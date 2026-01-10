@@ -13,8 +13,8 @@ const Input = forwardRef(
       focusColor,
       borderColor,
       error,
-      onFocus, //  부모(PasswordField)로부터 받은 포커스 이벤트
-      onBlur, // 부모(PasswordField)로부터 받은 블러 이벤트
+      onFocus,
+      onBlur,
       ...props
     },
     ref
@@ -61,12 +61,11 @@ const Input = forwardRef(
               ? `1px solid ${borderColor}`
               : "1px solid #D9D9D9",
 
-            // ⭐ 배경색 로직: 에러가 있으면 포커스 여부와 상관없이 빨간색 유지!
             backgroundColor: error
-              ? "#FF383C33" // 에러 시 연한 빨강 (33보다 조금 더 연한 1A 추천)
+              ? "#FF383C33"
               : isInternalFocused
-              ? focusColor // 에러가 없을 때만 포커스 시 노란색
-              : "#ffffff", // 평상시 흰색
+              ? focusColor
+              : "#ffffff",
             padding: "0 20px",
             fontSize: "16px",
             boxSizing: "border-box",

@@ -92,7 +92,6 @@ function Login() {
           error={idError}
           onChange={(e) => {
             setUserId(e.target.value);
-            if (e.target.value) setIdError(false); // 입력 시작하면 에러 해제
           }}
           focusColor="#FFC10033"
           borderColor="#FFC100"
@@ -106,7 +105,6 @@ function Login() {
           error={pwError}
           onChange={(e) => {
             setUserPw(e.target.value);
-            if (e.target.value) setPwError(false); // 입력 시작하면 에러 해제
           }}
           focusColor="#FFC10033"
           borderColor="#FFC100"
@@ -143,7 +141,7 @@ function Login() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              transition: "all 0.2s ease", // 색상 변할 때 부드럽게
+              transition: "all 0.2s ease",
             }}
           >
             {/* 선택되었을 때만 흰색 V 표시 등장 */}
