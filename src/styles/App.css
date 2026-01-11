@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-bottom: 80px; /* 하단 네비게이션 바 높이만큼 여백 */
+  overflow-y: auto;
+}
+
+.page-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.page-container p {
+  color: #666;
+  line-height: 1.6;
+}

@@ -1,0 +1,45 @@
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-top: 1px solid #e8e8e8;
+  padding: 0 29px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  height: 60px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  max-width: 20%;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.3s ease;
+}
+
+.nav-item:not(:last-child) {
+  margin-right: 54px;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.nav-item:hover .nav-icon {
+  filter: brightness(0.7);
+}
+
+.nav-item.active .nav-icon {
+  filter: invert(35%) sepia(45%) saturate(520%) hue-rotate(185deg) brightness(1.0);
+}
+
