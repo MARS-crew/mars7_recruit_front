@@ -20,7 +20,7 @@ export default function LoginRequiredModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   const handleConfirm = () => {
-    navigate('/login');
+    navigate('/Login');
   };
 
   if (!isOpen) return null;
