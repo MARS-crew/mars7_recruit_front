@@ -6,6 +6,7 @@ import Applications from "../pages/Applications";
 import Schedule from "../pages/Schedule";
 import MyPage from "../pages/MyPage";
 import Login from "../pages/Login";
+import Notice from "../pages/notice";
 
 export default function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ export default function AppRoutes() {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/notice" element={<Notice />} />
     </Routes>
   );
 }
