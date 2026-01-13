@@ -42,6 +42,7 @@ const Input = forwardRef(
               fontWeight: "400",
               color: "#212121",
               marginBottom: "8px",
+              marginLeft: "8px",
             }}
           >
             {label}
