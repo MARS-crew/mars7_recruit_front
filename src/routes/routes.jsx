@@ -8,6 +8,7 @@ import MyPage from "../pages/MyPage";
 import Login from "../pages/Login";
 import Notice from "../pages/notice";
 
+import Findpw from "../pages/findPw";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -19,6 +20,7 @@ export default function AppRoutes() {
       <Route path="/test" element={<Test />} />
       <Route path="/login" element={<Login />} />
       <Route path="/notice" element={<Notice />} />
+      <Route path="/findpw" element={<Findpw />} />
     </Routes>
   );
 }
