@@ -7,6 +7,7 @@ import Schedule from "../pages/Schedule";
 import MyPage from "../pages/MyPage";
 import Login from "../pages/Login";
 import ApplicantList from "../pages/applicantList";
+import ApplicantDetail from "../pages/applicantDetail";
 import Notice from "../pages/notice";
 import Findpw from "../pages/findPw";
 
@@ -20,9 +21,11 @@ export default function AppRoutes() {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/applicantList" element={<ApplicantList/>} />
+      <Route path="/applicants" element={<ApplicantList/>} />
+      <Route path="/applicants/:id" element={<ApplicantDetail />} />
       <Route path="/notice" element={<Notice />} />
       <Route path="/findpw" element={<Findpw />} />
+
     </Routes>
   );
 }
