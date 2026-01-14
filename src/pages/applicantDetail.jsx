@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 
+// 더미 데이터
 const mockApplicants = [
   {
     id: 1,
@@ -34,6 +35,15 @@ const mockApplicants = [
 export default function ApplicantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [modalType, setModalType] = useState(null);
+
+  const closeModal = () => setModalType(null);
+
+  const handleConfirm = () => {
+    alert(modalType === "pass" ? "합격 처리" : "불합격 처리");
+    closeModal();
+  };
 
   const applicant = useMemo(() => {
     const numId = Number(id);
@@ -123,8 +133,7 @@ export default function ApplicantDetail() {
           }}
         >
           <button
-            type="button"
-            onClick={() => alert("합격 처리(더미)")}
+            onClick={() => setModalType("pass")}
             style={{
               flex: 1,
               padding: "14px 0",
@@ -133,15 +142,13 @@ export default function ApplicantDetail() {
               background: "#E8F1FF",
               color: "#2B7FFF",
               fontWeight: 700,
-              fontSize: 16,
             }}
           >
             합격
           </button>
 
           <button
-            type="button"
-            onClick={() => alert("불합격 처리(더미)")}
+            onClick={() => setModalType("fail")}
             style={{
               flex: 1,
               padding: "14px 0",
@@ -150,13 +157,114 @@ export default function ApplicantDetail() {
               background: "#FFECEC",
               color: "#FF4D4D",
               fontWeight: 700,
-              fontSize: 16,
             }}
           >
             불합격
           </button>
         </div>
       </div>
+
+      {/* 모달 */}
+      {modalType && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: 24,
+          }}
+          onClick={closeModal}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 340,
+              background: "#fff",
+              borderRadius: 16,
+              padding: 20,
+              textAlign: "center",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 아이콘 */}
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                margin: "0 auto 12px",
+                borderRadius: "50%",
+                background: "#FFECEC",
+                color: "#FF4D4D",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 800,
+              }}
+            >
+              !
+            </div>
+
+            {/* 문구 */}
+            <div style={{ fontWeight: 800, fontSize: 16 }}>
+              {modalType === "pass"
+                ? "해당 지원자를 합격시키시겠습니까?"
+                : "해당 지원자를 불합격시키시겠습니까?"}
+            </div>
+
+            <div
+              style={{
+                marginTop: 8,
+                fontSize: 13,
+                color: "#777",
+                lineHeight: 1.5,
+              }}
+            >
+              취소가 불가능합니다.
+              <br />
+              신중하게 선택해주세요.
+            </div>
+
+            {/* 버튼 */}
+            <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+              <button
+                type="button"
+                onClick={closeModal}
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  borderRadius: 12,
+                  border: "1px solid #E5E5E5",
+                  background: "#fff",
+                  fontWeight: 700,
+                }}
+              >
+                취소
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirm}
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  borderRadius: 12,
+                  border: "none",
+                  background: modalType === "pass" ? "#2B7FFF" : "#FF4D4D",
+                  color: "#fff",
+                  fontWeight: 800,
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
