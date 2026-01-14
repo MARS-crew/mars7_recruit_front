@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import Test from "../pages/Test";
 import Home from "../pages/Home";
-import Clubs from "../pages/Clubs";
+import Clubs from "../pages/clubs";
 import Applications from "../pages/Applications";
 import Schedule from "../pages/Schedule";
 import MyPage from "../pages/MyPage";
 import Login from "../pages/Login";
 import ApplicantList from "../pages/applicantList";
 import Notice from "../pages/notice";
+import RecruitCreate from "../pages/RecruitCreate";
 import Findpw from "../pages/findPw";
 
 export default function AppRoutes() {
@@ -22,6 +23,7 @@ export default function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/applicantList" element={<ApplicantList/>} />
       <Route path="/notice" element={<Notice />} />
+      <Route path="/recruit" element={<RecruitCreate />} />
       <Route path="/findpw" element={<Findpw />} />
     </Routes>
   );

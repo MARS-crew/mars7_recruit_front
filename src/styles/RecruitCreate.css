@@ -1,0 +1,435 @@
+/* 폼 그룹 */
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 8px;
+}
+
+.required {
+  color: #FF383C;
+  margin-left: 2px;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.char-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 12px;
+  color: #2572B9;
+}
+
+/* 제목 입력 */
+.title-input-section {
+  padding: 11px 0;
+  border-bottom: 1px solid #EAEAEA;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  background: transparent;
+  padding: 0;
+  font-family: pretendard;
+}
+
+.title-input::placeholder {
+  color: #BDBDBD;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 텍스트 영역 */
+.form-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #212121;
+  resize: none;
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-textarea::placeholder {
+  color: #BDBDBD;
+}
+
+.form-textarea:focus {
+  border-color: #2572B9;
+}
+
+/* 드롭다운 */
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-button {
+  width: 100%;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.dropdown-button:hover {
+  border-color: #D9D9D9;
+}
+
+.dropdown-button.active {
+  border-color: #FFC100;
+  border-width: 1px;
+  outline: none;
+}
+
+.dropdown-button .placeholder {
+  color: #D9D9D9;
+  font-size: 14px;
+}
+
+.dropdown-button .selected {
+  color: #212121;
+  font-size: 14px;
+}
+
+.dropdown-icon {
+  flex-shrink: 0;
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #9EA3B2;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  padding: 16px 16px 16px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #212121;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #FFF9E6;
+  margin: 16px;
+}
+.dropdown-item.unselected {
+  background-color: #FFFFFF;
+  font-weight: 400;
+  color: #9EA3B2;
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.dropdown-item.selected {
+  background-color: #FFC10033;
+  font-weight: 500;
+  color: #9B7500;
+  border-radius: 8px;
+  width: 337px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+  margin-left: 12px;
+  margin-bottom: 6px;
+}
+
+/* 모집 인원 */
+.recruit-count-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.recruit-count-input {
+  width: 100%;
+  height: 56px;
+  padding: 16px;
+  padding-right: 48px;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #212121;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.recruit-count-input::placeholder {
+  color: #BDBDBD;
+}
+
+.recruit-count-input:focus {
+  border-color: #2572B9;
+}
+
+.recruit-count-input::-webkit-inner-spin-button,
+.recruit-count-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.recruit-count-unit {
+  position: absolute;
+  right: 16px;
+  font-size: 14px;
+  color: #212121;
+  font-weight: 500;
+  background-color: #ffffff;
+  pointer-events: none;
+}
+
+/* 날짜 선택 */
+.date-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.date-input-container {
+  flex: 1;
+  position: relative;
+}
+
+.date-input-container.full-width {
+  width: 100%;
+}
+
+.date-button {
+  width: 100%;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 12px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  text-align: left;
+  font-family: inherit;
+}
+
+.date-button.full-width {
+  width: 100%;
+}
+
+.date-button:hover {
+  border-color: #C7CBD4;
+}
+
+.date-button .placeholder {
+  color: #D9D9D9;
+  font-size: 14px;
+}
+
+.date-button .selected {
+  color: #212121;
+  font-size: 14px;
+}
+
+/* 커스텀 달력 */
+.calendar-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #9EA3B2;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  padding: 24px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-nav-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #212121;
+}
+
+.calendar-nav-button:hover {
+  background-color: #F5F5F5;
+  border-radius: 4px;
+}
+
+.calendar-month-year {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.calendar-weekdays > div {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #757575;
+  padding: 10px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #212121;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  min-width: 0;
+  min-height: 40px;
+}
+
+.calendar-day:hover:not(.empty) {
+  background-color: #FFF9E6;
+}
+
+.calendar-day.selected {
+  background-color: #FFC10033;
+  color: #9B7500;
+  font-weight: 600;
+}
+
+.calendar-day.empty {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* 에러 메시지 */
+.error-message {
+  color: #FF383C;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 400;
+}
+
+/* 담당자 정보 */
+.manager-info-container {
+  border: 1px solid #9EA3B2;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.manager-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.manager-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.manager-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #212121;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.manager-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #212121;
+  background: transparent;
+  padding: 0;
+  font-family: pretendard;
+}
+
+.manager-input::placeholder {
+  color: #D9D9D9;
+}
+
+/* 제출 버튼 */
+.submit-button {
+  width: 100%;
+  height: 56px;
+  background-color: #2572B9;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 100px;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #1E5A92;
+}
+
+.submit-button:active:not(:disabled) {
+  background-color: #174770;
+}
+
+.submit-button:disabled {
+  background-color: #C7CBD4;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
