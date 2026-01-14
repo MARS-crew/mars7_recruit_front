@@ -7,7 +7,7 @@ function AppContent() {
   const location = useLocation();
   
   // Show bottom nav bar only on these pages
-  const showBottomNav = ['/', '/clubs', '/applications', '/schedule', '/mypage'].includes(location.pathname);
+  const showBottomNav = ['/', '/clubs', '/applications', '/schedule', '/mypage', '/notice'].includes(location.pathname);
 
   return (
     <div className="app-container">

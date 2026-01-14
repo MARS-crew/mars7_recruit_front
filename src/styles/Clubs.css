@@ -1,0 +1,260 @@
+.clubs-container {
+  min-height: 139px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  margin-bottom: 80px;
+}
+
+.clubs-container h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 20px 0 16px 0;
+  color: #000000;
+}
+
+/* 검색 바 */
+.search-bar {
+  position: relative;
+  margin-top: 21px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333333;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder {
+  color: #bdbdbd;
+}
+
+.search-input:focus {
+  border-color: #0066ff;
+  background-color: #ffffff;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bdbdbd;
+  pointer-events: none;
+}
+
+/* 필터 탭 */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.filter-tab {
+  padding: 0;
+  width: 74px;
+  height: 32px;
+  border: 1px solid #EAEAEA;
+  border-radius: 20px;
+  background-color: #ffffff;
+  color: #212121;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-tab:hover {
+  background-color: #f0f0f0;
+}
+
+.filter-tab.active {
+  background-color: #2572B9;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 400;
+  border: none;
+  box-shadow: none;
+}
+
+/* 동아리 리스트 */
+.clubs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.club-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  background-color: #ffffff;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.club-card.last {
+  border-bottom: none;
+}
+
+.club-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.club-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.club-description {
+  font-size: 12px;
+  color: #9EA3B2;
+  margin-bottom: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+}
+
+.club-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #9EA3B2;
+  margin-top: 4px;
+}
+
+.club-code {
+  display: inline-block;
+  width: 53px;
+  height: 22px;
+  text-align: center;
+  line-height: 22px;
+  background-color: #ffe8cc;
+  color: #ff9800;
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.club-code.red {
+  background-color: #FF383C33;
+  color: #FF383C;
+}
+
+.club-date {
+  color: #9EA3B2;
+}
+.club-members {
+  display: flex;
+  align-items: center;
+  color: #9EA3B2;
+  margin-left: auto;
+}
+
+.member-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+.club-members-count {
+  color: #9EA3B2;
+}
+
+/* 동아리 이미지 */
+.club-image {
+  flex-shrink: 0;
+  width: 82px;
+  height: 117px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 2px solid #e0e0e0;
+}
+
+.club-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 빈 상태 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  color: #9EA3B2;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.empty-state p {
+  margin: 1890px 0 0 0;
+  font-size: 16px;
+}
+
+/* FAB 버튼 */
+.fab-button {
+  position: fixed;
+  bottom: 61px;
+  right: 25px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #2572B9;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+  transition: all 0.2s;
+  z-index: 999;
+}
+
+.fab-button:hover {
+  background-color: #0052cc;
+  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.4);
+}
+
+.fab-button:active {
+  transform: scale(0.95);
+}
