@@ -118,12 +118,22 @@ export default function SingUpDetail() {
       navigate("/");
     }
   };
+  const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
+
+  // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0; // 내부 스크롤 초기화
+    }
+    window.scrollTo(0, 0); // 브라우저 스크롤 초기화
+  }, []);
 
   return (
     <div
+      ref={containerRef}
       style={{
         padding: "0 16px",
-        height: "100vh",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         boxSizing: "border-box",
@@ -191,7 +201,13 @@ export default function SingUpDetail() {
               }}
               borderColor={genderError ? "#FF4D4D" : "#D9D9D9"}
             />
-            <MessageText marginTop={0} message={genderError} color="#FF4D4D" />
+            <div style={{ minHeight: "22px" }}>
+              <MessageText
+                marginTop={0}
+                message={genderError}
+                color="#FF4D4D"
+              />
+            </div>
           </div>
 
           {/* 생년월일 */}
@@ -218,6 +234,7 @@ export default function SingUpDetail() {
                 <Select
                   value={month}
                   options={monthOptions}
+                  label=""
                   placeholder="월"
                   customHeight={276}
                   onChange={(val) => {
@@ -230,6 +247,7 @@ export default function SingUpDetail() {
               <div style={{ flex: 1 }}>
                 <Select
                   value={day}
+                  label=""
                   options={dayOptions}
                   placeholder="일"
                   customHeight={276}
@@ -241,7 +259,9 @@ export default function SingUpDetail() {
                 />
               </div>
             </div>
-            <MessageText marginTop={0} message={birthError} color="#FF4D4D" />
+            <div style={{ minHeight: "22px" }}>
+              <MessageText marginTop={0} message={birthError} color="#FF4D4D" />
+            </div>
           </div>
 
           {/* 주소 (특수문자 검사 적용) */}
@@ -258,7 +278,13 @@ export default function SingUpDetail() {
               onChange={handleAddressChange}
               placeholder="주소를 입력해주세요."
             />
-            <MessageText marginTop={0} message={addressError} color="#FF4D4D" />
+            <div style={{ minHeight: "22px" }}>
+              <MessageText
+                marginTop={0}
+                message={addressError}
+                color="#FF4D4D"
+              />
+            </div>
           </div>
         </div>
       </div>
