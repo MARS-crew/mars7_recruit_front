@@ -14,12 +14,16 @@ import Findpw from "../pages/findPw";
 import SignUp from "../pages/signUp";
 import TermsDetail from "../pages/termsDetail";
 import PushTermsDetail from "../pages/pushTermsDetail";
+import ApplicationDetail from "../pages/applicationDetail";
+import ApplicationForm from "../pages/applicationForm";
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/clubs" element={<Clubs />} />
       <Route path="/applications" element={<Applications />} />
+      <Route path="/applications/:id" element={<ApplicationDetail />}/>
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
@@ -30,8 +34,10 @@ export default function AppRoutes() {
       <Route path="/findpw" element={<Findpw />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupdetail" element={<SignUpDetail />} />
-      <Route path="/termsDetail" element={<TermsDetail />} />/
+      <Route path="/termsDetail" element={<TermsDetail />} />
       <Route path="/pushTermsDetail" element={<PushTermsDetail />} />
+      <Route path="/applications/new" element={<ApplicationForm />}/>
+
     </Routes>
   );
 }
