@@ -2,6 +2,7 @@ export default function Button({
   label,
   type = "button",
   onClick,
+  fontWeight = "600",
   customWidth = "100%",
   height = 60,
 }) {
@@ -14,7 +15,7 @@ export default function Button({
         border: "1px solid #D9D9D9",
         borderRadius: 16,
         fontSize: "20px",
-        fontWeight: "600",
+        fontWeight: fontWeight,
         color: "#FFFFFF",
       }}
       type={type}

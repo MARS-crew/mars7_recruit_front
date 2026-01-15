@@ -194,7 +194,7 @@ function Login() {
         <p style={{ fontSize: 14, color: "#9EA3B2", margin: 0 }}>
           아직 회원이 아니신가요?{" "}
           <span
-            onClick={() => navigate("/Signup")}
+            onClick={() => navigate("/SignUp")}
             style={{
               color: "#FFC100",
               textDecoration: "underline",
