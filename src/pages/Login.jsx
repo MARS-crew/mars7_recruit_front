@@ -24,13 +24,6 @@ function Login() {
   const idRef = useRef(null);
   const pwRef = useRef(null);
 
-  // 3. 페이지 접속 시 아이디 칸에 자동 포커스
-  useEffect(() => {
-    if (idRef.current) {
-      idRef.current.focus();
-    }
-  }, []);
-
   // 4. 로그인 버튼 클릭 함수 (유효성 검사 포함)
   const handleLogin = () => {
     setIdError(false);
@@ -64,20 +57,18 @@ function Login() {
       }
       return;
     }
-
-    // 2. 아이디 존재 여부 확인 (아이디 x)
-    if (userId != mockId) {
-      setIdMError("존재하지 않는 회원 정보입니다.");
-      setIdError(true);
-      idRef.current?.focus();
-      return;
-    }
-
     // 3. 비밀번호 형식 확인 (형식 불일치)
     if (!pwRegex.test(userPw)) {
       setPwError(true);
       setPwMError("8-20자 숫자, 영문, 특수 문자 포함 후 작성해 주세요.");
       pwRef.current?.focus();
+      return;
+    }
+    // 2. 아이디 존재 여부 확인 (아이디 x)
+    if (userId != mockId) {
+      setIdMError("존재하지 않는 회원 정보입니다.");
+      setIdError(true);
+      idRef.current?.focus();
       return;
     }
 
@@ -132,7 +123,7 @@ function Login() {
       </div>
 
       {/* 입력 영역 */}
-      <div style={{ marginTop: 40 }}>
+      <div style={{ marginTop: 40, height: 90 }}>
         <Input
           ref={idRef}
           label="아이디"
@@ -146,7 +137,8 @@ function Login() {
           placeholder="아이디를 입력해주세요."
         />
         <MessageText message={IdMError} color="#FF4D4D" />
-
+      </div>
+      <div style={{ marginTop: 30, height: 90 }}>
         <PasswordField
           ref={pwRef}
           label="비밀번호"
@@ -175,6 +167,7 @@ function Login() {
           style={{
             display: "inline-flex",
             alignItems: "center",
+            marginTop: 8,
             gap: "10px", // 아이콘과 글자 간격
             cursor: "pointer",
           }}
