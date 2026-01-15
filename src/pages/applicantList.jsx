@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import BottomNavBar from "../components/BottomNavBar";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
@@ -10,7 +11,10 @@ const mockApplicants = [
     age: 22,
     major: "컴퓨터소프트웨어공학과",
     grade: "3학년",
-    appliedAt: "2025.12.23",
+    title: "어떤 일이든 최선을 다하겠습니다.",
+    address: "경기도 광명시",
+    phone: "010-0000-0000",
+    intro: "첫 번째 자기소개입니다.",
   },
   {
     id: 2,
@@ -19,11 +23,16 @@ const mockApplicants = [
     age: 22,
     major: "컴퓨터소프트웨어공학과",
     grade: "3학년",
-    appliedAt: "2025.12.23",
+    title: "열심히 하겠습니다.",
+    address: "서울특별시",
+    phone: "010-0000-0000",
+    intro: "두 번째 자기소개입니다.",
   },
 ];
 
 export default function ApplicantList() {
+  const navigate = useNavigate();
+
   return (
     <div style={{ paddingBottom: 72 }}>
       <Header title="지원자 목록" />
@@ -32,15 +41,15 @@ export default function ApplicantList() {
         {mockApplicants.map((applicant) => (
           <li
             key={applicant.id}
+            onClick={() => navigate(`/applicants/${applicant.id}`)}
             style={{
               display: "flex",
               alignItems: "center",
               padding: "16px",
               borderBottom: "1px solid #eee",
+              cursor: "pointer",
             }}
           >
-
-            {/* 프로필 이미지 */}
             <div
               style={{
                 width: 56,
@@ -54,19 +63,16 @@ export default function ApplicantList() {
               <img
                 src={Profile}
                 alt="프로필"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </div>
 
-            {/* 정보 영역 */}
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: "bold", fontSize: 16 }}>
                 {applicant.name}
-                <span style={{ color: "#888", fontWeight: "normal", marginLeft: 8 }}>
+                <span
+                  style={{ color: "#888", fontWeight: "normal", marginLeft: 8 }}
+                >
                   {applicant.gender} · {applicant.age}세
                 </span>
               </div>
@@ -76,7 +82,6 @@ export default function ApplicantList() {
               </div>
             </div>
 
-            {/* 지원 날짜 */}
             <div style={{ fontSize: 12, color: "#bbb" }}>
               {applicant.appliedAt}
             </div>
