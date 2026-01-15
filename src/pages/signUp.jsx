@@ -395,6 +395,9 @@ export default function SignUp() {
           <img src={RightArrow} alt="detail" />
         </div>
       </div>
+      <div style={{ minHeight: "22px" }}>
+        <MessageText marginTop={0} message={agreeError} color="#FF4D4D" />
+      </div>
       {/* 2. 앱 푸시 동의 (선택) */}
       <div
         style={{
@@ -403,7 +406,7 @@ export default function SignUp() {
           display: "inline-flex",
           alignItems: "center",
           height: 22,
-          marginTop: 16,
+
           gap: "10px",
         }}
       >
@@ -443,9 +446,7 @@ export default function SignUp() {
           <img src={RightArrow} alt="detail" />
         </div>
       </div>
-      <div style={{ minHeight: "20px" }}>
-        <MessageText marginTop={0} message={agreeError} color="#FF4D4D" />
-      </div>
+
       <div style={{ marginTop: 35 }}>
         <Button label="다음" onClick={handleSingUP} />
       </div>

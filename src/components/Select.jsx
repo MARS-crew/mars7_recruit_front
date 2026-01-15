@@ -53,12 +53,11 @@ const Select = ({
           width: "100%",
           height: "60px",
           borderRadius: "16px",
-          border: `1px solid ${isOpen ? "#FFC100" : "#D9D9D9"}`,
           border: error
-            ? "1px solid #FF383C"
-            : isInternalFocused
-            ? `1px solid ${borderColor}`
-            : "1px solid #D9D9D9",
+            ? "1px solid #FF383C" // 1순위: 에러 시 빨간색
+            : isOpen || isInternalFocused
+            ? "#1px solid #FFC100" // 2순위: 열려있거나 포커스/호버 시 노란색
+            : "1px solid #D9D9D9", // 3순위: 기본 회색
 
           backgroundColor: error
             ? "#FF383C33"
@@ -70,7 +69,7 @@ const Select = ({
           alignItems: "center",
           justifyContent: "space-between",
           boxSizing: "border-box",
-          color: value ? "#000" : "#D9D9D9",
+          color: value ? "#000" : "#757575",
         }}
       >
         <span style={{ fontSize: "16px" }}>{value || placeholder}</span>

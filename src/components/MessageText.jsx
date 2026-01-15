@@ -11,7 +11,7 @@ const MessageText = ({
   if (!isVisible || !message) return null;
 
   return (
-    <div style={{ marginTop: marginTop, marginLeft: 8 }}>
+    <div style={{ marginTop: marginTop, marginLeft: 8, height: 22 }}>
       <p
         style={{
           color: color,
