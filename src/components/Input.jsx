@@ -15,6 +15,9 @@ const Input = forwardRef(
       error,
       onFocus,
       onBlur,
+      backgroundColor,
+      marginBottom = "16px", // 기본값은 16px로 유지
+      star = false,
       ...props
     },
     ref
@@ -34,7 +37,7 @@ const Input = forwardRef(
     };
 
     return (
-      <div style={{ width: customWidth, marginBottom: "16px" }}>
+      <div style={{ width: customWidth, marginBottom: marginBottom }}>
         {label && (
           <p
             style={{
@@ -46,6 +49,8 @@ const Input = forwardRef(
             }}
           >
             {label}
+            {/* required가 true일 때만 빨간 별표를 렌더링 */}
+            {star && <span style={{ color: "red", marginLeft: "4px" }}>*</span>}
           </p>
         )}
         <input
