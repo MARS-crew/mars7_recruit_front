@@ -5,7 +5,7 @@ import Input from "../components/Input";
 import PasswordField from "../components/PasswordField"; // 비밀번호 전용 컴포넌트
 import MessageText from "../components/MessageText"; // 경고문구 컴포넌트
 import Button from "../components/Button";
-import Header from "../components/Header";
+import Header from "../components/header";
 import check from "../icon/check.png";
 
 function Login() {

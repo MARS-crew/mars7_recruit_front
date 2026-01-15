@@ -7,6 +7,10 @@ const ClubDetail = ({ club, isPublisher }) => {
         window.scrollTo(0, 0);
     }, []);
 
+    const descriptionParagraphs = (club.description || '동아리 소개 내용이 여기에 표시됩니다.')
+        .split(/\n+/)
+        .filter(Boolean);
+
     return (
         <div style={{
         padding: "0 16px",
@@ -64,7 +68,9 @@ const ClubDetail = ({ club, isPublisher }) => {
 
                 {/* 동아리 소개 */}
                 <section className="club-introduction">
-                    <p>{club.description || '동아리 소개 내용이 여기에 표시됩니다.'}</p>
+                    {descriptionParagraphs.map((line, idx) => (
+                        <p key={idx}>{line}</p>
+                    ))}
                 </section>
 
                 {/* 담당자 정보 */}

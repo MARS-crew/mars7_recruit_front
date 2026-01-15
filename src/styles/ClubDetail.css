@@ -37,7 +37,7 @@
     font-weight: 500;
     margin-bottom: 20px;
     line-height: 1.4;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f5f5f5;
     padding: 0 0 24px 0;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .condition-item:last-child {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f5f5f5;
     padding-bottom: 15px;
 }
 
@@ -80,7 +80,7 @@
 
 /* 포스터 */
 .poster-container {
-    margin: 20px 0;
+    margin: 24px 0 0 0;
     border-radius: 12px;
     overflow: hidden;
     background-color: #f5f5f5;
@@ -94,61 +94,70 @@
 
 /* 동아리 소개 */
 .club-introduction {
-    margin: 20px 0;
+    margin: 16px 0;
     padding: 12px 0;
     background-color: #fafafa;
     border-radius: 8px;
 }
 
 .club-introduction p {
-    font-size: 14px;
+    font-size: 16px;
+    font-family: Pretendard;
     line-height: 1.6;
     color: #333;
-    margin: 0;
+    margin: 0 0 8px 0;
+}
+
+.club-introduction p:last-child {
+    margin-bottom: 0;
 }
 
 /* 담당자 정보 */
 .manager-info {
-    margin: 20px 0;
+    margin: 15px 0;
 }
 
 .manager-info h3 {
     font-size: 16px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .info-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 8px 0;
 }
 
 .info-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 15px;
 }
 
 .info-label {
     font-size: 14px;
-    color: #757575;
+    color: #9EA3B2;
+    width: 80px; 
 }
 
 .info-value {
     font-size: 14px;
     color: #333;
     font-weight: 500;
+    margin-left: 16px;
 }
 
 /* 지원 정보 (게시자용) */
 .application-stats {
-    margin: 20px 0;
+    margin: 15px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f5f5f5;
 }
 
 .application-stats h3 {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 400;
     margin-bottom: 12px;
 }
 
@@ -163,47 +172,44 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 8px;
-    background-color: #fafafa;
+    background-color: #fff;
     border-radius: 8px;
 }
 
 .stat-label {
-    font-size: 13px;
-    color: #757575;
+    font-size: 14px;
+    color: #9EA3B2;
 }
 
 .stat-value {
-    font-size: 15px;
-    color: #333;
-    font-weight: 600;
+    font-size: 14px;
+    color: #212121;
+    font-weight: 400;
 }
 
 /* 하단 버튼 */
 .bottom-button-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px 20px;
+    position: relative;
+    width: 361px;
+    height: 60px;
+    margin: -70px 0 auto;
     background-color: #ffffff;
-    border-top: 1px solid #e0e0e0;
+
 }
 
 .action-button {
     width: 100%;
-    padding: 16px;
+    padding: 17px;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .publisher-button {
-    background-color: #2196f3;
+    background-color: #2572B9;
     color: #ffffff;
 }
 
@@ -212,21 +218,10 @@
 }
 
 .applicant-button {
-    background-color: #2196f3;
+    background-color: #2572B9;
     color: #ffffff;
 }
 
 .applicant-button:hover {
     background-color: #1976d2;
-}
-
-/* 반응형 */
-@media (max-width: 480px) {
-    .club-detail-content {
-        /* padding: 16px; */
-    }
-    
-    .recruitment-title {
-        font-size: 18px;
-    }
 }

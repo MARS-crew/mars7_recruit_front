@@ -18,7 +18,7 @@ const ClubDetailPage = () => {
             recruitPeriod: '2025.12.31 - 2026.01.07',
             announcementDate: '2026.01.12',
             posterImage: '../public/icons/clubimage.png',
-            description: '웹응용소프트웨어공학과 전공 동아리 ONE에서 신입 부원을 모집합니다.\n\nONE은 각종 세미나 및 스터디 활동, 대회와 동아리페어 expo 활동을 꾸준히 이어오고 있는 전공 동아리입니다!',
+            description: '웹응용소프트웨어공학과 전공 동아리 ONE에서 신입 부원을 모집합니다.\nONE은 각종 세미나 및 스터디 활동, 대회와 동아리페어 expo 활동을 꾸준히 이어오고 있는 전공 동아리입니다!',
             managerName: '최예은',
             contact: '010-9017-0806',
             viewCount: 6,
