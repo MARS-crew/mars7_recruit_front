@@ -176,7 +176,7 @@ export default function SignUp() {
       setIdError("사용할 수 없는 아이디입니다.");
       setIdOk("no");
     } else if (!idRegex.test(userId)) {
-      setIdError("조건은 3-15자 영대소문자, 숫자 포함 후 작성해 주세요.");
+      setIdError("조건은 3-15자 영문자, 숫자 포함 후 작성해 주세요.");
       setIdOk("");
     } else {
       setUseId(true);
