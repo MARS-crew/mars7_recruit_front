@@ -11,6 +11,7 @@ import ApplicantDetail from "../pages/applicantDetail";
 import Notice from "../pages/notice";
 import Findpw from "../pages/findPw";
 import ApplicationDetail from "../pages/applicationDetail"
+import ApplicationForm from "../pages/applicationForm";
 
 export default function AppRoutes() {
   return (
@@ -27,6 +28,7 @@ export default function AppRoutes() {
       <Route path="/applicants/:id" element={<ApplicantDetail />} />
       <Route path="/notice" element={<Notice />} />
       <Route path="/findpw" element={<Findpw />} />
+      <Route path="/applications/new" element={<ApplicationForm/>}/>
 
     </Routes>
   );
