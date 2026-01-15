@@ -14,8 +14,8 @@ export default function RecruitCreate() {
     startDate: '',
     endDate: '',
     deadline: '',
-    managerName: '',
-    phoneNumber: ''
+    managerName: '최예은',
+    phoneNumber: '010-9017-0806'
   });
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
