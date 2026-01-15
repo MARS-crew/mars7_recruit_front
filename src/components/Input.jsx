@@ -76,6 +76,7 @@ const Input = forwardRef(
             fontSize: "16px",
             boxSizing: "border-box",
             outline: "none",
+
             transition: "all 0.2s ease", // 부드러운 변화 추가
           }}
           type={type}

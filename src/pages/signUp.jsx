@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import Input from "../components/Input";
 import Select from "../components/Select";
@@ -176,7 +176,7 @@ export default function SignUp() {
       setIdError("사용할 수 없는 아이디입니다.");
       setIdOk("no");
     } else if (!idRegex.test(userId)) {
-      setIdError("조건은 3-15자 영대소문자, 숫자 포함 후 작성해 주세요.");
+      setIdError("조건은 3-15자 영문자, 숫자 포함 후 작성해 주세요.");
       setIdOk("");
     } else {
       setUseId(true);
@@ -184,6 +184,15 @@ export default function SignUp() {
       setIdError("사용 가능한 아이디 입니다.");
     }
   };
+  const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
+
+  // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0; // 내부 스크롤 초기화
+    }
+    window.scrollTo(0, 0); // 브라우저 스크롤 초기화
+  }, []);
   // 전화번호 하이픈 자동 삽입 함수
   const formatPhoneNumber = (value) => {
     const raw = value.replace(/[^\d]/g, "");
@@ -193,6 +202,7 @@ export default function SignUp() {
   };
   return (
     <div
+      ref={containerRef} // ★ 이 Ref가 반드시 필요합니다
       style={{
         padding: "0 16px",
         backgroundColor: "#FFFFFF",
@@ -395,6 +405,9 @@ export default function SignUp() {
           <img src={RightArrow} alt="detail" />
         </div>
       </div>
+      <div style={{ minHeight: "22px" }}>
+        <MessageText marginTop={0} message={agreeError} color="#FF4D4D" />
+      </div>
       {/* 2. 앱 푸시 동의 (선택) */}
       <div
         style={{
@@ -403,7 +416,7 @@ export default function SignUp() {
           display: "inline-flex",
           alignItems: "center",
           height: 22,
-          marginTop: 16,
+
           gap: "10px",
         }}
       >
@@ -443,9 +456,7 @@ export default function SignUp() {
           <img src={RightArrow} alt="detail" />
         </div>
       </div>
-      <div style={{ minHeight: "20px" }}>
-        <MessageText marginTop={0} message={agreeError} color="#FF4D4D" />
-      </div>
+
       <div style={{ marginTop: 35 }}>
         <Button label="다음" onClick={handleSingUP} />
       </div>

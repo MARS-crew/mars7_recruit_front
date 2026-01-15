@@ -1,8 +1,19 @@
+import Nobackheader from "../components/nobackheader";
+
 export default function Schedule() {
   return (
-    <div className="page-container">
-      <h1>학사일정</h1>
-      <p>학사일정 페이지입니다.</p>
+    <div style={{ height: "100vh" }}>
+      <Nobackheader title="학사일정" />
+
+      <iframe
+        src="https://www.dongyang.ac.kr/dmu/4749/subview.do"
+        title="학사일정"
+        style={{
+          width: "100%",
+          height: "calc(100vh - 56px)",
+          border: "none",
+        }}
+      />
     </div>
   );
 }
