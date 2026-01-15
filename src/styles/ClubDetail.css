@@ -1,0 +1,232 @@
+.club-detail-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content */
+.club-detail-content {
+    flex: 1;
+    padding: 16px 0 100px 0;
+}
+
+/* 카테고리 태그 */
+.club-category-tag {
+    width: 110px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px 9px 16px;
+    background-color: #2572B933;
+    border: 1px solid #2572B9;
+    border-radius: 20px;
+    color: #2572B9;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 11px;
+    margin-top: 0;
+}
+
+/* 모집 제목 */
+.recruitment-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0 0 24px 0;
+}
+
+/* 모집 조건 */
+.recruitment-conditions {
+    margin-bottom: 20px;
+}
+
+.recruitment-conditions h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #000;
+}
+
+.condition-item {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.condition-item:last-child {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.condition-label {
+    font-size: 14px;
+    color: #9EA3B2;
+    width: 80px; 
+}
+
+.condition-value {
+    font-size: 14px;
+    color: #212121;
+    font-weight: 400;
+    margin-left: 16px;
+}
+
+/* 포스터 */
+.poster-container {
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.poster-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 동아리 소개 */
+.club-introduction {
+    margin: 20px 0;
+    padding: 12px 0;
+    background-color: #fafafa;
+    border-radius: 8px;
+}
+
+.club-introduction p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+}
+
+/* 담당자 정보 */
+.manager-info {
+    margin: 20px 0;
+}
+
+.manager-info h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 14px;
+    color: #757575;
+}
+
+.info-value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 지원 정보 (게시자용) */
+.application-stats {
+    margin: 20px 0;
+}
+
+.application-stats h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px;
+    background-color: #fafafa;
+    border-radius: 8px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #757575;
+}
+
+.stat-value {
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* 하단 버튼 */
+.bottom-button-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+}
+
+.action-button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.publisher-button {
+    background-color: #2196f3;
+    color: #ffffff;
+}
+
+.publisher-button:hover {
+    background-color: #1976d2;
+}
+
+.applicant-button {
+    background-color: #2196f3;
+    color: #ffffff;
+}
+
+.applicant-button:hover {
+    background-color: #1976d2;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+    .club-detail-content {
+        /* padding: 16px; */
+    }
+    
+    .recruitment-title {
+        font-size: 18px;
+    }
+}
