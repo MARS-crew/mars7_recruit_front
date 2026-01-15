@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import Input from "../components/Input";
 import Select from "../components/Select";
@@ -184,6 +184,15 @@ export default function SignUp() {
       setIdError("사용 가능한 아이디 입니다.");
     }
   };
+  const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
+
+  // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0; // 내부 스크롤 초기화
+    }
+    window.scrollTo(0, 0); // 브라우저 스크롤 초기화
+  }, []);
   // 전화번호 하이픈 자동 삽입 함수
   const formatPhoneNumber = (value) => {
     const raw = value.replace(/[^\d]/g, "");
@@ -193,6 +202,7 @@ export default function SignUp() {
   };
   return (
     <div
+      ref={containerRef} // ★ 이 Ref가 반드시 필요합니다
       style={{
         padding: "0 16px",
         backgroundColor: "#FFFFFF",

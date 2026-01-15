@@ -96,7 +96,7 @@ function Login() {
     <div
       style={{
         padding: "0 16px",
-        minHeight: "100vh",
+        minHeight: "100%",
         display: "flex",
         flexDirection: "column",
         boxSizing: "border-box",
@@ -230,7 +230,7 @@ function Login() {
         style={{
           display: "flex",
           justifyContent: "center",
-          marginBottom: "50px",
+          marginTop: "50px",
         }}
       >
         <p style={{ fontSize: 14, color: "#9EA3B2", margin: 0 }}>
