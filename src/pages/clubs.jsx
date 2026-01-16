@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginRequiredModal from '../components/LoginRequiredModal';
 import '../styles/Clubs.css';
@@ -9,6 +9,10 @@ export default function Clubs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // 임시 동아리 데이터
   const clubsData = [
@@ -123,7 +127,12 @@ export default function Clubs() {
           </div>
         ) : (
           filteredClubs.map((club, index) => (
-            <div key={club.id} className={`club-card ${index === filteredClubs.length - 1 ? 'last' : ''}`}>
+            <div 
+              key={club.id} 
+              className={`club-card ${index === filteredClubs.length - 1 ? 'last' : ''}`}
+              onClick={() => navigate(`/clubs/${club.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="club-content">
                 <h3 className="club-title">{club.title}</h3>
                 <p className="club-description">{club.description}</p>

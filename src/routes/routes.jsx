@@ -3,9 +3,9 @@ import Test from "../pages/Test";
 import Home from "../pages/Home";
 import Clubs from "../pages/clubs";
 import Applications from "../pages/applications";
-import Schedule from "../pages/Schedule";
-import MyPage from "../pages/MyPage";
-import Login from "../pages/Login";
+import Schedule from "../pages/schedule";
+import MyPage from "../pages/mypage";
+import Login from "../pages/login";
 import ApplicantList from "../pages/applicantList";
 import ApplicantDetail from "../pages/applicantDetail";
 import Notice from "../pages/notice";
@@ -17,12 +17,14 @@ import TermsDetail from "../pages/termsDetail";
 import PushTermsDetail from "../pages/pushTermsDetail";
 import ApplicationDetail from "../pages/applicationDetail";
 import ApplicationForm from "../pages/applicationForm";
+import ClubDetailPage from "../pages/ClubDetailPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/clubs" element={<Clubs />} />
+      <Route path="/clubs/:id" element={<ClubDetailPage />} />
       <Route path="/applications" element={<Applications />} />
       <Route path="/applications/:id" element={<ApplicationDetail />}/>
       <Route path="/schedule" element={<Schedule />} />

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import './styles/App.css'
 import AppRoutes from './routes/routes';
 import BottomNavBar from './components/BottomNavBar';
+import ClubDetailPage from './pages/ClubDetailPage';
 
 function AppContent() {
   const location = useLocation();

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/header";
 import BottomNavBar from "../components/BottomNavBar";
 
 // 더미 데이터

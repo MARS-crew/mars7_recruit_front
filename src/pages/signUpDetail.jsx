@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Header from "../components/Header";
+import Header from "../components/header";
 import Select from "../components/Select";
 import userImage from "../icon/userImage.png";
 import MessageText from "../components/MessageText";
