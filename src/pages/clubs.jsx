@@ -1,18 +1,35 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LoginRequiredModal from '../components/LoginRequiredModal';
 import '../styles/Clubs.css';
 import Nobackheader from '../components/nobackheader';
 
 export default function Clubs() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
+  const [showToast, setShowToast] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    if (location.state?.showDeleteToast) {
+      setShowToast(true);
+      setFadeOut(false);
+      window.history.replaceState({}, document.title);
+      
+      setTimeout(() => {
+        setFadeOut(true);
+      }, 1500);
+      
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+    }
+  }, [location]);
 
   // 임시 동아리 데이터
   const clubsData = [
@@ -163,6 +180,31 @@ export default function Clubs() {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
       />
+      
+      {/* 토스트 팝업 */}
+      {showToast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 80,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'rgba(150, 150, 150, 0.7)',
+            color: '#fff',
+            padding: '12px 24px',
+            borderRadius: 16,
+            fontSize: 14,
+            fontWeight: 500,
+            zIndex: 10000,
+            whiteSpace: 'nowrap',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            opacity: fadeOut ? 0 : 1,
+            transition: 'opacity 0.5s ease-out',
+          }}
+        >
+          삭제되었습니다.
+        </div>
+      )}
     </div>
   );
 }
