@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/header';
+import Header from '../components/Header';
 import '../styles/RecruitCreate.css';
 
 export default function RecruitCreate() {
@@ -23,12 +23,77 @@ export default function RecruitCreate() {
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showDeadlinePicker, setShowDeadlinePicker] = useState(false);
   const [dateError, setDateError] = useState('');
+  const [emptyFieldError, setEmptyFieldError] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]);
   
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
 
+  // refs for each section
+  const titleRef = useRef(null);
+  const contentRef = useRef(null);
+  const categoryRef = useRef(null);
+  const genderRef = useRef(null);
+  const recruitCountRef = useRef(null);
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+  const deadlineRef = useRef(null);
+  const managerRef = useRef(null);
+  const imageInputRef = useRef(null);
+
+  // refs for dropdown and date picker wrappers
+  const categoryDropdownRef = useRef(null);
+  const genderDropdownRef = useRef(null);
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
+  const deadlinePickerRef = useRef(null);
+
   const categoryOptions = ['취미동아리', '전공동아리'];
   const genderOptions = ['남자', '여자', '무관'];
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    setUploadedImages(prev => [...prev, ...newImages]);
+  };
+
+  const handleImageDelete = (index) => {
+    setUploadedImages(prev => {
+      const newImages = [...prev];
+      URL.revokeObjectURL(newImages[index].preview);
+      newImages.splice(index, 1);
+      return newImages;
+    });
+  };
+
+  // 외부 클릭 감지하여 드롭다운/데이트피커 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+        setShowCategoryDropdown(false);
+      }
+      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+        setShowGenderDropdown(false);
+      }
+      if (startDatePickerRef.current && !startDatePickerRef.current.contains(event.target)) {
+        setShowStartDatePicker(false);
+      }
+      if (endDatePickerRef.current && !endDatePickerRef.current.contains(event.target)) {
+        setShowEndDatePicker(false);
+      }
+      if (deadlinePickerRef.current && !deadlinePickerRef.current.contains(event.target)) {
+        setShowDeadlinePicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -160,6 +225,68 @@ export default function RecruitCreate() {
   );
 
   const handleSubmit = () => {
+    // 필수 입력 검증 순서대로 확인
+    if (!formData.title) {
+      setEmptyFieldError('제목을 입력해 주세요.');
+      titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.content) {
+      setEmptyFieldError('모집글을 입력해 주세요.');
+      contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.category) {
+      setEmptyFieldError('동아리 분야를 선택해 주세요.');
+      categoryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.gender) {
+      setEmptyFieldError('성별을 선택해 주세요.');
+      genderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.recruitCount) {
+      setEmptyFieldError('모집 인원을 입력해 주세요.');
+      recruitCountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.startDate) {
+      setEmptyFieldError('모집 시작일을 선택해 주세요.');
+      startDateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.endDate) {
+      setEmptyFieldError('모집 종료일을 선택해 주세요.');
+      endDateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (dateError) {
+      setEmptyFieldError(dateError);
+      endDateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.deadline) {
+      setEmptyFieldError('합격 발표일을 선택해 주세요.');
+      deadlineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!formData.managerName || !formData.phoneNumber) {
+      setEmptyFieldError('담당자 정보를 입력해 주세요.');
+      managerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    setEmptyFieldError('');
     // 폼 제출 로직
     console.log('Form submitted:', formData);
     navigate('/clubs');
@@ -180,7 +307,7 @@ export default function RecruitCreate() {
       <Header title="모집글 작성" />
 
       {/* 제목 입력 */}
-      <div className="title-input-section">
+      <div className="title-input-section" ref={titleRef}>
         <input
           type="text"
           className="title-input"
@@ -189,28 +316,67 @@ export default function RecruitCreate() {
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
       </div>
+      {emptyFieldError && emptyFieldError.includes('제목') && (
+        <div className="error-message" style={{ marginTop: '-18px' }}>{emptyFieldError}</div>
+      )}
 
       {/* 모집글 입력 */}
-      <div className="form-group">
+      <div className="form-group" ref={contentRef}>
         <label className="form-label">
           모집글<span className="required">*</span>
         </label>
         <div className="char-count">{formData.content.length}/500</div>
-        <textarea
-          className="form-textarea"
-          placeholder="모집글을 작성해주세요."
-          value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-          maxLength={500}
-        />
+        <div className="textarea-wrapper">
+          <textarea
+            className="form-textarea"
+            placeholder="모집글을 작성해주세요."
+            value={formData.content}
+            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            maxLength={500}
+          />
+          <button
+            type="button"
+            className="image-upload-button"
+            onClick={() => imageInputRef.current?.click()}
+          >
+            <img src="../../public/icons/image-icon.png" alt="이미지 추가" style={{ width: '20px', height: '20px' }} />
+          </button>
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleImageUpload}
+          />
+        </div>
+        {uploadedImages.length > 0 && (
+          <div className="uploaded-images">
+            {uploadedImages.map((img, index) => (
+              <div key={index} className="image-preview">
+                <img src={img.preview} alt={`업로드 ${index + 1}`} />
+                <button
+                  type="button"
+                  className="image-delete-button"
+                  onClick={() => handleImageDelete(index)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {emptyFieldError && emptyFieldError.includes('모집글') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 동아리 분야 드롭다운 */}
-      <div className="form-group">
+      <div className="form-group" ref={categoryRef}>
         <label className="form-label">
           동아리 분야<span className="required">*</span>
         </label>
-        <div className="dropdown-wrapper">
+        <div className="dropdown-wrapper" ref={categoryDropdownRef}>
           <button
             className={`dropdown-button ${showCategoryDropdown ? 'active' : ''}`}
             onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
@@ -241,14 +407,17 @@ export default function RecruitCreate() {
             </div>
           )}
         </div>
+        {emptyFieldError && emptyFieldError.includes('동아리 분야') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 성별 드롭다운 */}
-      <div className="form-group">
+      <div className="form-group" ref={genderRef}>
         <label className="form-label">
           성별<span className="required">*</span>
         </label>
-        <div className="dropdown-wrapper">
+        <div className="dropdown-wrapper" ref={genderDropdownRef}>
           <button
             className={`dropdown-button ${showGenderDropdown ? 'active' : ''}`}
             onClick={() => setShowGenderDropdown(!showGenderDropdown)}
@@ -279,10 +448,13 @@ export default function RecruitCreate() {
             </div>
           )}
         </div>
+        {emptyFieldError && emptyFieldError.includes('성별') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 모집 인원 */}
-      <div className="form-group">
+      <div className="form-group" ref={recruitCountRef}>
         <label className="form-label">
           모집 인원<span className="required">*</span>
         </label>
@@ -296,16 +468,19 @@ export default function RecruitCreate() {
           />
           <span className="recruit-count-unit">명</span>
         </div>
+        {emptyFieldError && emptyFieldError.includes('모집 인원') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 모집 시작일 */}
-      <div className="form-group">
+      <div className="form-group" ref={startDateRef}>
         <label className="form-label">
           모집 시작일<span className="required">*</span>
         </label>
-        <div className="date-input-container full-width">
+        <div className="date-input-container full-width" ref={startDatePickerRef}>
           <button
-            className="date-button full-width"
+            className={`date-button full-width ${showStartDatePicker ? 'active' : ''}`}
             onClick={() => {
               setShowStartDatePicker(!showStartDatePicker);
               setShowEndDatePicker(false);
@@ -327,16 +502,19 @@ export default function RecruitCreate() {
             <CalendarPicker dateField="startDate" setShowPicker={setShowStartDatePicker} />
           )}
         </div>
+        {emptyFieldError && emptyFieldError.includes('시작일') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 모집 종료일 */}
-      <div className="form-group">
+      <div className="form-group" ref={endDateRef}>
         <label className="form-label">
           모집 종료일<span className="required">*</span>
         </label>
-        <div className="date-input-container full-width">
+        <div className="date-input-container full-width" ref={endDatePickerRef}>
           <button
-            className="date-button full-width"
+            className={`date-button full-width ${showEndDatePicker ? 'active' : ''}`}
             onClick={() => {
               setShowEndDatePicker(!showEndDatePicker);
               setShowStartDatePicker(false);
@@ -361,16 +539,19 @@ export default function RecruitCreate() {
             <div className="error-message">{dateError}</div>
           )}
         </div>
+        {emptyFieldError && emptyFieldError.includes('종료일') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 합격 발표일 */}
-      <div className="form-group">
+      <div className="form-group" ref={deadlineRef}>
         <label className="form-label">
           합격 발표일<span className="required">*</span>
         </label>
-        <div className="date-input-container full-width">
+        <div className="date-input-container full-width" ref={deadlinePickerRef}>
           <button
-            className="date-button full-width"
+            className={`date-button full-width ${showDeadlinePicker ? 'active' : ''}`}
             onClick={() => {
               setShowDeadlinePicker(!showDeadlinePicker);
               setShowStartDatePicker(false);
@@ -395,13 +576,13 @@ export default function RecruitCreate() {
       </div>
 
       {/* 담당자 정보 */}
-      <div className="form-group">
+      <div className="form-group" ref={managerRef}>
         <label className="form-label">
           담당자 정보<span className="required">*</span>
         </label>
         <div className="manager-info-container">
           <div className="manager-info-row">
-            <span className="manager-label">담당자:</span>
+            <span className="manager-label">담당자</span>
             <input
               type="text"
               className="manager-input"
@@ -411,7 +592,7 @@ export default function RecruitCreate() {
             />
           </div>
           <div className="manager-info-row">
-            <span className="manager-label">연락처:</span>
+            <span className="manager-label">연락처</span>
             <input
               type="tel"
               className="manager-input"
@@ -421,25 +602,15 @@ export default function RecruitCreate() {
             />
           </div>
         </div>
+        {emptyFieldError && emptyFieldError.includes('담당자') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 제출 버튼 */}
       <button 
         className="submit-button" 
         onClick={handleSubmit}
-        disabled={
-          !formData.title ||
-          !formData.content ||
-          !formData.category ||
-          !formData.gender ||
-          !formData.recruitCount ||
-          !formData.startDate ||
-          !formData.endDate ||
-          !formData.deadline ||
-          !formData.managerName ||
-          !formData.phoneNumber ||
-          dateError
-        }
       >
         작성하기
       </button>

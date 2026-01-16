@@ -54,10 +54,15 @@
 }
 
 /* 텍스트 영역 */
+.textarea-wrapper {
+  position: relative;
+}
+
 .form-textarea {
   width: 100%;
   min-height: 160px;
   padding: 16px;
+  padding-bottom: 48px;
   border: 1px solid #E0E0E0;
   border-radius: 12px;
   font-size: 14px;
@@ -76,6 +81,71 @@
   border-color: #2572B9;
 }
 
+.image-upload-button {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.image-upload-button:hover {
+  opacity: 0.7;
+}
+
+.uploaded-images {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.image-preview {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #E0E0E0;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-delete-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.image-delete-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
 /* 드롭다운 */
 .dropdown-wrapper {
   position: relative;
@@ -83,7 +153,7 @@
 
 .dropdown-button {
   width: 100%;
-  height: 56px;
+  height: 60px;
   padding: 16px;
   border: 1px solid #E0E0E0;
   border-radius: 12px;
@@ -98,7 +168,7 @@
 }
 
 .dropdown-button:hover {
-  border-color: #D9D9D9;
+  border-color: #FFC100;
 }
 
 .dropdown-button.active {
@@ -136,52 +206,57 @@
 }
 
 .dropdown-item {
-  padding: 16px 16px 16px 8px;
+  padding: 16px 16px 16px 16px;
   cursor: pointer;
   font-size: 14px;
   color: #212121;
   transition: background-color 0.2s;
+  box-sizing: border-box;
+  position: relative;
+  background-color: #FFFFFF;
+  z-index: 0;
 }
 
-.dropdown-item:hover {
-  background-color: #FFF9E6;
-  margin: 16px;
-}
 .dropdown-item.unselected {
-  background-color: #FFFFFF;
   font-weight: 400;
-  color: #9EA3B2;
+  color: #212121;
   display: flex;
   align-items: center;
-  margin-left: 12px;
 }
 
 .dropdown-item.selected {
-  background-color: #FFC10033;
-  font-weight: 500;
-  color: #9B7500;
-  border-radius: 8px;
-  width: 337px;
-  height: 44px;
+  color: #212121;
+  font-weight: 400;
   display: flex;
   align-items: center;
-  margin-top: 6px;
-  margin-left: 12px;
-  margin-bottom: 6px;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 8px;
+  background-color: transparent;
+  transition: background-color 0.2s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dropdown-item:hover::before {
+  background-color: #FFC10033;
 }
 
 /* 모집 인원 */
 .recruit-count-wrapper {
-  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .recruit-count-input {
-  width: 100%;
-  height: 56px;
+  width: 298px;
+  height: 60px;
   padding: 16px;
-  padding-right: 48px;
   border: 1px solid #E0E0E0;
   border-radius: 12px;
   font-size: 14px;
@@ -205,13 +280,13 @@
 }
 
 .recruit-count-unit {
-  position: absolute;
-  right: 16px;
-  font-size: 14px;
-  color: #212121;
-  font-weight: 500;
-  background-color: #ffffff;
-  pointer-events: none;
+  font-size: 20px;
+  color: #000;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+  align-self: flex-end;
+  padding-bottom: 5px;
 }
 
 /* 날짜 선택 */
@@ -231,7 +306,7 @@
 
 .date-button {
   width: 100%;
-  height: 56px;
+  height: 60px;
   padding: 16px;
   border: 1px solid #D9D9D9;
   border-radius: 12px;
@@ -365,28 +440,21 @@
 
 /* 담당자 정보 */
 .manager-info-container {
-  border: 1px solid #9EA3B2;
-  border-radius: 12px;
-  padding: 20px;
   background-color: #ffffff;
 }
 
 .manager-info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.manager-info-row:last-child {
-  margin-bottom: 0;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .manager-label {
   font-size: 14px;
-  font-weight: 500;
-  color: #212121;
-  min-width: 60px;
+  font-weight: 400;
+  color: #9EA3B2;
+  min-width: 90px;
   flex-shrink: 0;
 }
 
@@ -416,7 +484,7 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 100px;
+  margin-top: 35px;
   transition: background-color 0.2s;
 }
 
