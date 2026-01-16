@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ClubDetail.css';
 import Clubheader from '../components/clubheader';
 
 const ClubDetail = ({ club, isPublisher }) => {
+    const navigate = useNavigate();
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -21,7 +24,10 @@ const ClubDetail = ({ club, isPublisher }) => {
         backgroundColor: "#FFFFFF",
       }}>
             {/* Header */}
-            <Clubheader title="동아리 모집" />
+            <Clubheader
+                title="동아리 모집"
+                onEdit={() => navigate('/recruit', { state: { club } })}
+            />
 
             <div className="club-detail-content">
                 {/* 동아리 카테고리 태그 */}
