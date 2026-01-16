@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header';
 import '../styles/RecruitCreate.css';
 
 export default function RecruitCreate() {
