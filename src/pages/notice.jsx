@@ -55,7 +55,7 @@ const notice = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "12px",
+              gap: "7px",
               height: "72px",
               padding: "0",
               borderBottom: "1px solid #F0F0F0",
@@ -65,7 +65,7 @@ const notice = () => {
               <img 
                 src={notification.iconPath} 
                 alt="icon" 
-                style={{ width: "36px", height: "36px" }} 
+                style={{ width: "36px", height: "36px", alignItems: "center" }} 
               />
             </div>
             <p
@@ -75,6 +75,9 @@ const notice = () => {
                 lineHeight: "1.5",
                 color: "#000000",
                 fontWeight: "400",
+                height: "22px",
+                fontFamily: "Pretendard",
+                alignItems: "center",
               }}
             >
               {notification.prefix}
