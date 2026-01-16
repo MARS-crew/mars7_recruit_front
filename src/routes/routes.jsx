@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Test from "../pages/Test";
-import Home from "../pages/Home";
+import Home from "../pages/home";
 import Clubs from "../pages/clubs";
 import Applications from "../pages/applications";
 import Schedule from "../pages/schedule";
@@ -18,7 +18,7 @@ import PushTermsDetail from "../pages/pushTermsDetail";
 import ApplicationDetail from "../pages/applicationDetail";
 import ApplicationForm from "../pages/applicationForm";
 import ClubDetailPage from "../pages/ClubDetailPage";
-
+import PwChange from "../pages/pwChange";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -26,7 +26,7 @@ export default function AppRoutes() {
       <Route path="/clubs" element={<Clubs />} />
       <Route path="/clubs/:id" element={<ClubDetailPage />} />
       <Route path="/applications" element={<Applications />} />
-      <Route path="/applications/:id" element={<ApplicationDetail />}/>
+      <Route path="/applications/:id" element={<ApplicationDetail />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
@@ -40,8 +40,8 @@ export default function AppRoutes() {
       <Route path="/signupdetail" element={<SignUpDetail />} />
       <Route path="/termsDetail" element={<TermsDetail />} />
       <Route path="/pushTermsDetail" element={<PushTermsDetail />} />
-      <Route path="/applications/new" element={<ApplicationForm />}/>
-
+      <Route path="/applications/new" element={<ApplicationForm />} />
+      <Route path="/pwChange" element={<PwChange />} />
     </Routes>
   );
 }
