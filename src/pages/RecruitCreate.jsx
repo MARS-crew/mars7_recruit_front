@@ -1,22 +1,30 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/header';
 import '../styles/RecruitCreate.css';
 
 export default function RecruitCreate() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    category: '',
-    gender: '',
-    recruitCount: '',
-    startDate: '',
-    endDate: '',
-    deadline: '',
-    managerName: '최예은',
-    phoneNumber: '010-9017-0806'
-  });
+  const location = useLocation();
+  const prefilledClub = location.state?.club;
+
+  const initialFormData = useMemo(
+    () => ({
+      title: '',
+      content: '',
+      category: '',
+      gender: '',
+      recruitCount: '',
+      startDate: '',
+      endDate: '',
+      deadline: '',
+      managerName: '최예은',
+      phoneNumber: '010-9017-0806'
+    }),
+    []
+  );
+
+  const [formData, setFormData] = useState(initialFormData);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -51,11 +59,63 @@ export default function RecruitCreate() {
   const categoryOptions = ['취미동아리', '전공동아리'];
   const genderOptions = ['남자', '여자', '무관'];
 
+  const normalizeDateString = (value) => {
+    if (!value) return '';
+    const cleaned = value.trim().replace(/\./g, '-');
+    const match = cleaned.match(/(\d{4})[-.](\d{2})[-.](\d{2})/);
+    if (match) {
+      const [, y, m, d] = match;
+      return `${y}-${m}-${d}`;
+    }
+    return cleaned;
+  };
+
+  const parseRecruitPeriod = (period) => {
+    if (!period) return { start: '', end: '' };
+    const parts = period.split('-');
+    if (parts.length !== 2) return { start: '', end: '' };
+    const [startRaw, endRaw] = parts;
+    return {
+      start: normalizeDateString(startRaw),
+      end: normalizeDateString(endRaw),
+    };
+  };
+
+  const mapClubToFormData = (club) => ({
+    title: club?.title || '',
+    content: club?.description || club?.content || '',
+    category: club?.category || '',
+    gender: club?.gender || '',
+    recruitCount: club?.recruitCount ? String(club.recruitCount) : '',
+    startDate: club?.startDate || parseRecruitPeriod(club?.recruitPeriod).start,
+    endDate: club?.endDate || parseRecruitPeriod(club?.recruitPeriod).end,
+    deadline: club?.deadline || club?.announcementDate || '',
+    managerName: club?.managerName || '최예은',
+    phoneNumber: club?.contact || club?.phoneNumber || '010-9017-0806'
+  });
+
+  useEffect(() => {
+    if (prefilledClub) {
+      setFormData((prev) => ({ ...prev, ...mapClubToFormData(prefilledClub) }));
+      
+      // 포스터 이미지 추가
+      if (prefilledClub.posterImage) {
+        const posterImage = {
+          file: null,
+          preview: prefilledClub.posterImage,
+          isExisting: true
+        };
+        setUploadedImages([posterImage]);
+      }
+    }
+  }, [prefilledClub]);
+
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const newImages = files.map(file => ({
       file,
-      preview: URL.createObjectURL(file)
+      preview: URL.createObjectURL(file),
+      isExisting: false
     }));
     setUploadedImages(prev => [...prev, ...newImages]);
   };
@@ -63,7 +123,9 @@ export default function RecruitCreate() {
   const handleImageDelete = (index) => {
     setUploadedImages(prev => {
       const newImages = [...prev];
-      URL.revokeObjectURL(newImages[index].preview);
+      if (newImages[index].file) {
+        URL.revokeObjectURL(newImages[index].preview);
+      }
       newImages.splice(index, 1);
       return newImages;
     });
