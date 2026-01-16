@@ -5,12 +5,13 @@ const MessageText = ({
   color,
   fontSize = "12px",
   isVisible = true,
+  marginTop = -10,
 }) => {
   // 메세지가 없으면 아예 렌더링하지 않음
   if (!isVisible || !message) return null;
 
   return (
-    <div style={{ marginTop: -10, marginLeft: 8 }}>
+    <div style={{ marginTop: marginTop, marginLeft: 8, height: 22 }}>
       <p
         style={{
           color: color,

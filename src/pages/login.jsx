@@ -5,7 +5,7 @@ import Input from "../components/Input";
 import PasswordField from "../components/PasswordField"; // 비밀번호 전용 컴포넌트
 import MessageText from "../components/MessageText"; // 경고문구 컴포넌트
 import Button from "../components/Button";
-import Header from "../components/header";
+import Header from "../components/Header";
 import check from "../icon/check.png";
 
 function Login() {
@@ -15,49 +15,88 @@ function Login() {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
   const [isIDSaved, setIsIDSaved] = useState(false);
-  const [error, setError] = useState("");
 
   const [idError, setIdError] = useState(false);
+  const [IdMError, setIdMError] = useState("");
+  const [PwMError, setPwMError] = useState("");
   const [pwError, setPwError] = useState(false);
   // 2. Ref 설정
   const idRef = useRef(null);
   const pwRef = useRef(null);
 
-  // 3. 페이지 접속 시 아이디 칸에 자동 포커스
-  useEffect(() => {
-    if (idRef.current) {
-      idRef.current.focus();
-    }
-  }, []);
-
   // 4. 로그인 버튼 클릭 함수 (유효성 검사 포함)
   const handleLogin = () => {
     setIdError(false);
     setPwError(false);
-    setError("");
+    setIdMError("");
+    setPwMError("");
+
+    // 임시 데이터 및 정규식
+    const mockId = "aaa1";
+    const mockPW = "1q2w3e4r!";
+    const pwRegex =
+      /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/;
+
+    // 1. 필수 입력 확인 (아이디와 비밀번호 각각 독립적으로 체크)
     if (!userId || !userPw) {
-      setError("필수 정보를 입력해주세요.");
-      if (!userId) setIdError(true); // 아이디 비었으면 에러
-      if (!userPw) setPwError(true); // 비번 비었으면 에러
+      setIdMError("필수 정보를 입력해주세요.");
+      setPwMError("필수 정보를 입력해주세요.");
+      if (!userId) {
+        setIdError(true);
+      }
+
+      if (!userPw) {
+        setPwError(true);
+      }
+
+      // 포커스는 가장 위에 있는 아이디부터, 아이디가 있으면 비밀번호로 이동
+      if (!userId) {
+        idRef.current?.focus();
+      } else {
+        pwRef.current?.focus();
+      }
       return;
     }
-    if (userId == null) {
-      setError("존재하지 않는 회원 정보입니다.");
+    // 3. 비밀번호 형식 확인 (형식 불일치)
+    if (!pwRegex.test(userPw)) {
+      setPwError(true);
+      setPwMError("8-20자 숫자, 영문, 특수 문자 포함 후 작성해 주세요.");
+      pwRef.current?.focus();
       return;
     }
-    if (userId && !userPw) {
-      setError("비밀번호가 올바르지 않습니다.");
+    // 2. 아이디 존재 여부 확인 (아이디 x)
+    if (userId != mockId) {
+      setIdMError("존재하지 않는 회원 정보입니다.");
+      setIdError(true);
+      idRef.current?.focus();
+      return;
     }
 
-    console.log("로그인 성공 시도:", { userId, userPw, isIDSaved });
-    navigate("/home");
+    // 4. 비밀번호 일치 확인 (아이디 o, 비밀번호x)
+    if (userPw !== mockPW) {
+      setPwMError("비밀번호가 올바르지 않습니다.");
+      setPwError(true);
+      pwRef.current?.focus();
+      return;
+    }
+
+    // 5. 로그인 성공 및 자동 로그인 처리
+    try {
+      if (isIDSaved) {
+        localStorage.setItem("savedId", userId);
+      }
+      console.log("로그인 성공:", { userId, isIDSaved });
+      navigate("/");
+    } catch (e) {
+      setPwMError("알 수 없는 오류입니다.");
+    }
   };
 
   return (
     <div
       style={{
         padding: "0 16px",
-        minHeight: "100vh",
+        minHeight: "100%",
         display: "flex",
         flexDirection: "column",
         boxSizing: "border-box",
@@ -84,7 +123,7 @@ function Login() {
       </div>
 
       {/* 입력 영역 */}
-      <div style={{ marginTop: 40 }}>
+      <div style={{ marginTop: 40, height: 90 }}>
         <Input
           ref={idRef}
           label="아이디"
@@ -97,7 +136,9 @@ function Login() {
           borderColor="#FFC100"
           placeholder="아이디를 입력해주세요."
         />
-
+        <MessageText message={IdMError} color="#FF4D4D" />
+      </div>
+      <div style={{ marginTop: 30, height: 90 }}>
         <PasswordField
           ref={pwRef}
           label="비밀번호"
@@ -110,7 +151,7 @@ function Login() {
           borderColor="#FFC100"
           placeholder="비밀번호를 입력해주세요."
         />
-        <MessageText message={error} color="#FF4D4D" />
+        <MessageText message={PwMError} color="#FF4D4D" />
       </div>
 
       <div
@@ -126,6 +167,7 @@ function Login() {
           style={{
             display: "inline-flex",
             alignItems: "center",
+            marginTop: 8,
             gap: "10px", // 아이콘과 글자 간격
             cursor: "pointer",
           }}
@@ -188,13 +230,13 @@ function Login() {
         style={{
           display: "flex",
           justifyContent: "center",
-          marginBottom: "50px",
+          marginTop: "50px",
         }}
       >
         <p style={{ fontSize: 14, color: "#9EA3B2", margin: 0 }}>
           아직 회원이 아니신가요?{" "}
           <span
-            onClick={() => navigate("/Signup")}
+            onClick={() => navigate("/SignUp")}
             style={{
               color: "#FFC100",
               textDecoration: "underline",

@@ -10,8 +10,13 @@ import ApplicantList from "../pages/applicantList";
 import ApplicantDetail from "../pages/applicantDetail";
 import Notice from "../pages/notice";
 import RecruitCreate from "../pages/RecruitCreate";
+import SignUpDetail from "../pages/signUpDetail";
 import Findpw from "../pages/findPw";
-import ApplicationDetail from "../pages/applicationDetail"
+import SignUp from "../pages/signUp";
+import TermsDetail from "../pages/termsDetail";
+import PushTermsDetail from "../pages/pushTermsDetail";
+import ApplicationDetail from "../pages/applicationDetail";
+import ApplicationForm from "../pages/applicationForm";
 
 export default function AppRoutes() {
   return (
@@ -19,16 +24,21 @@ export default function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/clubs" element={<Clubs />} />
       <Route path="/applications" element={<Applications />} />
-      <Route path="/applications/:id" element={<ApplicationDetail />} />
+      <Route path="/applications/:id" element={<ApplicationDetail />}/>
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/applicants" element={<ApplicantList/>} />
+      <Route path="/applicants" element={<ApplicantList />} />
       <Route path="/applicants/:id" element={<ApplicantDetail />} />
       <Route path="/notice" element={<Notice />} />
       <Route path="/recruit" element={<RecruitCreate />} />
       <Route path="/findpw" element={<Findpw />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signupdetail" element={<SignUpDetail />} />
+      <Route path="/termsDetail" element={<TermsDetail />} />
+      <Route path="/pushTermsDetail" element={<PushTermsDetail />} />
+      <Route path="/applications/new" element={<ApplicationForm />}/>
 
     </Routes>
   );
