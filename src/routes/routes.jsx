@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Test from "../pages/Test";
-import Home from "../pages/Home";
+import Home from "../pages/home";
 import Clubs from "../pages/Clubs";
 import Applications from "../pages/applications";
 import Schedule from "../pages/Schedule";
@@ -23,7 +23,7 @@ export default function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/clubs" element={<Clubs />} />
       <Route path="/applications" element={<Applications />} />
-      <Route path="/applications/:id" element={<ApplicationDetail />}/>
+      <Route path="/applications/:id" element={<ApplicationDetail />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/test" element={<Test />} />
@@ -36,8 +36,7 @@ export default function AppRoutes() {
       <Route path="/signupdetail" element={<SignUpDetail />} />
       <Route path="/termsDetail" element={<TermsDetail />} />
       <Route path="/pushTermsDetail" element={<PushTermsDetail />} />
-      <Route path="/applications/new" element={<ApplicationForm />}/>
-
+      <Route path="/applications/new" element={<ApplicationForm />} />
     </Routes>
   );
 }
