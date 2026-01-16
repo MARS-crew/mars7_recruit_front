@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import Test from "../pages/test";
-import Home from "../pages/home";
+import Test from "../pages/Test";
+import Home from "../pages/Home";
 import Clubs from "../pages/clubs";
 import Applications from "../pages/applications";
 import Schedule from "../pages/schedule";
@@ -9,6 +9,7 @@ import Login from "../pages/login";
 import ApplicantList from "../pages/applicantList";
 import ApplicantDetail from "../pages/applicantDetail";
 import Notice from "../pages/notice";
+import RecruitCreate from "../pages/RecruitCreate";
 import SignUpDetail from "../pages/signUpDetail";
 import Findpw from "../pages/findPw";
 import SignUp from "../pages/signUp";
@@ -33,6 +34,7 @@ export default function AppRoutes() {
       <Route path="/applicants" element={<ApplicantList />} />
       <Route path="/applicants/:id" element={<ApplicantDetail />} />
       <Route path="/notice" element={<Notice />} />
+      <Route path="/recruit" element={<RecruitCreate />} />
       <Route path="/findpw" element={<Findpw />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupdetail" element={<SignUpDetail />} />
