@@ -77,7 +77,7 @@ export default function SignUp() {
     let firstErrorRef = null; // 가장 첫 번째 에러가 난 Ref를 담을 변수
 
     // 1. 이름 검증
-    const nameRegex = /^[a-zA-Z가-힣]*$/;
+    const nameRegex = /^[a-zA-Z가-힣]+$/;
     if (!userName) {
       setNameError("필수정보를 입력해 주세요.");
       isValid = false;
