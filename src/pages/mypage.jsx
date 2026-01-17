@@ -10,12 +10,14 @@ import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 import Logout from "../components/LogoutModal";
 import WIthdrawModal from "../components/WithdrawModal";
+import LoginRequiredModal from "../components/LoginRequiredModal";
 
 export default function MyPage() {
   const navigate = useNavigate();
 
   const [isWithdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [LoginOpen, setLoginOpen] = useState(false);
   // Refs
   const nameRef = useRef(null);
   const phoneRef = useRef(null);
@@ -311,6 +313,19 @@ export default function MyPage() {
           onClick={() => setIsModalOpen(true)}
         />{" "}
         <Logout isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      </div>
+      {/* 5. 로그아웃 */}
+      <div style={{ marginTop: 48 }}>
+        <Button
+          label="로그인"
+          backgroundColor="#F5F5F5"
+          color="#9EA3B2"
+          onClick={() => setLoginOpen(true)}
+        />
+        <LoginRequiredModal
+          isOpen={LoginOpen}
+          onClose={() => setLoginOpen(false)}
+        />
       </div>
     </div>
   );
