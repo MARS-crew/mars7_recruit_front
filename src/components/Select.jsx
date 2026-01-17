@@ -9,6 +9,7 @@ const Select = ({
   width = "100%",
   options,
   placeholder,
+  star = true,
   onChange,
   customHeight,
 }) => {
@@ -42,7 +43,7 @@ const Select = ({
           }}
         >
           {label}
-          <span style={{ color: "red" }}>*</span>
+          {star && <span style={{ color: "red", marginLeft: "4px" }}>*</span>}
         </label>
       )}
 

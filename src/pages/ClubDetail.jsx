@@ -1,11 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ClubDetail.css';
+import '../styles/LoginRequiredModal.css';
 import Clubheader from '../components/clubheader';
 
 const ClubDetail = ({ club, isPublisher }) => {
+    const navigate = useNavigate();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const handleDeleteConfirm = () => {
+        console.log('글 삭제:', club.id);
+        setShowDeleteModal(false);
+        navigate('/clubs', { state: { showDeleteToast: true } });
+    };
 
     const descriptionParagraphs = (club.description || '동아리 소개 내용이 여기에 표시됩니다.')
         .split(/\n+/)
@@ -21,7 +33,11 @@ const ClubDetail = ({ club, isPublisher }) => {
         backgroundColor: "#FFFFFF",
       }}>
             {/* Header */}
-            <Clubheader title="동아리 모집" />
+            <Clubheader
+                title="동아리 모집"
+                onEdit={() => navigate('/recruit', { state: { club } })}
+                onDelete={() => setShowDeleteModal(true)}
+            />
 
             <div className="club-detail-content">
                 {/* 동아리 카테고리 태그 */}
@@ -132,6 +148,59 @@ const ClubDetail = ({ club, isPublisher }) => {
                     </button>
                 )}
             </div>
+
+            {/* 삭제 확인 모달 */}
+            {showDeleteModal && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <div className="modal-icon">!</div>
+                        <h2 className="modal-title" style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>
+                            글을 삭제하시겠습니까?
+                        </h2>
+                        <p style={{ fontSize: 14, color: '#000', lineHeight: 1.6, margin: '0 0 18px 0' }}>
+                            삭제한 글은 영구 삭제되어
+                            <br />
+                            복구할 수 없습니다.
+                        </p>
+                        <div className="modal-buttons">
+                            <button className="modal-btn cancel-btn" onClick={() => setShowDeleteModal(false)}>
+                                취소
+                            </button>
+                            <button 
+                                className="modal-btn confirm-btn" 
+                                onClick={handleDeleteConfirm}
+                                style={{ backgroundColor: '#FF383C' }}
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 토스트 팝업 */}
+            {showToast && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: 80,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        color: '#fff',
+                        padding: '12px 24px',
+                        borderRadius: 8,
+                        fontSize: 14,
+                        fontWeight: 500,
+                        zIndex: 10000,
+                        whiteSpace: 'nowrap',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        animation: 'fadeIn 0.3s ease-in-out',
+                    }}
+                >
+                    삭제되었습니다.
+                </div>
+            )}
         </div>
     );
 };

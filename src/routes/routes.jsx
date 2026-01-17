@@ -18,7 +18,7 @@ import PushTermsDetail from "../pages/pushTermsDetail";
 import ApplicationDetail from "../pages/applicationDetail";
 import ApplicationForm from "../pages/applicationForm";
 import ClubDetailPage from "../pages/ClubDetailPage";
-
+import PwChange from "../pages/pwChange";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -41,6 +41,7 @@ export default function AppRoutes() {
       <Route path="/termsDetail" element={<TermsDetail />} />
       <Route path="/pushTermsDetail" element={<PushTermsDetail />} />
       <Route path="/applications/new" element={<ApplicationForm />} />
+      <Route path="/pwChange" element={<PwChange />} />
     </Routes>
   );
 }
