@@ -100,7 +100,12 @@ function Home() {
           }}
         >
           {/* 2 영역 */}
-          <div style={{ width: "28%", minWidth: "100px" }}>
+          <div
+            style={{ width: "28%", minWidth: "100px" }}
+            onClick={() => {
+              navigate("/clubs/1");
+            }}
+          >
             <span
               style={{ fontSize: 18, fontWeight: "bold", color: "#FFC100" }}
             >
@@ -188,7 +193,12 @@ function Home() {
           </div>
 
           {/* 1 영역 */}
-          <div style={{ width: "36%", minWidth: "133px" }}>
+          <div
+            style={{ width: "36%", minWidth: "133px" }}
+            onClick={() => {
+              navigate("/clubs/1");
+            }}
+          >
             <span
               style={{ fontSize: 18, fontWeight: "bold", color: "#FFC100" }}
             >
@@ -276,7 +286,12 @@ function Home() {
           </div>
 
           {/* 3 영역 */}
-          <div style={{ width: "28%", minWidth: "100px" }}>
+          <div
+            style={{ width: "28%", minWidth: "100px" }}
+            onClick={() => {
+              navigate("/clubs/1");
+            }}
+          >
             <span
               style={{ fontSize: 18, fontWeight: "bold", color: "#FFC100" }}
             >
@@ -393,6 +408,9 @@ function Home() {
           const isDay1 = item.dDay === "D-1";
           return (
             <div
+              onClick={() => {
+                navigate("/clubs/1");
+              }}
               key={item.id}
               style={{
                 width: "100%",
