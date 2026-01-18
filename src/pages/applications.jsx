@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import Header from "../components/header";
 import BottomNavBar from "../components/BottomNavBar";
+import Nobackheader from "../components/nobackheader";
 
 // 더미 데이터
 const mockApplications = [
@@ -64,7 +64,7 @@ export default function Applications() {
 
   return (
     <div style={{ paddingBottom: 72 }}>
-      <Header title="지원서 목록" />
+      <Nobackheader title = "지원서 목록"/>
 
       <div style={{ padding: "0 16px" }}>
         <div style={{ height: 10 }} />
