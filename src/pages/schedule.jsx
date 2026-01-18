@@ -1,4 +1,5 @@
 import Nobackheader from "../components/nobackheader";
+import BottomNavBar from "../components/BottomNavBar";
 
 export default function Schedule() {
   return (
@@ -14,6 +15,7 @@ export default function Schedule() {
           border: "none",
         }}
       />
+      <BottomNavBar/>
     </div>
   );
 }
