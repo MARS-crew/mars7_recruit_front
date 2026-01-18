@@ -42,14 +42,14 @@ function StatusPill({ status }) {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 64,
-        height: 30,
+        minWidth: 77,
+        height: 32,
         padding: "0 14px",
         borderRadius: 999,
         border: `1.5px solid ${s.border}`,
         background: s.bg,
         color: s.color,
-        fontWeight: 700,
+        fontWeight: 500,
         fontSize: 13,
         flexShrink: 0,
       }}
@@ -93,8 +93,8 @@ export default function Applications() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
-                      fontWeight: 800,
-                      fontSize: 16,
+                      fontSize: 15,
+                      fontWeight: 700,
                       color: "#111",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -107,7 +107,7 @@ export default function Applications() {
                   <div
                     style={{
                       marginTop: 6,
-                      fontSize: 13,
+                      fontSize: 12,
                       color: "#8A8FA3",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
