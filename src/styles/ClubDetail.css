@@ -38,7 +38,7 @@
     margin-bottom: 20px;
     line-height: 1.4;
     border-bottom: 1px solid #f5f5f5;
-    padding: 0 0 24px 0;
+    padding: 0 0 20px 0;
 }
 
 /* 모집 조건 */
@@ -57,7 +57,7 @@
     display: flex;
     justify-content: left;
     align-items: center;
-    padding: 8px 0;
+    padding: 6px 0;
 }
 
 .condition-item:last-child {
@@ -80,10 +80,9 @@
 
 /* 포스터 */
 .poster-container {
-    margin: 24px 0 0 0;
+    margin: 20px 0 0 0;
     border-radius: 12px;
     overflow: hidden;
-    background-color: #f5f5f5;
 }
 
 .poster-image {
@@ -94,9 +93,8 @@
 
 /* 동아리 소개 */
 .club-introduction {
-    margin: 16px 0;
+    margin: 16px 0 20px 0;
     padding: 12px 0;
-    background-color: #fafafa;
     border-radius: 8px;
 }
 
@@ -157,7 +155,7 @@
 
 .application-stats h3 {
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 700;
     margin-bottom: 12px;
 }
 
@@ -190,7 +188,6 @@
 /* 하단 버튼 */
 .bottom-button-container {
     position: relative;
-    width: 361px;
     height: 60px;
     margin: -70px 0 auto;
     background-color: #ffffff;
@@ -213,15 +210,10 @@
     color: #ffffff;
 }
 
-.publisher-button:hover {
-    background-color: #1976d2;
-}
 
 .applicant-button {
     background-color: #2572B9;
     color: #ffffff;
 }
 
-.applicant-button:hover {
-    background-color: #1976d2;
-}
+

@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/header'
+import Modal from '../components/Modal'
 
 const notice = () => {
+  const navigate = useNavigate();
+  const [LoginOpen, setLoginOpen] = useState(false); 
   const notifications = [
     {
       id: 1,
@@ -10,7 +14,7 @@ const notice = () => {
       recruitTitle: "축구동아리 공차 신입...",
       prefix: "",
       middle: " 님이 ",
-      suffix: "에 지원하였습니다."
+      suffix: " 에 지원하였습니다."
     },
     {
       id: 2,
@@ -31,9 +35,14 @@ const notice = () => {
       iconPath: "../public/icons/notice4.png",
       recruitTitle: "2026년도 컴퓨터 동아리",
       prefix: "",
-      suffix: ".. 에 불합격하였습니다"
+      suffix: "... 에 불합격하였습니다"
     }
   ]
+
+ useEffect(() => {
+    window.scrollTo(0, 0);
+    setLoginOpen(true); // 렌더링 직후 모달을 열기
+  }, []);
 
   return (
     <div
@@ -48,16 +57,16 @@ const notice = () => {
     >
       <Header title="알림" />
       
-      <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "24px" }}>
         {notifications.map((notification) => (
           <div
             key={notification.id}
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "7px",
-              height: "72px",
-              padding: "0",
+              gap: "10px",
+              height: "84px",
+              padding: "8px 0",
               borderBottom: "1px solid #F0F0F0",
             }}
           >
@@ -65,17 +74,18 @@ const notice = () => {
               <img 
                 src={notification.iconPath} 
                 alt="icon" 
-                style={{ width: "36px", height: "36px", alignItems: "center" }} 
+                style={{ width: "42px", height: "42px", alignItems: "center" }} 
               />
             </div>
             <p
               style={{
                 margin: 0,
-                fontSize: "12px",
-                lineHeight: "1.5",
+                fontSize: "14px",
+                lineHeight: "1.6",
                 color: "#000000",
                 fontWeight: "400",
-                height: "22px",
+                height: "auto",
+                minHeight: "26px",
                 fontFamily: "Pretendard",
                 alignItems: "center",
               }}
@@ -91,6 +101,13 @@ const notice = () => {
           </div>
         ))}
       </div>
+
+      <Modal
+        isOpen={LoginOpen}
+        lBtn="취소"
+        onClose={() => setLoginOpen(false)}
+        onRightClick={() => navigate('/login')}
+      />
     </div>
   )
 }
