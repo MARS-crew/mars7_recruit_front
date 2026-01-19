@@ -64,7 +64,7 @@ export default function ApplicantDetail() {
 
       <div style={{ padding: 24 }}>
         {/* 제목 */}
-        <h2 style={{ margin: "8px 0 20px", fontSize: 20 }}>
+        <h2 style={{ margin: "8px 0 10px", fontSize: 20, fontWeight: 600, marginBottom: 30 }}>
           {applicant.title}
         </h2>
 
@@ -72,8 +72,8 @@ export default function ApplicantDetail() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div
             style={{
-              width: 64,
-              height: 64,
+              width: 79,
+              height: 79,
               borderRadius: "50%",
               overflow: "hidden",
               flexShrink: 0,
@@ -88,7 +88,7 @@ export default function ApplicantDetail() {
           </div>
 
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16 }}>{applicant.name}</div>
+            <div style={{ fontWeight: 600, fontSize: 16 }}>{applicant.name}</div>
             <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
               {applicant.gender} · {applicant.age}세 / {applicant.major}{" "}
               {applicant.grade}
@@ -101,12 +101,12 @@ export default function ApplicantDetail() {
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
           <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ width: 64, color: "#999" }}>주소</div>
-            <div style={{ color: "#222" }}>{applicant.address}</div>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>주소</div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>{applicant.address}</div>
           </div>
           <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ width: 64, color: "#999" }}>연락처</div>
-            <div style={{ color: "#222" }}>{applicant.phone}</div>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>연락처</div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>{applicant.phone}</div>
           </div>
         </div>
 
@@ -114,10 +114,10 @@ export default function ApplicantDetail() {
 
         {/* 자기소개 */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 12 }}>
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>
             자기소개
           </div>
-          <p style={{ margin: 0, lineHeight: 1.7, color: "#333" }}>
+          <p style={{ fontWeight: 400, fontSize: 14, margin: 0, lineHeight: 1.7, color: "#333" }}>
             {applicant.intro}
           </p>
         </div>
