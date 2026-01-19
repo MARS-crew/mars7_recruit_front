@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/header";
+import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 
 // 더미 데이터

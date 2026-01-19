@@ -49,13 +49,13 @@ export default function ApplicationForm() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="제목을 입력하세요."
+          placeholder="제목을 입력해주세요."
           style={{
             width: "100%",
             border: "none",
             outline: "none",
-            fontSize: 22,
-            fontWeight: 900,
+            fontSize: 20,
+            fontWeight: 600,
             color: "#111",
             padding: "10px 0 14px",
           }}
@@ -66,8 +66,8 @@ export default function ApplicationForm() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div
             style={{
-              width: 72,
-              height: 72,
+              width: 79,
+              height: 79,
               borderRadius: "50%",
               overflow: "hidden",
               flexShrink: 0,
@@ -82,7 +82,7 @@ export default function ApplicationForm() {
           </div>
 
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 900, fontSize: 16, color: "#111" }}>
+            <div style={{ fontWeight: 600, fontSize: 16, color: "#111" }}>
               {data.name}
             </div>
             <div style={{ marginTop: 6, fontSize: 13, color: "#8A8FA3" }}>
@@ -91,22 +91,22 @@ export default function ApplicationForm() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "22px 0" }} />
+        <div style={{ height: 1, background: "#eee", margin: "40px 0 20px" }} />
 
         {/* 주소, 연락처 */}
-        <div style={{ display: "grid", rowGap: 16 }}>
+        <div style={{ display: "grid", rowGap: 14 }}>
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            <div style={{ width: 64, color: "#9AA0A6" }}>주소</div>
-            <div style={{ color: "#111" }}>{data.address}</div>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#9AA0A6" }}>주소</div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>{data.address}</div>
           </div>
 
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            <div style={{ width: 64, color: "#9AA0A6" }}>연락처</div>
-            <div style={{ color: "#111" }}>{data.phone}</div>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#9AA0A6" }}>연락처</div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>{data.phone}</div>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "22px 0" }} />
+        <div style={{ height: 1, background: "#eee", margin: "20px 0" }} />
 
         {/* 자기소개*/}
         <div
@@ -117,11 +117,12 @@ export default function ApplicationForm() {
             marginBottom: 10,
           }}
         >
-          <div style={{ fontWeight: 900, fontSize: 16, color: "#111" }}>
+          <div style={{ fontWeight: 600, fontSize: 16, color: "#111" }}>
             자기소개<span style={{ color: "#FF4D4D" }}> *</span>
           </div>
-          <div style={{ color: "#2B7FFF", fontSize: 13, fontWeight: 800 }}>
-            {intro.length}/{INTRO_MAX}
+          <div style={{ fontSize: 12, fontWeight: 400 }}>
+            <span style={{ color: "#2572B9" }}>{intro.length}</span>
+            <span style={{ color: "#B0B5C0" }}>/{INTRO_MAX}</span>
           </div>
         </div>
 
@@ -139,6 +140,7 @@ export default function ApplicationForm() {
             border: "1px solid #E6E6E6",
             outline: "none",
             fontSize: 14,
+            fontWeight: 400,
             lineHeight: 1.6,
             color: "#111",
             background: "#fff",
@@ -146,7 +148,7 @@ export default function ApplicationForm() {
         />
 
         {/* 하단 버튼 */}
-        <div style={{ marginTop: 28 }}>
+        <div style={{ marginTop: 80 }}>
           <Button label="지원하기" onClick={openModal}/>
         </div>
       </div>
@@ -178,11 +180,11 @@ export default function ApplicationForm() {
               boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
             }}
           >
-            <div style={{ fontWeight: 900, fontSize: 20, marginBottom: 10 }}>
+            <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 10 }}>
               지원하시겠습니까?
             </div>
 
-            <div style={{ color: "#666", fontSize: 14, lineHeight: 1.5 }}>
+            <div style={{ fontWeight: 400, color: "#000000", fontSize: 14, lineHeight: 1.5 }}>
               지금 지원한 내용은 수정 및 취소가 되지 않습니다.
             </div>
 
@@ -196,7 +198,7 @@ export default function ApplicationForm() {
                   borderRadius: 14,
                   border: "1px solid #E5E5E5",
                   background: "#fff",
-                  fontWeight: 800,
+                  fontWeight: 500,
                 }}
               >
                 취소
@@ -212,7 +214,7 @@ export default function ApplicationForm() {
                   border: "none",
                   background: "#2572B9",
                   color: "#fff",
-                  fontWeight: 900,
+                  fontWeight: 500,
                 }}
               >
                 확인
