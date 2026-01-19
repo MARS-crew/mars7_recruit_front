@@ -395,7 +395,7 @@ export default function MyPage() {
             animation: "fadeInOut 2s",
           }}
         >
-          비밀번호가 변경되었습니다.
+          저장되었습니다.
         </div>
       )}
 
