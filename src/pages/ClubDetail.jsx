@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ClubDetail.css';
-import '../styles/LoginRequiredModal.css';
 import Clubheader from '../components/clubheader';
+import Modal from '../components/Modal';
+import Toast from '../components/Toast';
 
 const ClubDetail = ({ club, isPublisher }) => {
     const navigate = useNavigate();
@@ -139,68 +140,47 @@ const ClubDetail = ({ club, isPublisher }) => {
             {/* 하단 버튼 */}
             <div className="bottom-button-container">
                 {isPublisher ? (
-                    <button className="action-button publisher-button">
+                    <button 
+                        className="action-button publisher-button"
+                        onClick={() => navigate('/applicants')}
+                    >
                         지원자 조회하기
                     </button>
                 ) : (
-                    <button className="action-button applicant-button">
+                    <button 
+                        className="action-button applicant-button"
+                        onClick={() => navigate('/applications/new')}
+                    >
                         지원하기
                     </button>
                 )}
             </div>
 
             {/* 삭제 확인 모달 */}
-            {showDeleteModal && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-icon">!</div>
-                        <h2 className="modal-title" style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>
-                            글을 삭제하시겠습니까?
-                        </h2>
-                        <p style={{ fontSize: 14, color: '#000', lineHeight: 1.6, margin: '0 0 18px 0' }}>
-                            삭제한 글은 영구 삭제되어
-                            <br />
-                            복구할 수 없습니다.
-                        </p>
-                        <div className="modal-buttons">
-                            <button className="modal-btn cancel-btn" onClick={() => setShowDeleteModal(false)}>
-                                취소
-                            </button>
-                            <button 
-                                className="modal-btn confirm-btn" 
-                                onClick={handleDeleteConfirm}
-                                style={{ backgroundColor: '#FF383C' }}
-                            >
-                                삭제
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <Modal
+                isOpen={showDeleteModal}
+                title="글을 삭제하시겠습니까?"
+                content={
+                    <>
+                        삭제한 글은 영구 삭제되어
+                        <br />
+                        복구할 수 없습니다.
+                    </>
+                }
+                lBtn="취소"
+                rBtn="삭제"
+                rBtnColor="#FF383C"
+                onClose={() => setShowDeleteModal(false)}
+                onRightClick={handleDeleteConfirm}
+                showIcon={true}
+            />
 
             {/* 토스트 팝업 */}
-            {showToast && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        bottom: 80,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                        color: '#fff',
-                        padding: '12px 24px',
-                        borderRadius: 8,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        zIndex: 10000,
-                        whiteSpace: 'nowrap',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        animation: 'fadeIn 0.3s ease-in-out',
-                    }}
-                >
-                    삭제되었습니다.
-                </div>
-            )}
+            <Toast
+                message="삭제되었습니다."
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </div>
     );
 };

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LoginRequiredModal from '../components/LoginRequiredModal';
+import Modal from '../components/Modal';
 import '../styles/Clubs.css';
 import Nobackheader from '../components/nobackheader';
 
 export default function Clubs() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [LoginOpen, setLoginOpen] = useState(false); 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
   const [showToast, setShowToast] = useState(false);
@@ -170,16 +170,27 @@ export default function Clubs() {
         )}
       </div>
       {/* FAB 버튼 */}
-      <button className="fab-button" onClick={() => navigate('/recruit')}>
+      <button
+        className="fab-button"
+        onClick={() => {
+          navigate('/recruit');
+          // setLoginOpen(true); // 로그인 모달을 다시 사용할 때 주석 해제
+        }}
+      >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 14.2525V18.0025H3.75L14.81 6.9425L11.06 3.1925L0 14.2525ZM17.71 4.0425C18.1 3.6525 18.1 3.0225 17.71 2.6325L15.37 0.2925C14.98 -0.0975 14.35 -0.0975 13.96 0.2925L12.13 2.1225L15.88 5.8725L17.71 4.0425Z" fill="white"/>
         </svg>
 
       </button>
-      <LoginRequiredModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+
+      {false && (
+        <Modal
+          isOpen={LoginOpen}
+          lBtn="취소"
+          onClose={() => setLoginOpen(false)}
+          onRightClick={() => navigate('/login')}
+        />
+      )}
       
       {/* 토스트 팝업 */}
       {showToast && (

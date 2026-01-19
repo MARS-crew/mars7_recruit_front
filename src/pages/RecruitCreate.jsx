@@ -30,7 +30,8 @@ export default function RecruitCreate() {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showDeadlinePicker, setShowDeadlinePicker] = useState(false);
-  const [dateError, setDateError] = useState('');
+  const [endDateError, setEndDateError] = useState('');
+  const [deadlineError, setDeadlineError] = useState('');
   const [emptyFieldError, setEmptyFieldError] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
   
@@ -89,14 +90,15 @@ export default function RecruitCreate() {
     recruitCount: club?.recruitCount ? String(club.recruitCount) : '',
     startDate: club?.startDate || parseRecruitPeriod(club?.recruitPeriod).start,
     endDate: club?.endDate || parseRecruitPeriod(club?.recruitPeriod).end,
-    deadline: club?.deadline || club?.announcementDate || '',
+    deadline: normalizeDateString(club?.deadline || club?.announcementDate || ''),
     managerName: club?.managerName || '최예은',
     phoneNumber: club?.contact || club?.phoneNumber || '010-9017-0806'
   });
 
   useEffect(() => {
     if (prefilledClub) {
-      setFormData((prev) => ({ ...prev, ...mapClubToFormData(prefilledClub) }));
+      const mappedData = mapClubToFormData(prefilledClub);
+      setFormData((prev) => ({ ...prev, ...mappedData }));
       
       // 포스터 이미지 추가
       if (prefilledClub.posterImage) {
@@ -108,6 +110,7 @@ export default function RecruitCreate() {
         setUploadedImages([posterImage]);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefilledClub]);
 
   const handleImageUpload = (e) => {
@@ -204,27 +207,21 @@ export default function RecruitCreate() {
             const newFormData = { ...formData, [dateField]: dateStr };
             setFormData(newFormData);
             
-            // 날짜 유효성 검사
-            if (dateField === 'startDate') {
-              if (newFormData.endDate && dateStr > newFormData.endDate) {
-                setDateError('시작일이 종료일보다 늦습니다.');
-              } else {
-                setDateError('');
-              }
-            } else if (dateField === 'endDate') {
-              if (newFormData.startDate && dateStr < newFormData.startDate) {
-                setDateError('종료일이 시작일보다 빠릅니다.');
-              } else if (newFormData.deadline && dateStr > newFormData.deadline) {
-                setDateError('마감일이 잘못 선택되었습니다.');
-              } else {
-                setDateError('');
-              }
-            } else if (dateField === 'deadline') {
-              if (newFormData.endDate && dateStr < newFormData.endDate) {
-                setDateError('마감일이 잘못 선택되었습니다.');
-              } else {
-                setDateError('');
-              }
+            // 시작일 > 종료일 체크 (종료일 필드 아래 에러)
+            if (newFormData.startDate && newFormData.endDate && newFormData.startDate > newFormData.endDate) {
+              setEndDateError('마감일이 잘못 선택되었습니다.');
+            } else {
+              setEndDateError('');
+            }
+            
+            // 시작일 > 발표일 또는 종료일 > 발표일 체크 (발표일 필드 아래 에러)
+            if (newFormData.deadline && (
+              (newFormData.startDate && newFormData.startDate > newFormData.deadline) ||
+              (newFormData.endDate && newFormData.endDate > newFormData.deadline)
+            )) {
+              setDeadlineError('발표일이 잘못 선택되었습니다.');
+            } else {
+              setDeadlineError('');
             }
             
             setShowPicker(false);
@@ -330,14 +327,20 @@ export default function RecruitCreate() {
       return;
     }
 
-    if (dateError) {
-      setEmptyFieldError(dateError);
+    if (endDateError) {
+      setEmptyFieldError(endDateError);
       endDateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     if (!formData.deadline) {
       setEmptyFieldError('합격 발표일을 선택해 주세요.');
+      deadlineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (deadlineError) {
+      setEmptyFieldError(deadlineError);
       deadlineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -375,7 +378,10 @@ export default function RecruitCreate() {
           className="title-input"
           placeholder="제목을 입력해주세요."
           value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, title: e.target.value });
+            if (emptyFieldError.includes('제목')) setEmptyFieldError('');
+          }}
         />
       </div>
       {emptyFieldError && emptyFieldError.includes('제목') && (
@@ -393,7 +399,10 @@ export default function RecruitCreate() {
             className="form-textarea"
             placeholder="모집글을 작성해주세요."
             value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, content: e.target.value });
+              if (emptyFieldError.includes('모집글')) setEmptyFieldError('');
+            }}
             maxLength={500}
           />
           <button
@@ -461,6 +470,7 @@ export default function RecruitCreate() {
                   onClick={() => {
                     setFormData({ ...formData, category: option });
                     setShowCategoryDropdown(false);
+                    if (emptyFieldError.includes('동아리 분야')) setEmptyFieldError('');
                   }}
                 >
                   {option}
@@ -502,6 +512,7 @@ export default function RecruitCreate() {
                   onClick={() => {
                     setFormData({ ...formData, gender: option });
                     setShowGenderDropdown(false);
+                    if (emptyFieldError.includes('성별')) setEmptyFieldError('');
                   }}
                 >
                   {option}
@@ -526,7 +537,17 @@ export default function RecruitCreate() {
             className="recruit-count-input"
             placeholder="모집 인원을 입력하세요."
             value={formData.recruitCount}
-            onChange={(e) => setFormData({ ...formData, recruitCount: e.target.value })}
+            min="1"
+            max="100"
+            onChange={(e) => {
+              let value = e.target.value;
+              // 입력값이 100을 넘으면 100으로 제한
+              if (value && Number(value) > 100) {
+                value = '100';
+              }
+              setFormData({ ...formData, recruitCount: value });
+              if (emptyFieldError.includes('모집 인원')) setEmptyFieldError('');
+            }}
           />
           <span className="recruit-count-unit">명</span>
         </div>
@@ -597,10 +618,10 @@ export default function RecruitCreate() {
           {showEndDatePicker && (
             <CalendarPicker dateField="endDate" setShowPicker={setShowEndDatePicker} />
           )}
-          {dateError && (
-            <div className="error-message">{dateError}</div>
-          )}
         </div>
+        {endDateError && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{endDateError}</div>
+        )}
         {emptyFieldError && emptyFieldError.includes('종료일') && (
           <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
         )}
@@ -634,6 +655,9 @@ export default function RecruitCreate() {
           {showDeadlinePicker && (
             <CalendarPicker dateField="deadline" setShowPicker={setShowDeadlinePicker} />
           )}
+          {deadlineError && (
+            <div className="error-message">{deadlineError}</div>
+          )}
         </div>
       </div>
 
@@ -650,7 +674,10 @@ export default function RecruitCreate() {
               className="manager-input"
               placeholder="이름을 입력하세요"
               value={formData.managerName}
-              onChange={(e) => setFormData({ ...formData, managerName: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, managerName: e.target.value });
+                if (emptyFieldError.includes('담당자')) setEmptyFieldError('');
+              }}
             />
           </div>
           <div className="manager-info-row">
@@ -660,7 +687,10 @@ export default function RecruitCreate() {
               className="manager-input"
               placeholder="010-0000-0000"
               value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, phoneNumber: e.target.value });
+                if (emptyFieldError.includes('담당자')) setEmptyFieldError('');
+              }}
             />
           </div>
         </div>

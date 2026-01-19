@@ -32,7 +32,7 @@
   padding: 11px 0;
   border-bottom: 1px solid #EAEAEA;
   margin-top: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .title-input {
@@ -209,7 +209,7 @@
   padding: 16px 16px 16px 16px;
   cursor: pointer;
   font-size: 14px;
-  color: #212121;
+  color: #9EA3B2;
   transition: background-color 0.2s;
   box-sizing: border-box;
   position: relative;
@@ -219,13 +219,13 @@
 
 .dropdown-item.unselected {
   font-weight: 400;
-  color: #212121;
+  color: #9EA3B2;
   display: flex;
   align-items: center;
 }
 
 .dropdown-item.selected {
-  color: #212121;
+  color: #9B7500;
   font-weight: 400;
   display: flex;
   align-items: center;
