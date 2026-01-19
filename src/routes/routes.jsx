@@ -19,6 +19,7 @@ import ApplicationDetail from "../pages/applicationDetail";
 import ApplicationForm from "../pages/applicationForm";
 import ClubDetailPage from "../pages/ClubDetailPage";
 import PwChange from "../pages/pwChange";
+
 export default function AppRoutes() {
   return (
     <Routes>

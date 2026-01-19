@@ -1,5 +1,5 @@
 import Header from "../components/header";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PasswordField from "../components/PasswordField";
 import MessageText from "../components/MessageText";
 import Button from "../components/Button";
@@ -15,63 +15,72 @@ export default function PwChange() {
   const [pwError, setPwError] = useState("");
   const [pwcError, setPwcError] = useState("");
 
+  // 1. 토스트 메시지 표시 여부 상태 추가
+  const [showToast, setShowToast] = useState(false);
+
   const pwcheck = () => {
-    // 에러 상태 초기화
     setPwcError("");
     setPwError("");
 
-    let isValid = true; // 기본값을 true로 설정
+    let isValid = true;
     let firstErrorRef = null;
 
     const pwRegex =
       /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/;
 
-    // 1. 비밀번호 유효성 검사
-    if (!userPw) {
-      setPwError("필수 정보를 입력해 주세요.");
-      isValid = false;
-      firstErrorRef = pwRef;
+    if (!userPw || !userPwC) {
+      if (!userPw) {
+        setPwError("필수 정보를 입력해 주세요.");
+        isValid = false;
+        firstErrorRef = pwRef;
+      }
+      if (!userPwC) {
+        setPwcError("필수 정보를 입력해 주세요.");
+        isValid = false;
+        if (!firstErrorRef) firstErrorRef = pwcRef;
+      }
     } else if (!pwRegex.test(userPw)) {
       setPwError("8-20자 숫자, 영문, 특수 문자를 포함해 주세요.");
       isValid = false;
       firstErrorRef = pwRef;
-    }
-
-    // 2. 비밀번호 확인 유효성 검사
-    if (!userPwC) {
-      setPwcError("필수 정보를 입력해 주세요.");
-      isValid = false;
-      if (!firstErrorRef) firstErrorRef = pwcRef;
     } else if (userPw !== userPwC) {
       setPwcError("비밀번호가 일치하지 않습니다.");
       isValid = false;
-      if (!firstErrorRef) firstErrorRef = pwcRef;
+      firstErrorRef = pwcRef;
     }
 
-    // 모든 검사 통과 시
     if (isValid) {
-      alert("비밀번호가 성공적으로 변경되었습니다.");
-      navigate("/"); // 메인 또는 로그인 페이지로 이동
+      // 2. 알럿 대신 토스트 활성화
+      setShowToast(true);
+
+      // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/mypage");
+      }, 2000);
     } else if (firstErrorRef) {
-      // 첫 번째 에러가 발생한 곳으로 포커스
       firstErrorRef.current?.focus();
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div
       style={{
         padding: "0 16px",
         backgroundColor: "#FFFFFF",
-        minHeight: "100vh", // 화면 전체 높이 확보
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        position: "relative",
       }}
     >
       <Header title="비밀번호 변경" />
 
       <div style={{ marginTop: 10 }}>
-        {/* 새 비밀번호 입력 */}
         <div style={{ height: 100, marginTop: 20 }}>
           <PasswordField
             ref={pwRef}
@@ -87,7 +96,6 @@ export default function PwChange() {
           <MessageText marginTop={-10} message={pwError} color="#FF4D4D" />
         </div>
 
-        {/* 비밀번호 확인 입력 */}
         <div style={{ height: 100, marginTop: 20 }}>
           <PasswordField
             ref={pwcRef}
@@ -105,9 +113,40 @@ export default function PwChange() {
       </div>
 
       <div style={{ marginTop: 37 }}>
-        {/* 버튼을 하단에 배치하거나 간격을 주어 저장하기 배치 */}
-        <Button label="저장하기" onClick={pwcheck} />
+        <Button label="저장" onClick={pwcheck} />
       </div>
+
+      {/* 3. 토스트 UI (하단 고정) */}
+      {showToast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "100px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "30px",
+            fontSize: "14px",
+            zIndex: 10000,
+            whiteSpace: "nowrap",
+            animation: "fadeInOut 2s",
+          }}
+        >
+          비밀번호가 변경되었습니다.
+        </div>
+      )}
+
+      {/* 토스트 애니메이션 스타일 */}
+      <style>{`
+        @keyframes fadeInOut {
+          0% { opacity: 0; bottom: 30px; }
+          15% { opacity: 1; bottom: 50px; }
+          85% { opacity: 1; bottom: 50px; }
+          100% { opacity: 0; bottom: 30px; }
+        }
+      `}</style>
     </div>
   );
 }

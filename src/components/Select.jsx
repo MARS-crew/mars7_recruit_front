@@ -43,7 +43,7 @@ const Select = ({
           }}
         >
           {label}
-          {star && <span style={{ color: "red", marginLeft: "4px" }}>*</span>}
+          {star && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
 
@@ -57,14 +57,14 @@ const Select = ({
           border: error
             ? "1px solid #FF383C" // 1순위: 에러 시 빨간색
             : isOpen || isInternalFocused
-            ? "1px solid #FFC100" // 2순위: 열려있거나 포커스/호버 시 노란색
-            : "1px solid #D9D9D9", // 3순위: 기본 회색
+              ? "1px solid #FFC100" // 2순위: 열려있거나 포커스/호버 시 노란색
+              : "1px solid #D9D9D9", // 3순위: 기본 회색
 
           backgroundColor: error
             ? "#FF383C33"
             : isInternalFocused
-            ? focusColor
-            : "#ffffff",
+              ? focusColor
+              : "#ffffff",
           padding: "0 20px",
           display: "flex",
           alignItems: "center",

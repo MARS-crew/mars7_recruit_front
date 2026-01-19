@@ -117,7 +117,7 @@ export default function SignUp() {
       isValid = false;
       if (!firstErrorRef) firstErrorRef = idRef;
     } else if (!useId) {
-      setIdError("아이디 중복확인을 해주세요.");
+      setIdError("아이디 중복 확인을 해주세요.");
       isValid = false;
       if (!firstErrorRef) firstErrorRef = idRef;
     }
@@ -298,7 +298,7 @@ export default function SignUp() {
               value={userId}
               star={true}
               ref={idRef}
-              error={!!idOk}
+              error={!!idError}
               marginBottom={0} // 인풋 박스 자체의 하단 마진 제거
               focusColor="#FFC10033"
               borderColor="#FFC100"
@@ -324,12 +324,13 @@ export default function SignUp() {
             color={useId ? "#4CAF50" : "#FF4D4D"}
           />
         </div>
-        <div>
+        <div style={{ height: 90 }}>
           <PasswordField
             label="비밀번호"
             value={userPw}
             ref={pwRef}
             error={!!pwError}
+            star={true}
             onChange={(e) => {
               setUserPw(e.target.value);
             }}
@@ -339,12 +340,13 @@ export default function SignUp() {
           />
           <MessageText marginTop={-15} message={pwError} color="#FF4D4D" />
         </div>
-        <div>
+        <div style={{ height: 90 }}>
           <PasswordField
             label="비밀번호 확인"
             value={userPwC}
             ref={pwcRef}
             error={!!pwcError}
+            star={true}
             onChange={(e) => {
               setUserPwC(e.target.value);
             }}
@@ -364,7 +366,7 @@ export default function SignUp() {
           display: "inline-flex",
           alignItems: "center",
           height: 22,
-          marginTop: 16,
+          marginTop: 40,
           gap: "10px",
         }}
       >
@@ -394,13 +396,13 @@ export default function SignUp() {
           >
             {agree && <img src={check} alt="checked" />}
           </div>
-          <span style={{ fontSize: 14, color: agree ? "#212121" : "#9EA3B2" }}>
+          <span style={{ fontSize: 14, color: "#9EA3B2" }}>
             이용약관 동의 (필수)
           </span>
         </div>
         <div
           onClick={() => navigate("/termsDetail")}
-          style={{ position: "absolute", right: "2px", cursor: "pointer" }}
+          style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
         >
           <img src={RightArrow} alt="detail" />
         </div>
@@ -451,7 +453,7 @@ export default function SignUp() {
         </div>
         <div
           onClick={() => navigate("/pushTermsDetail")}
-          style={{ position: "absolute", right: "2px", cursor: "pointer" }}
+          style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
         >
           <img src={RightArrow} alt="detail" />
         </div>

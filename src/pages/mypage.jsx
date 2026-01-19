@@ -1,5 +1,5 @@
 import Nobackheader from "../components/nobackheader";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import userImage from "../icon/userImage.png";
 import Input from "../components/Input";
@@ -8,15 +8,16 @@ import Button from "../components/Button";
 import Toggle from "../components/Toggle";
 import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
-import Logout from "../components/LogoutModal";
-import WIthdrawModal from "../components/WithdrawModal";
-import LoginRequiredModal from "../components/LoginRequiredModal";
+
+import Modal from "../components/Modal";
+import Header from "../components/header";
 
 export default function MyPage() {
   const navigate = useNavigate();
 
-  const [isWithdrawModalOpen, setWithdrawModalOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSave, setIsSave] = useState(false);
   const [LoginOpen, setLoginOpen] = useState(false);
   // Refs
   const nameRef = useRef(null);
@@ -38,6 +39,9 @@ export default function MyPage() {
   const [phoneError, setPhoneError] = useState("");
   const [gradeError, setGradeError] = useState("");
   const [majorError, setMajorError] = useState("");
+
+  //  토스트 메시지 표시 여부 상태 추가
+  const [showToast, setShowToast] = useState(false);
 
   const isDefaultImage = profileImg === userImage;
 
@@ -132,201 +136,278 @@ export default function MyPage() {
     }
 
     if (isValid) {
-      alert("정보가 수정되었습니다.");
-      // 여기서 서버로 데이터 전송 로직 추가 가능
+      // 2. 알럿 대신 토스트 활성화
+      setShowToast(true);
+
+      // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
     } else if (firstErrorRef) {
       firstErrorRef.current?.focus();
     }
   };
 
-  return (
-    <div className="page-container" style={{ paddingBottom: 60 }}>
-      <Nobackheader title="마이페이지" />
+  const ModalLogoutConfirm = () => {
+    navigate("/");
+  };
+  const ModalLoginConfirm = () => {
+    navigate("/login");
+  };
 
-      {/* 1. 프로필 이미지 */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setLoginOpen(true); // 렌더링 직후 모달을 열기
+  }, []);
+  return (
+    <div>
+      <div className="page-container">
+        <Header showArrow={false} title="마이페이지" />
+
+        {/* 1. 프로필 이미지 */}
         <div
-          style={{
-            position: "relative",
-            width: 120,
-            height: 120,
-            cursor: "pointer",
-          }}
-          onClick={handleImageClick}
+          style={{ display: "flex", justifyContent: "center", marginTop: 22 }}
         >
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-          <img
-            src={profileImg}
-            alt="user"
+          <div
             style={{
+              position: "relative",
               width: 120,
               height: 120,
-              borderRadius: isDefaultImage ? "0%" : "50%",
-              objectFit: isDefaultImage ? "contain" : "cover",
+              cursor: "pointer",
             }}
+            onClick={handleImageClick}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            <img
+              src={profileImg}
+              alt="user"
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: isDefaultImage ? "0%" : "50%",
+                objectFit: isDefaultImage ? "contain" : "cover",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* 2. 입력 필드 */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{ height: 90 }}>
+            <Input
+              label="이름"
+              ref={nameRef}
+              error={!!nameError}
+              value={userName}
+              focusColor="#FFC10033"
+              marginBottom="0"
+              borderColor="#FFC100"
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <MessageText marginTop={4} message={nameError} color="#FF4D4D" />
+          </div>
+          <div style={{ marginTop: 24, height: 90 }}>
+            <Input
+              label="전화번호"
+              ref={phoneRef}
+              error={!!phoneError}
+              value={userPhone}
+              focusColor="#FFC10033"
+              marginBottom="0"
+              borderColor="#FFC100"
+              onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))}
+            />
+            <MessageText marginTop={4} message={phoneError} color="#FF4D4D" />
+          </div>
+
+          <div style={{ marginTop: 24 }}>
+            <Select
+              label="학년"
+              value={grade}
+              options={gradeOptions}
+              ref={gradeRef}
+              star={false}
+              error={!!gradeError}
+              onChange={(val) => setGrade(val)}
+            />
+            <MessageText marginTop={4} message={gradeError} color="#FF4D4D" />
+          </div>
+
+          <div style={{ marginTop: 24 }}>
+            <Select
+              label="학과"
+              customHeight={276}
+              value={major}
+              options={majorOptions}
+              ref={majorRef}
+              star={false}
+              error={!!majorError}
+              onChange={(val) => setMajor(val)}
+            />
+            <MessageText marginTop={4} message={majorError} color="#FF4D4D" />
+          </div>
+        </div>
+
+        {/* 3. 저장 버튼 */}
+
+        <div style={{ marginTop: 40 }}>
+          <Button label="저장" onClick={saveHandle} />
+        </div>
+        {/* 4. 기타 설정 및 메뉴 */}
+        <div style={{ marginTop: 48 }}>
+          <p
+            style={{
+              color: "#9EA3B2",
+              fontSize: 16,
+              fontWeight: "500",
+              marginBottom: 16,
+            }}
+          >
+            기타 설정
+          </p>
+
+          {/* 앱 푸시 알림 */}
+          <div
+            style={{
+              height: 60,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderBottom: "1px solid #F0F0F0",
+            }}
+          >
+            <span style={{ fontSize: 16, color: "#000" }}>알림 푸시 알림</span>
+            <Toggle
+              id="app-push"
+              checked={appPush}
+              onChange={() => setAppPush(!appPush)}
+            />
+          </div>
+
+          {/* 비밀번호 변경 */}
+          <div
+            onClick={() => navigate("/Pwchange")}
+            style={{
+              height: 60,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderBottom: "1px solid #F0F0F0",
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ fontSize: 16, color: "#000" }}>비밀번호 변경</span>
+            <img src={RA} alt="arrow" />
+          </div>
+
+          {/* 회원 탈퇴 */}
+          <div
+            style={{
+              height: 60,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderBottom: "1px solid #F0F0F0",
+              cursor: "pointer",
+            }}
+            onClick={() => setIsWithdrawOpen(true)}
+          >
+            <span style={{ fontSize: 16, color: "#333" }}>회원 탈퇴</span>
+            <img src={RA} alt="arrow" />
+          </div>
+          <Modal
+            title="정말로 탈퇴하시겠습니까?"
+            content={
+              <>
+                탈퇴한 계정은 영구 삭제되어
+                <br />
+                계정 복구가 불가능합니다.
+              </>
+            }
+            padding="19px"
+            spacing={{
+              iconToTitle: 8,
+              titleToContent: 3,
+              contentToBtn: 18,
+            }}
+            rBtnColor="#FF383C"
+            lBtn="취소"
+            rBtn="탈퇴"
+            isOpen={isWithdrawOpen}
+            onClose={() => setIsWithdrawOpen(false)}
+            onRightClick={ModalLogoutConfirm}
+          />
+        </div>
+
+        {/* 5. 로그아웃 */}
+        <div style={{ marginTop: 48 }}>
+          <Button
+            label="로그아웃"
+            backgroundColor="#F5F5F5"
+            color="#9EA3B2"
+            onClick={() => setIsModalOpen(true)}
+          />
+          <Modal
+            title="정말로 로그아웃 하시겠습니까?"
+            rBtnColor="#FF383C"
+            lBtn="취소"
+            height="192px"
+            rBtn="로그아웃"
+            spacing={{
+              iconToTitle: 24,
+              titleToContent: 28,
+            }}
+            padding="15px"
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onRightClick={ModalLogoutConfirm}
           />
         </div>
       </div>
 
-      {/* 2. 입력 필드 */}
-      <div style={{ marginTop: 32 }}>
-        <div style={{ height: 90 }}>
-          <Input
-            label="이름"
-            ref={nameRef}
-            error={!!nameError}
-            value={userName}
-            focusColor="#FFC10033"
-            marginBottom="0"
-            borderColor="#FFC100"
-            onChange={(e) => setUserName(e.target.value)}
-          />
-          <MessageText marginTop={4} message={nameError} color="#FF4D4D" />
-        </div>
-        <div style={{ marginTop: 24, height: 90 }}>
-          <Input
-            label="전화번호"
-            ref={phoneRef}
-            error={!!phoneError}
-            value={userPhone}
-            focusColor="#FFC10033"
-            marginBottom="0"
-            borderColor="#FFC100"
-            onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))}
-          />
-          <MessageText marginTop={4} message={phoneError} color="#FF4D4D" />
-        </div>
-
-        <div style={{ marginTop: 24 }}>
-          <Select
-            label="학년"
-            value={grade}
-            options={gradeOptions}
-            ref={gradeRef}
-            star={false}
-            error={!!gradeError}
-            onChange={(val) => setGrade(val)}
-          />
-          <MessageText marginTop={4} message={gradeError} color="#FF4D4D" />
-        </div>
-
-        <div style={{ marginTop: 24 }}>
-          <Select
-            label="학과"
-            customHeight={276}
-            value={major}
-            options={majorOptions}
-            ref={majorRef}
-            star={false}
-            error={!!majorError}
-            onChange={(val) => setMajor(val)}
-          />
-          <MessageText marginTop={4} message={majorError} color="#FF4D4D" />
-        </div>
-      </div>
-
-      {/* 3. 저장 버튼 */}
-      <div style={{ marginTop: 40 }}>
-        <Button label="저장" onClick={saveHandle} />
-      </div>
-
-      {/* 4. 기타 설정 및 메뉴 */}
-      <div style={{ marginTop: 48 }}>
-        <p
-          style={{
-            color: "#9EA3B2",
-            fontSize: 16,
-            fontWeight: "500",
-            marginBottom: 16,
-          }}
-        >
-          기타 설정
-        </p>
-
-        {/* 앱 푸시 알림 */}
+      <Modal
+        onRightClick={ModalLoginConfirm}
+        isOpen={LoginOpen}
+        lBtn="취소"
+        onClose={() => setLoginOpen(false)}
+      />
+      {/* 3. 토스트 UI (하단 고정) */}
+      {showToast && (
         <div
           style={{
-            height: 60,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderBottom: "1px solid #F0F0F0",
+            position: "fixed",
+            bottom: "100px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "30px",
+            fontSize: "14px",
+            zIndex: 10000,
+            whiteSpace: "nowrap",
+            animation: "fadeInOut 2s",
           }}
         >
-          <span style={{ fontSize: 16, color: "#000" }}>알림 푸시 알림</span>
-          <Toggle
-            id="app-push"
-            checked={appPush}
-            onChange={() => setAppPush(!appPush)}
-          />
+          비밀번호가 변경되었습니다.
         </div>
+      )}
 
-        {/* 비밀번호 변경 */}
-        <div
-          onClick={() => navigate("/Pwchange")}
-          style={{
-            height: 60,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderBottom: "1px solid #F0F0F0",
-            cursor: "pointer",
-          }}
-        >
-          <span style={{ fontSize: 16, color: "#000" }}>비밀번호 변경</span>
-          <img src={RA} alt="arrow" />
-        </div>
-
-        {/* 회원 탈퇴 */}
-        <div
-          style={{
-            height: 60,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderBottom: "1px solid #F0F0F0",
-            cursor: "pointer",
-          }}
-          onClick={() => setWithdrawModalOpen(true)}
-        >
-          <span style={{ fontSize: 16, color: "#333" }}>회원 탈퇴</span>
-          <img src={RA} alt="arrow" />
-          <WIthdrawModal
-            isOpen={isWithdrawModalOpen}
-            onClose={() => setWithdrawModalOpen(false)}
-          />
-        </div>
-      </div>
-
-      {/* 5. 로그아웃 */}
-      <div style={{ marginTop: 48 }}>
-        <Button
-          label="로그아웃"
-          backgroundColor="#F5F5F5"
-          color="#9EA3B2"
-          onClick={() => setIsModalOpen(true)}
-        />{" "}
-        <Logout isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      </div>
-      {/* 5. 로그아웃 */}
-      <div style={{ marginTop: 48 }}>
-        <Button
-          label="로그인"
-          backgroundColor="#F5F5F5"
-          color="#9EA3B2"
-          onClick={() => setLoginOpen(true)}
-        />
-        <LoginRequiredModal
-          isOpen={LoginOpen}
-          onClose={() => setLoginOpen(false)}
-        />
-      </div>
+      {/* 토스트 애니메이션 스타일 */}
+      <style>{`
+        @keyframes fadeInOut {
+          0% { opacity: 0; bottom: 30px; }
+          15% { opacity: 1; bottom: 50px; }
+          85% { opacity: 1; bottom: 50px; }
+          100% { opacity: 0; bottom: 30px; }
+        }
+      `}</style>
     </div>
   );
 }
