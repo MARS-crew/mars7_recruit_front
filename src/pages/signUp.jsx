@@ -181,7 +181,7 @@ export default function SignUp() {
     } else {
       setUseId(true);
 
-      setIdError("사용 가능한 아이디 입니다.");
+      setIdError("사용 가능한 아이디입니다.");
     }
   };
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
@@ -231,10 +231,11 @@ export default function SignUp() {
             focusColor="#FFC10033"
             marginBottom="0"
             borderColor="#FFC100"
+            maxLength="30"
             onChange={(e) => setUserName(e.target.value)}
             placeholder="이름을 입력해주세요."
           />
-          <MessageText marginTop={0} message={nameError} color="#FF4D4D" />
+          <MessageText marginTop={2} message={nameError} color="#FF4D4D" />
         </div>
         <div>
           <Input
@@ -249,7 +250,7 @@ export default function SignUp() {
             onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))} // 하이픈 자동 삽입 적용
             placeholder="전화번호를 입력해주세요."
           />
-          <MessageText marginTop={0} message={phoneError} color="#FF4D4D" />
+          <MessageText marginTop={2} message={phoneError} color="#FF4D4D" />
         </div>
         {/* 학년 선택 */}
         <div>
@@ -265,7 +266,7 @@ export default function SignUp() {
               setGrade(val);
             }}
           />
-          <MessageText marginTop={0} message={gradeError} color="#FF4D4D" />
+          <MessageText marginTop={2} message={gradeError} color="#FF4D4D" />
         </div>
         {/* 학과 선택 */}
         <div>
@@ -281,7 +282,7 @@ export default function SignUp() {
               setMajor(val);
             }}
           />
-          <MessageText marginTop={0} message={majorError} color="#FF4D4D" />
+          <MessageText marginTop={2} message={majorError} color="#FF4D4D" />
         </div>
         <div>
           <div
@@ -298,6 +299,7 @@ export default function SignUp() {
               value={userId}
               star={true}
               ref={idRef}
+              maxLength="15"
               error={!!idError}
               marginBottom={0} // 인풋 박스 자체의 하단 마진 제거
               focusColor="#FFC10033"
@@ -329,6 +331,7 @@ export default function SignUp() {
             label="비밀번호"
             value={userPw}
             ref={pwRef}
+            maxLength="20"
             error={!!pwError}
             star={true}
             onChange={(e) => {
@@ -338,13 +341,14 @@ export default function SignUp() {
             borderColor="#FFC100"
             placeholder="비밀번호를 입력해주세요."
           />
-          <MessageText marginTop={-15} message={pwError} color="#FF4D4D" />
+          <MessageText marginTop={-13} message={pwError} color="#FF4D4D" />
         </div>
         <div style={{ height: 90 }}>
           <PasswordField
             label="비밀번호 확인"
             value={userPwC}
             ref={pwcRef}
+            maxLength="20"
             error={!!pwcError}
             star={true}
             onChange={(e) => {
@@ -354,7 +358,7 @@ export default function SignUp() {
             borderColor="#FFC100"
             placeholder="비밀번호를 입력해주세요."
           />
-          <MessageText marginTop={-15} message={pwcError} color="#FF4D4D" />
+          <MessageText marginTop={-13} message={pwcError} color="#FF4D4D" />
         </div>
       </div>
       {/* 앱 푸시 동의 */}
@@ -407,8 +411,8 @@ export default function SignUp() {
           <img src={RightArrow} alt="detail" />
         </div>
       </div>
-      <div style={{ minHeight: "22px" }}>
-        <MessageText marginTop={0} message={agreeError} color="#FF4D4D" />
+      <div style={{ minHeight: "24px" }}>
+        <MessageText marginTop={2} message={agreeError} color="#FF4D4D" />
       </div>
       {/* 2. 앱 푸시 동의 (선택) */}
       <div
@@ -418,7 +422,6 @@ export default function SignUp() {
           display: "inline-flex",
           alignItems: "center",
           height: 22,
-
           gap: "10px",
         }}
       >
@@ -445,9 +448,7 @@ export default function SignUp() {
           >
             {appPush && <img src={check} alt="checked" />}
           </div>
-          <span
-            style={{ fontSize: 14, color: appPush ? "#212121" : "#9EA3B2" }}
-          >
+          <span style={{ fontSize: 14, color: "#9EA3B2" }}>
             앱 푸시 수신 동의 (선택)
           </span>
         </div>

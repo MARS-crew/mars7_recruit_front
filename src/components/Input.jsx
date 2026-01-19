@@ -4,6 +4,7 @@ const Input = forwardRef(
   (
     {
       label,
+      maxLength,
       type = "text",
       placeholder,
       height = 60,
@@ -55,12 +56,14 @@ const Input = forwardRef(
         )}
         <input
           ref={ref}
+          maxLength={maxLength}
           onFocus={handleFocus} // 합쳐진 핸들러 연결
           onBlur={handleBlur} // 합쳐진 핸들러 연결
           style={{
             width: "100%",
             height: height,
             borderRadius: 16,
+
             border: error
               ? "1px solid #FF383C"
               : isInternalFocused
