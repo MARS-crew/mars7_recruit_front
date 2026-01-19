@@ -42,6 +42,7 @@ function Home() {
   return (
     <div
       style={{
+        minWidth: 393,
         display: "flex",
         padding: "0 16px",
         flexDirection: "column",
@@ -78,6 +79,7 @@ function Home() {
             fontSize: 24,
             fontWeight: "bold",
             margin: 0,
+            lineHeight: "32px",
           }}
         >
           지금 핫한 동아리
@@ -151,6 +153,7 @@ function Home() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
+                    fontSize: 12,
                     margin: 0,
                     width: "100%",
                   }}
@@ -163,7 +166,7 @@ function Home() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  margin: "4px",
+                  margin: " 4px 6px",
                 }}
               >
                 <div
@@ -171,6 +174,10 @@ function Home() {
                     background: "#FFC10033",
                     padding: "2px 8px",
                     borderRadius: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 40,
                   }}
                 >
                   <p
@@ -187,7 +194,7 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 10 }} />
+                  <img src={person} style={{ height: 14, width: 14 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
                     00명
                   </p>
@@ -223,8 +230,6 @@ function Home() {
               <img
                 style={{
                   width: "100%",
-                  aspectRatio: "133 / 154",
-                  objectFit: "cover",
                 }}
                 src={MainImg}
                 alt="동아리"
@@ -239,7 +244,7 @@ function Home() {
               >
                 <p
                   style={{
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: "500",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -263,6 +268,10 @@ function Home() {
                   style={{
                     background: "#FFC10033",
                     padding: "4px 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 53,
                     borderRadius: 8,
                   }}
                 >
@@ -280,7 +289,7 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 14 }} />
+                  <img src={person} style={{ height: 19, width: 19 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 12, margin: 0 }}>
                     00명
                   </p>
@@ -332,7 +341,7 @@ function Home() {
               >
                 <p
                   style={{
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: "500",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -349,13 +358,17 @@ function Home() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  margin: "4px",
+                  margin: " 4px 6px",
                 }}
               >
                 <div
                   style={{
                     background: "#FFC10033",
                     padding: "2px 8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 40,
                     borderRadius: 8,
                   }}
                 >
@@ -373,7 +386,7 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 10 }} />
+                  <img src={person} style={{ height: 14, width: 14 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
                     00명
                   </p>
@@ -390,6 +403,7 @@ function Home() {
               fontSize: 24,
               fontWeight: "bold",
               margin: 0,
+              lineHeight: "32px",
             }}
           >
             최근 올라온 모집글
@@ -421,7 +435,7 @@ function Home() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
-                padding: "16px 0",
+                padding: "11px 0",
                 borderBottom: showBorder ? "1px solid #9EA3B2" : "none",
               }}
             >
@@ -444,6 +458,7 @@ function Home() {
                     color: "#000",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
+                    lineHeight: "26px",
                     textOverflow: "ellipsis", // 너비를 넘어가면 무조건 ... 처리
                   }}
                 >
@@ -460,7 +475,7 @@ function Home() {
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
                     overflow: "hidden",
-                    lineHeight: "1.4",
+                    lineHeight: "22px",
                   }}
                 >
                   {item.content}
@@ -502,7 +517,7 @@ function Home() {
                     <img
                       src={person}
                       alt="인원"
-                      style={{ width: 14, height: 14 }}
+                      style={{ width: 19, height: 19 }}
                     />
                     <span style={{ color: "#9EA3B2", fontSize: "14px" }}>
                       {item.targetCount}

@@ -10,6 +10,7 @@ import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 
 import Modal from "../components/Modal";
+import Header from "../components/header";
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -38,6 +39,9 @@ export default function MyPage() {
   const [phoneError, setPhoneError] = useState("");
   const [gradeError, setGradeError] = useState("");
   const [majorError, setMajorError] = useState("");
+
+  //  토스트 메시지 표시 여부 상태 추가
+  const [showToast, setShowToast] = useState(false);
 
   const isDefaultImage = profileImg === userImage;
 
@@ -132,8 +136,13 @@ export default function MyPage() {
     }
 
     if (isValid) {
-      alert("정보가 수정되었습니다.");
-      // 여기서 서버로 데이터 전송 로직 추가 가능
+      // 2. 알럿 대신 토스트 활성화
+      setShowToast(true);
+
+      // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
     } else if (firstErrorRef) {
       firstErrorRef.current?.focus();
     }
@@ -147,12 +156,13 @@ export default function MyPage() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setLoginOpen(true); // 렌더링 직후 모달을 열기
   }, []);
   return (
     <div>
       <div className="page-container">
-        <Nobackheader title="마이페이지" />
+        <Header showArrow={false} title="마이페이지" />
 
         {/* 1. 프로필 이미지 */}
         <div
@@ -245,20 +255,10 @@ export default function MyPage() {
         </div>
 
         {/* 3. 저장 버튼 */}
-        <div style={{ marginTop: 40 }}>
-          <Button label="저장" onClick={() => setIsSave(true)} />
-        </div>
-        <Modal
-          showIcon={false}
-          title="저장하시겠습니까?"
-          lBtn="취소"
-          content="지금 지원한 내용은 수정 및 취소가 되지 않습니다."
-          rBtn="저장하기"
-          isOpen={isSave}
-          onClose={() => setIsSave(false)}
-          onRightClick={ModalLogoutConfirm}
-        />
 
+        <div style={{ marginTop: 40 }}>
+          <Button label="저장" onClick={saveHandle} />
+        </div>
         {/* 4. 기타 설정 및 메뉴 */}
         <div style={{ marginTop: 48 }}>
           <p
@@ -377,6 +377,37 @@ export default function MyPage() {
         lBtn="취소"
         onClose={() => setLoginOpen(false)}
       />
+      {/* 3. 토스트 UI (하단 고정) */}
+      {showToast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "100px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "30px",
+            fontSize: "14px",
+            zIndex: 10000,
+            whiteSpace: "nowrap",
+            animation: "fadeInOut 2s",
+          }}
+        >
+          비밀번호가 변경되었습니다.
+        </div>
+      )}
+
+      {/* 토스트 애니메이션 스타일 */}
+      <style>{`
+        @keyframes fadeInOut {
+          0% { opacity: 0; bottom: 30px; }
+          15% { opacity: 1; bottom: 50px; }
+          85% { opacity: 1; bottom: 50px; }
+          100% { opacity: 0; bottom: 30px; }
+        }
+      `}</style>
     </div>
   );
 }

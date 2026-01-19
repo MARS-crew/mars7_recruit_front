@@ -20,7 +20,7 @@ export default function Modal({
   height = "213px",
   onClose,
   showIcon = true,
-  // 마진 값을 받을 spacing props 추가 (기본값 설정)
+  //기본 값 로그인 모달
   spacing = {
     iconToTitle: 8,
     titleToContent: 13,
@@ -70,9 +70,8 @@ export default function Modal({
           height: height,
           display: "flex",
           flexDirection: "column",
-          // 전체 세로 중앙 정렬을 빼고 싶다면 'center' 대신 'flex-start'를 사용하세요.
           justifyContent: "flex-start",
-          boxSizing: "border-box", // 패딩이 높이에 포함되도록 설정
+          boxSizing: "border-box",
         }}
       >
         {showIcon && (
@@ -89,7 +88,7 @@ export default function Modal({
               flexShrink: 0,
               alignItems: "center",
               justifyContent: "center",
-              margin: `0 auto ${iconToTitle}px`, // props로 받은 마진 적용
+              margin: `0 auto ${iconToTitle}px`,
             }}
           >
             !
@@ -101,6 +100,7 @@ export default function Modal({
             fontSize: "20px",
             fontWeight: "600",
             color: "#000",
+            lineHeight: "26px",
             lineHeight: "1.4",
             marginBottom: `${titleToContent}px`,
           }}
@@ -112,7 +112,9 @@ export default function Modal({
           <div
             style={{
               fontSize: "14px",
-              color: "#9EA3B2",
+              fontWeight: "regular",
+              lineHeight: "22px",
+              color: "#000000",
               marginBottom: `${contentToBtn}px`, // 설명에서 버튼까지의 마진 적용
             }}
           >
