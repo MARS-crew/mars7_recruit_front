@@ -73,7 +73,7 @@ const ClubDetailPage = () => {
     const club = clubsData[id] || clubsData[1]; // ID에 해당하는 동아리 데이터
     
     // TODO: 로그인한 사용자가 게시자인지 지원자인지 확인하는 로직
-    // 임시로 false로 설정 (지원자 화면)
+    // true 이면 게시자 false이면 지원자 시점으로 화면을 렌더링
     const isPublisher = false;
 
     return <ClubDetail club={club} isPublisher={isPublisher} />;
