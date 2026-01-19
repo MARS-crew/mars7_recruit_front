@@ -20,7 +20,7 @@ const Input = forwardRef(
       star = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     // 1. 내부 포커스 상태 관리 (배경색/테두리용)
     const [isInternalFocused, setIsInternalFocused] = useState(false);
@@ -50,7 +50,7 @@ const Input = forwardRef(
           >
             {label}
             {/* required가 true일 때만 빨간 별표를 렌더링 */}
-            {star && <span style={{ color: "red", marginLeft: "4px" }}>*</span>}
+            {star && <span style={{ color: "red" }}>*</span>}
           </p>
         )}
         <input
@@ -64,14 +64,14 @@ const Input = forwardRef(
             border: error
               ? "1px solid #FF383C"
               : isInternalFocused
-              ? `1px solid ${borderColor}`
-              : "1px solid #D9D9D9",
+                ? `1px solid ${borderColor}`
+                : "1px solid #D9D9D9",
 
             backgroundColor: error
               ? "#FF383C33"
               : isInternalFocused
-              ? focusColor
-              : "#ffffff",
+                ? focusColor
+                : "#ffffff",
             padding: "0 20px",
             fontSize: "16px",
             boxSizing: "border-box",
@@ -87,7 +87,7 @@ const Input = forwardRef(
         />
       </div>
     );
-  }
+  },
 );
 
 export default Input;

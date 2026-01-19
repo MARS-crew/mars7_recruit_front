@@ -58,7 +58,11 @@ function Home() {
           width: "100%",
         }}
       >
-        <img style={{ height: 56, minWidth: 144 }} src={MainLogo} alt="로고" />
+        <img
+          style={{ height: 56, minWidth: 144, paddingTop: 4 }}
+          src={MainLogo}
+          alt="로고"
+        />
         <img
           style={{ height: 24, width: 24, cursor: "pointer" }}
           src={notice}
@@ -151,7 +155,7 @@ function Home() {
                     width: "100%",
                   }}
                 >
-                  26학년도 ONE 신입 모집 안내...
+                  26학년도 ONfffffffE 신입 모집 안내fdsfsfsfs...
                 </p>
               </div>
               <div

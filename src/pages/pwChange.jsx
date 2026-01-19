@@ -1,5 +1,5 @@
 import Header from "../components/header";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PasswordField from "../components/PasswordField";
 import MessageText from "../components/MessageText";
 import Button from "../components/Button";
@@ -27,10 +27,18 @@ export default function PwChange() {
       /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/;
 
     // 1. 비밀번호 유효성 검사
-    if (!userPw) {
-      setPwError("필수 정보를 입력해 주세요.");
-      isValid = false;
-      firstErrorRef = pwRef;
+    if (!userPw || !userPwC) {
+      if (!userPw) {
+        setPwError("필수 정보를 입력해 주세요.");
+        isValid = false;
+        firstErrorRef = pwRef;
+      }
+      if (!userPwC) {
+        setPwcError("필수 정보를 입력해 주세요.");
+        isValid = false;
+        firstErrorRef = pwcRef;
+      }
+      if (!userPw && !userPwC) firstErrorRef = pwRef;
     } else if (!pwRegex.test(userPw)) {
       setPwError("8-20자 숫자, 영문, 특수 문자를 포함해 주세요.");
       isValid = false;
@@ -38,11 +46,7 @@ export default function PwChange() {
     }
 
     // 2. 비밀번호 확인 유효성 검사
-    if (!userPwC) {
-      setPwcError("필수 정보를 입력해 주세요.");
-      isValid = false;
-      if (!firstErrorRef) firstErrorRef = pwcRef;
-    } else if (userPw !== userPwC) {
+    else if (userPw !== userPwC) {
       setPwcError("비밀번호가 일치하지 않습니다.");
       isValid = false;
       if (!firstErrorRef) firstErrorRef = pwcRef;
@@ -51,19 +55,23 @@ export default function PwChange() {
     // 모든 검사 통과 시
     if (isValid) {
       alert("비밀번호가 성공적으로 변경되었습니다.");
-      navigate("/"); // 메인 또는 로그인 페이지로 이동
+      navigate("/mypage"); // 메인 또는 로그인 페이지로 이동
     } else if (firstErrorRef) {
       // 첫 번째 에러가 발생한 곳으로 포커스
       firstErrorRef.current?.focus();
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // 브라우저 스크롤 초기화
+  }, []);
+
   return (
     <div
       style={{
         padding: "0 16px",
         backgroundColor: "#FFFFFF",
-        minHeight: "100vh", // 화면 전체 높이 확보
+        minHeight: "100%", // 화면 전체 높이 확보
         display: "flex",
         flexDirection: "column",
       }}
@@ -106,7 +114,7 @@ export default function PwChange() {
 
       <div style={{ marginTop: 37 }}>
         {/* 버튼을 하단에 배치하거나 간격을 주어 저장하기 배치 */}
-        <Button label="저장하기" onClick={pwcheck} />
+        <Button label="저장" onClick={pwcheck} />
       </div>
     </div>
   );

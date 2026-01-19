@@ -34,19 +34,21 @@ function Login() {
     // 임시 데이터 및 정규식
     const mockId = "aaa1";
     const mockPW = "1q2w3e4r!";
+    //id
+    const idRegex = /^(?=.*[a-z])(?=.*\d)[a-z0-9]{3,15}$/;
     const pwRegex =
       /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/;
 
     // 1. 필수 입력 확인 (아이디와 비밀번호 각각 독립적으로 체크)
     if (!userId || !userPw) {
-      setIdMError("필수 정보를 입력해주세요.");
-      setPwMError("필수 정보를 입력해주세요.");
       if (!userId) {
         setIdError(true);
+        setIdMError("필수 정보를 입력해주세요.");
       }
 
       if (!userPw) {
         setPwError(true);
+        setPwMError("필수 정보를 입력해주세요.");
       }
 
       // 포커스는 가장 위에 있는 아이디부터, 아이디가 있으면 비밀번호로 이동
@@ -57,6 +59,13 @@ function Login() {
       }
       return;
     }
+    // 3. 아이디 형식 확인 (형식 불일치)
+    if (!idRegex.test(userId)) {
+      setIdError(true);
+      setIdMError("3-15자 숫자, 영문, 특수 문자 포함 후 작성해 주세요.");
+      pwRef.current?.focus();
+      return;
+    }
     // 3. 비밀번호 형식 확인 (형식 불일치)
     if (!pwRegex.test(userPw)) {
       setPwError(true);
@@ -64,6 +73,7 @@ function Login() {
       pwRef.current?.focus();
       return;
     }
+
     // 2. 아이디 존재 여부 확인 (아이디 x)
     if (userId != mockId) {
       setIdMError("존재하지 않는 회원 정보입니다.");
@@ -122,7 +132,7 @@ function Login() {
         />
       </div>
 
-      {/* 입력 영역 */}
+      {/* 아이디 영역 */}
       <div style={{ marginTop: 40, height: 90 }}>
         <Input
           ref={idRef}
@@ -138,6 +148,7 @@ function Login() {
         />
         <MessageText message={IdMError} color="#FF4D4D" />
       </div>
+      {/* 비밀번호 영역 */}
       <div style={{ marginTop: 30, height: 90 }}>
         <PasswordField
           ref={pwRef}
@@ -205,7 +216,7 @@ function Login() {
           <span
             style={{
               fontSize: 14,
-              color: isIDSaved ? "#212121" : "#9EA3B2",
+              color: "#9EA3B2",
               transition: "color 0.2s",
             }}
           >
@@ -213,8 +224,8 @@ function Login() {
           </span>
         </div>
         <span
-          style={{ fontSize: 14, color: "#9EA3B2" }}
-          onClick={() => navigate("/findPw")}
+          style={{ fontSize: 14, color: "#9EA3B2", paddingRight: 5 }}
+          onClick={() => navigate("/pwChange")}
         >
           비밀번호 찾기
         </span>
