@@ -41,7 +41,6 @@ export default function ApplicantDetail() {
   const closeModal = () => setModalType(null);
 
   const handleConfirm = () => {
-    alert(modalType === "pass" ? "합격 처리" : "불합격 처리");
     closeModal();
   };
 
