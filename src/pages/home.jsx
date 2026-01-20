@@ -494,7 +494,7 @@ function Home() {
                       padding: "4px 12px",
                       borderRadius: "16px",
                       fontSize: "12px",
-                      fontWeight: "regular",
+                      fontWeight: "bold",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
