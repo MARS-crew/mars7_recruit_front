@@ -5,9 +5,12 @@ import userImage from "../icon/userImage.png";
 import MessageText from "../components/MessageText";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { authApi } from "../api/auth";
 export default function SingUpDetail() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const prevData = location.state?.signUpData; // 이전 페이지에서 넘어온 데이터
 
   const genderRef = useRef(null);
   const yearRef = useRef(null);
@@ -60,7 +63,7 @@ export default function SingUpDetail() {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setGenderError("");
     setBirthError("");
     // addressError는 실시간으로 관리되므로 초기화하지 않거나 필요 시 체크
@@ -93,14 +96,34 @@ export default function SingUpDetail() {
       isValid = false;
     }
 
+    // 모든 검증 통과 시 서버 전송
     if (isValid) {
-      console.log("전송 데이터:", {
-        gender,
-        birth: `${year}-${month}-${day}`,
-        profileImg,
-        address,
-      });
-      navigate("/");
+      // 데이터 포맷팅
+      const formattedBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      const formattedGender = gender === "여성" ? "F" : "M";
+
+      // 최종 JSON 구조 생성
+      const finalData = {
+        ...prevData, // usersId, password, name, phoneNumber, grade, major, serviceAgreed, apppushAgreed 포함
+        gender: formattedGender,
+        birth: formattedBirth,
+        profileImage: profileImg,
+        address: address,
+      };
+
+      try {
+        console.log("서버 전송 데이터:", finalData);
+
+        // API 호출
+        const response = await authApi.signup(finalData);
+
+        if (response) {
+          alert("회원가입이 완료되었습니다!");
+          navigate("/");
+        }
+      } catch (error) {
+        alert(error.message || "회원가입 중 오류가 발생했습니다.");
+      }
     }
   };
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
@@ -123,7 +146,6 @@ export default function SingUpDetail() {
         flexDirection: "column",
         boxSizing: "border-box",
         backgroundColor: "#FFFFFF",
-        overflowY: "auto",
       }}
     >
       <Header title={"회원가입"} />
@@ -218,7 +240,7 @@ export default function SingUpDetail() {
                 <Select
                   value={month}
                   options={monthOptions}
-                  label=""
+                  top="73px"
                   placeholder="월"
                   customHeight={276}
                   onChange={(val) => {
@@ -232,6 +254,7 @@ export default function SingUpDetail() {
                 <Select
                   value={day}
                   label=""
+                  top="73px"
                   options={dayOptions}
                   placeholder="일"
                   customHeight={276}

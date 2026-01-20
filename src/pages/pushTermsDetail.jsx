@@ -1,8 +1,9 @@
-import Header from "../components/Header";
+import Header from "../components/header";
+import { useLocation } from "react-router-dom";
 import React, { useEffect, useRef } from "react";
 export default function pushTermsDetail() {
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
-
+  const location = useLocation();
   // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
   useEffect(() => {
     if (containerRef.current) {
@@ -22,7 +23,7 @@ export default function pushTermsDetail() {
         backgroundColor: "#FFFFFF",
       }}
     >
-      <Header title="이용약관 동의" />
+      <Header title="이용약관 동의" backData={signupData} backPath="/signUp" />
       {/* 약관 소제목 영역 */}
       <div style={{ marginTop: 22, marginBottom: 8 }}>
         <p

@@ -7,8 +7,9 @@ import PasswordField from "../components/PasswordField";
 import check from "../icon/check.png";
 import RightArrow from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 export default function SignUp() {
+  //input 칸
   const majorRef = useRef(null);
   const gradeRef = useRef(null);
   const nameRef = useRef(null);
@@ -17,6 +18,8 @@ export default function SignUp() {
   const pwRef = useRef(null);
   const pwcRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  //상태값
   const [grade, setGrade] = useState("");
   const [userName, setUserName] = useState("");
   const [userPhone, setUserPhone] = useState("");
@@ -37,28 +40,32 @@ export default function SignUp() {
   const [gradeError, setGradeError] = useState("");
   const [majorError, setMajorError] = useState("");
   const majorOptions = [
-    "자유전공학부",
-    "컴퓨터소프트웨어공학과",
-    "컴퓨터정보공학과",
-    "인공지능소프트웨어학과",
-    "웹응용소프트웨어공학과",
-    "빅데이터경영과",
     "기계공학과",
     "기계설계공학과",
     "자동화공학과",
-    "로봇공학과",
+    "로봇소프트웨어과",
     "전기공학과",
-    "전자공학과",
-    "정보통신공학과",
     "반도체전자공학과",
+    "정보통신공학과",
+    "소방안전관리과",
+    "웹응용소프트웨어공학과",
+    "컴퓨터소프트웨어공학과",
+    "인공지능소프트웨어학과",
     "생명화학공학과",
+    "바이오융합공학과",
     "건축과",
-    "실내디자인과",
+    "실내건축디자인과",
     "시각디자인과",
+    "AR·VR콘텐츠디자인과",
+
     "경영학과",
     "세무회계학과",
-    "관광컨벤션학과",
-    "소방안전관리과",
+    "유통마케팅학과",
+    "호텔관광학과",
+
+    "경영정보학과",
+    "빅데이터경영과",
+    "자유전공학과",
   ].sort();
   const gradeOptions = ["1학년", "2학년", "3학년", "4학년"];
   //체크
@@ -154,14 +161,38 @@ export default function SignUp() {
 
     // 검증 결과 처리
     if (isValid) {
-      console.log("모든 검증 통과! 서버 전송");
-      navigate("/signUpDetail");
+      const signUpData = {
+        usersId: userId,
+        password: userPw,
+        passwordConfirm: userPwC,
+        name: userName,
+        phoneNumber: userPhone,
+        grade: parseInt(grade.replace(/[^0-9]/g, "")),
+        major: major,
+        serviceAgreed: agree,
+        apppushAgreed: appPush,
+      };
+      navigate("/signUpDetail", { state: { signUpData } });
     } else {
       // 에러가 있다면 가장 최상단 에러 필드로 포커스 이동
       if (firstErrorRef) {
         firstErrorRef.current?.focus();
       }
     }
+  };
+  // 2. 약관 페이지 이동 함수 (기존 navigate 부분을 수정)
+  const goToTerms = (path) => {
+    const currentInput = {
+      userName,
+      userPhone,
+      grade,
+      major,
+      userId,
+      agree,
+      appPush,
+      useId,
+    };
+    navigate(path, { state: { fromSignUp: currentInput } });
   };
   //아이디 중복 체크
   const idChecked = () => {
@@ -185,14 +216,24 @@ export default function SignUp() {
     }
   };
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
-
-  // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = 0; // 내부 스크롤 초기화
     }
     window.scrollTo(0, 0); // 브라우저 스크롤 초기화
-  }, []);
+    const data = location.state?.recoveredData;
+    if (location.state?.recoveredData) {
+      setUserName(data.userName || "");
+      setUserPhone(data.userPhone || "");
+      setGrade(data.grade || "");
+      setMajor(data.major || "");
+      setUserId(data.userId || "");
+      setAgree(data.agree || false);
+      setAppPush(data.appPush || false);
+      setUseId(data.useId || false);
+    }
+  }, [location.state]);
+
   // 전화번호 하이픈 자동 삽입 함수
   const formatPhoneNumber = (value) => {
     const raw = value.replace(/[^\d]/g, "");
@@ -216,7 +257,6 @@ export default function SignUp() {
         style={{
           display: "flex",
           flexDirection: "column",
-
           marginTop: "20px",
         }}
       >
@@ -229,7 +269,7 @@ export default function SignUp() {
             star={true}
             value={userName}
             focusColor="#FFC10033"
-            marginBottom="0"
+            marginBottom="0px"
             borderColor="#FFC100"
             maxLength="10"
             onChange={(e) => setUserName(e.target.value)}
@@ -308,12 +348,13 @@ export default function SignUp() {
               star={true}
               ref={idRef}
               maxLength="15"
-              error={!!idError}
-              marginBottom={0} // 인풋 박스 자체의 하단 마진 제거
+              error={!!idError && !useId}
+              marginBottom={0}
               focusColor="#FFC10033"
               borderColor="#FFC100"
               onChange={(e) => {
                 setUserId(e.target.value);
+                setUseId(false);
               }}
               placeholder="아이디를 입력해주세요."
             />
@@ -421,7 +462,7 @@ export default function SignUp() {
           </span>
         </div>
         <div
-          onClick={() => navigate("/termsDetail")}
+          onClick={() => goToTerms("/termsDetail")}
           style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
         >
           <img src={RightArrow} alt="detail" />
@@ -469,7 +510,7 @@ export default function SignUp() {
           </span>
         </div>
         <div
-          onClick={() => navigate("/pushTermsDetail")}
+          onClick={() => goToTerms("/pushTermsDetail")}
           style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
         >
           <img src={RightArrow} alt="detail" />

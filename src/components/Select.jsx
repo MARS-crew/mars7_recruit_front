@@ -6,6 +6,7 @@ const Select = ({
   label,
   value,
   error,
+  top = "100px",
   width = "100%",
   options,
   placeholder,
@@ -86,7 +87,7 @@ const Select = ({
         <ul
           style={{
             position: "absolute",
-            top: "100px",
+            top: top,
             left: 0,
             width: "100%",
             backgroundColor: "#FFFFFF",
