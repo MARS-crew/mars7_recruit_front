@@ -216,7 +216,7 @@ export default function SignUp() {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "30px",
+
           marginTop: "20px",
         }}
       >
@@ -235,7 +235,9 @@ export default function SignUp() {
             onChange={(e) => setUserName(e.target.value)}
             placeholder="이름을 입력해주세요."
           />
-          <MessageText marginTop={2} message={nameError} color="#FF4D4D" />
+          <div style={{ height: 30 }}>
+            <MessageText marginTop={2} message={nameError} color="#FF4D4D" />
+          </div>
         </div>
         <div>
           <Input
@@ -250,7 +252,9 @@ export default function SignUp() {
             onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))} // 하이픈 자동 삽입 적용
             placeholder="전화번호를 입력해주세요."
           />
-          <MessageText marginTop={2} message={phoneError} color="#FF4D4D" />
+          <div style={{ height: 30 }}>
+            <MessageText marginTop={2} message={phoneError} color="#FF4D4D" />
+          </div>
         </div>
         {/* 학년 선택 */}
         <div>
@@ -266,7 +270,9 @@ export default function SignUp() {
               setGrade(val);
             }}
           />
-          <MessageText marginTop={2} message={gradeError} color="#FF4D4D" />
+          <div style={{ height: 30 }}>
+            <MessageText marginTop={2} message={gradeError} color="#FF4D4D" />
+          </div>
         </div>
         {/* 학과 선택 */}
         <div>
@@ -282,7 +288,9 @@ export default function SignUp() {
               setMajor(val);
             }}
           />
-          <MessageText marginTop={2} message={majorError} color="#FF4D4D" />
+          <div style={{ height: 30 }}>
+            <MessageText marginTop={2} message={majorError} color="#FF4D4D" />
+          </div>
         </div>
         <div>
           <div
@@ -320,13 +328,15 @@ export default function SignUp() {
               />
             </div>
           </div>
-          <MessageText
-            marginTop={2}
-            message={idError}
-            color={useId ? "#4CAF50" : "#FF4D4D"}
-          />
+          <div style={{ height: 30 }}>
+            <MessageText
+              marginTop={2}
+              message={idError}
+              color={useId ? "#4CAF50" : "#FF4D4D"}
+            />
+          </div>
         </div>
-        <div style={{ height: 90 }}>
+        <div>
           <PasswordField
             label="비밀번호"
             value={userPw}
@@ -334,6 +344,7 @@ export default function SignUp() {
             maxLength="20"
             error={!!pwError}
             star={true}
+            marginBottom="0px"
             onChange={(e) => {
               setUserPw(e.target.value);
             }}
@@ -341,14 +352,17 @@ export default function SignUp() {
             borderColor="#FFC100"
             placeholder="비밀번호를 입력해주세요."
           />
-          <MessageText marginTop={-13} message={pwError} color="#FF4D4D" />
+          <div style={{ height: 30 }}>
+            <MessageText marginTop={2} message={pwError} color="#FF4D4D" />
+          </div>
         </div>
-        <div style={{ height: 90 }}>
+        <div>
           <PasswordField
             label="비밀번호 확인"
             value={userPwC}
             ref={pwcRef}
             maxLength="20"
+            marginBottom="0px"
             error={!!pwcError}
             star={true}
             onChange={(e) => {
@@ -358,7 +372,9 @@ export default function SignUp() {
             borderColor="#FFC100"
             placeholder="비밀번호를 입력해주세요."
           />
-          <MessageText marginTop={-13} message={pwcError} color="#FF4D4D" />
+          <div style={{ height: 40 }}>
+            <MessageText marginTop={2} message={pwcError} color="#FF4D4D" />
+          </div>
         </div>
       </div>
       {/* 앱 푸시 동의 */}
@@ -370,7 +386,7 @@ export default function SignUp() {
           display: "inline-flex",
           alignItems: "center",
           height: 22,
-          marginTop: 40,
+
           gap: "10px",
         }}
       >
