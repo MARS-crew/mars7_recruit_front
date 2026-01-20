@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/header";
+import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 
 // 더미 데이터
@@ -96,7 +96,7 @@ export default function ApplicantDetail() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "20px 0" }} />
+        <div style={{ height: 1, background: "#eee", margin: "30px 0" }} />
 
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
@@ -110,7 +110,7 @@ export default function ApplicantDetail() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "20px 0" }} />
+        <div style={{ height: 1, background: "#eee", margin: "30px 0" }} />
 
         {/* 자기소개 */}
         <div>
@@ -127,7 +127,7 @@ export default function ApplicantDetail() {
           style={{
             display: "flex",
             gap: 12,
-            marginTop: 48,
+            marginTop: 300,
             justifyContent: "space-between",
           }}
         >
@@ -137,10 +137,11 @@ export default function ApplicantDetail() {
               flex: 1,
               padding: "14px 0",
               borderRadius: 14,
-              border: "1.5px solid #2B7FFF",
-              background: "#E8F1FF",
-              color: "#2B7FFF",
-              fontWeight: 700,
+              border: "1.5px solid #2572B9",
+              background: "rgba(37, 114, 185, 0.2)",
+              color: "#2572B9",
+              fontWeight: 400,
+              fontSize: 20
             }}
           >
             합격
@@ -152,10 +153,11 @@ export default function ApplicantDetail() {
               flex: 1,
               padding: "14px 0",
               borderRadius: 14,
-              border: "1.5px solid #FF4D4D",
-              background: "#FFECEC",
-              color: "#FF4D4D",
-              fontWeight: 700,
+              border: "1.5px solid #FF383C",
+              background: "rgba(255, 56, 60, 0.2)",
+              color: "#FF383C",
+              fontWeight: 400,
+              fontSize: 20
             }}
           >
             불합격
@@ -209,7 +211,7 @@ export default function ApplicantDetail() {
             </div>
 
             {/* 문구 */}
-            <div style={{ fontWeight: 800, fontSize: 16 }}>
+            <div style={{ fontWeight: 600, fontSize: 20 }}>
               {modalType === "pass"
                 ? "해당 지원자를 합격시키시겠습니까?"
                 : "해당 지원자를 불합격시키시겠습니까?"}
@@ -218,8 +220,8 @@ export default function ApplicantDetail() {
             <div
               style={{
                 marginTop: 8,
-                fontSize: 13,
-                color: "#777",
+                fontSize: 14,
+                fontWeight: 400,
                 lineHeight: 1.5,
               }}
             >
@@ -239,7 +241,8 @@ export default function ApplicantDetail() {
                   borderRadius: 12,
                   border: "1px solid #E5E5E5",
                   background: "#fff",
-                  fontWeight: 700,
+                  fontWeight: 500,
+                  fontSize: 16
                 }}
               >
                 취소
@@ -253,9 +256,10 @@ export default function ApplicantDetail() {
                   padding: "12px 0",
                   borderRadius: 12,
                   border: "none",
-                  background: modalType === "pass" ? "#2B7FFF" : "#FF4D4D",
+                  background: modalType === "pass" ? "#2572B9" : "#FF383C",
                   color: "#fff",
-                  fontWeight: 800,
+                  fontWeight: 500,
+                  fontSize: 16
                 }}
               >
                 확인
