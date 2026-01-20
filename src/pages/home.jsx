@@ -173,11 +173,12 @@ function Home() {
                   style={{
                     background: "#FFC10033",
                     padding: "2px 8px",
-                    borderRadius: 8,
+                    borderRadius: 16,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 40,
+                    width: 36,
+                    height: 18,
                   }}
                 >
                   <p
@@ -194,8 +195,8 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 14, width: 14 }} />
-                  <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
+                  <img src={person} style={{ height: 16, width: 16 }} />
+                  <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
                     00명
                   </p>
                 </div>
@@ -272,7 +273,7 @@ function Home() {
                     alignItems: "center",
                     justifyContent: "center",
                     width: 53,
-                    borderRadius: 8,
+                    borderRadius: 16,
                   }}
                 >
                   <p
@@ -368,8 +369,9 @@ function Home() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 40,
-                    borderRadius: 8,
+                    width: 36,
+                    height: 18,
+                    borderRadius: 16,
                   }}
                 >
                   <p
@@ -386,8 +388,8 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 14, width: 14 }} />
-                  <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
+                  <img src={person} style={{ height: 16, width: 16 }} />
+                  <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
                     00명
                   </p>
                 </div>
@@ -436,7 +438,7 @@ function Home() {
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 padding: "11px 0",
-                borderBottom: showBorder ? "1px solid #9EA3B2" : "none",
+                borderBottom: showBorder ? "1px solid #EAEAEA" : "none",
               }}
             >
               {/* 1. 왼쪽 텍스트 영역*/}
@@ -492,7 +494,11 @@ function Home() {
                       padding: "4px 12px",
                       borderRadius: "16px",
                       fontSize: "12px",
-                      fontWeight: "bold",
+                      fontWeight: "regular",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "53px",
                     }}
                   >
                     {item.dDay}
@@ -540,9 +546,8 @@ function Home() {
                   style={{
                     width: 82,
                     height: 117,
-                    borderRadius: "4px",
+                    borderRadius: "8px",
                     objectFit: "cover",
-                    border: "1px solid #E0E0E0",
                   }}
                   src={item.poster}
                   alt="포스터"

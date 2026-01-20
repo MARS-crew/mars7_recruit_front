@@ -30,11 +30,11 @@ export default function SingUpDetail() {
   // 옵션 데이터
   const genderOption = ["여성", "남성"];
   const yearOptions = Array.from({ length: 2026 - 1940 + 1 }, (_, i) =>
-    String(2026 - i)
+    String(2026 - i),
   );
   const monthOptions = Array.from({ length: 12 }, (_, i) => String(i + 1));
   const [dayOptions, setDayOptions] = useState(
-    Array.from({ length: 31 }, (_, i) => String(i + 1))
+    Array.from({ length: 31 }, (_, i) => String(i + 1)),
   );
 
   // 생년월일 동적 계산
@@ -57,21 +57,6 @@ export default function SingUpDetail() {
       const reader = new FileReader();
       reader.onloadend = () => setProfileImg(reader.result);
       reader.readAsDataURL(file);
-    }
-  };
-
-  // 주소 입력 핸들러 (특수문자 실시간 검사)
-  const handleAddressChange = (e) => {
-    const value = e.target.value;
-    setAddress(value);
-
-    // 정규표현식: 한글, 영문, 숫자, 공백만 허용
-    const specialCharPattern = /[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]/;
-
-    if (specialCharPattern.test(value)) {
-      setAddressError("문자만 입력해 주세요.");
-    } else {
-      setAddressError("");
     }
   };
 
@@ -203,7 +188,7 @@ export default function SingUpDetail() {
             />
             <div style={{ minHeight: "22px" }}>
               <MessageText
-                marginTop={0}
+                marginTop={2}
                 message={genderError}
                 color="#FF4D4D"
               />
@@ -260,7 +245,7 @@ export default function SingUpDetail() {
               </div>
             </div>
             <div style={{ minHeight: "22px" }}>
-              <MessageText marginTop={0} message={birthError} color="#FF4D4D" />
+              <MessageText marginTop={2} message={birthError} color="#FF4D4D" />
             </div>
           </div>
 
@@ -274,13 +259,14 @@ export default function SingUpDetail() {
               value={address}
               focusColor="#FFC10033"
               marginBottom="0"
+              maxLength="50"
               borderColor={addressError ? "#FF4D4D" : "#D9D9D9"}
-              onChange={handleAddressChange}
+              onChange={(e) => setAddress(e.target.value)}
               placeholder="주소를 입력해주세요."
             />
             <div style={{ minHeight: "22px" }}>
               <MessageText
-                marginTop={0}
+                marginTop={2}
                 message={addressError}
                 color="#FF4D4D"
               />

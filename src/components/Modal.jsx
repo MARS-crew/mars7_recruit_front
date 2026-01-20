@@ -5,7 +5,7 @@ export default function Modal({
     <>
       로그인이 필요한
       <br />
-      콘텐츠 입니다.
+      콘텐츠입니다.
       <br />
       로그인하시겠습니까?
     </>

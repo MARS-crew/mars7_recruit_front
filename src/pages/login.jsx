@@ -137,6 +137,7 @@ function Login() {
         <Input
           ref={idRef}
           label="아이디"
+          maxLength="10"
           value={userId}
           error={idError}
           onChange={(e) => {
@@ -153,6 +154,7 @@ function Login() {
         <PasswordField
           ref={pwRef}
           label="비밀번호"
+          maxLength="20"
           value={userPw}
           error={pwError}
           onChange={(e) => {
