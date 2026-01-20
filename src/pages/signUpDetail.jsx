@@ -167,7 +167,6 @@ export default function SingUpDetail() {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "30px",
             marginTop: 62,
           }}
         >
@@ -186,7 +185,7 @@ export default function SingUpDetail() {
               }}
               borderColor={genderError ? "#FF4D4D" : "#D9D9D9"}
             />
-            <div style={{ minHeight: "22px" }}>
+            <div style={{ height: 28 }}>
               <MessageText
                 marginTop={2}
                 message={genderError}
@@ -244,7 +243,7 @@ export default function SingUpDetail() {
                 />
               </div>
             </div>
-            <div style={{ minHeight: "22px" }}>
+            <div style={{ height: 28 }}>
               <MessageText marginTop={2} message={birthError} color="#FF4D4D" />
             </div>
           </div>
@@ -264,7 +263,7 @@ export default function SingUpDetail() {
               onChange={(e) => setAddress(e.target.value)}
               placeholder="주소를 입력해주세요."
             />
-            <div style={{ minHeight: "22px" }}>
+            <div style={{ height: 28 }}>
               <MessageText
                 marginTop={2}
                 message={addressError}
