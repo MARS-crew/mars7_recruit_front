@@ -73,7 +73,7 @@ export const authApi = {
    */
   deleteAccount: async () => {
     try {
-      const response = await axiosInstance.delete("/api/v1/user");
+      const response = await axiosInstance.delete("/api/v1/auth");
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
