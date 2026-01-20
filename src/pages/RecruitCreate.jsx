@@ -212,6 +212,7 @@ export default function RecruitCreate() {
               setEndDateError('마감일이 잘못 선택되었습니다.');
             } else {
               setEndDateError('');
+              if (emptyFieldError.includes('마감일이 잘못 선택되었습니다.')) setEmptyFieldError('');
             }
             
             // 시작일 > 발표일 또는 종료일 > 발표일 체크 (발표일 필드 아래 에러)
@@ -222,7 +223,13 @@ export default function RecruitCreate() {
               setDeadlineError('발표일이 잘못 선택되었습니다.');
             } else {
               setDeadlineError('');
+              if (emptyFieldError.includes('발표일이 잘못 선택되었습니다.')) setEmptyFieldError('');
             }
+
+            // 필수 입력 경고 제거
+            if (dateField === 'startDate' && emptyFieldError.includes('모집 시작일')) setEmptyFieldError('');
+            if (dateField === 'endDate' && emptyFieldError.includes('모집 종료일')) setEmptyFieldError('');
+            if (dateField === 'deadline' && emptyFieldError.includes('합격 발표일')) setEmptyFieldError('');
             
             setShowPicker(false);
           }}
@@ -378,12 +385,16 @@ export default function RecruitCreate() {
           className="title-input"
           placeholder="제목을 입력해주세요."
           value={formData.title}
+          maxLength="50"
           onChange={(e) => {
             setFormData({ ...formData, title: e.target.value });
             if (emptyFieldError.includes('제목')) setEmptyFieldError('');
           }}
         />
       </div>
+      {formData.title.length >= 50 && (
+        <div className="error-message" style={{ marginTop: '-18px' }}>50자까지 작성가능합니다</div>
+      )}
       {emptyFieldError && emptyFieldError.includes('제목') && (
         <div className="error-message" style={{ marginTop: '-18px' }}>{emptyFieldError}</div>
       )}
@@ -391,9 +402,13 @@ export default function RecruitCreate() {
       {/* 모집글 입력 */}
       <div className="form-group" ref={contentRef}>
         <label className="form-label">
-          모집글<span className="required">*</span>
+          <span style={{ fontWeight : 600 }}>모집글</span>
+          <span className="required">*</span>
         </label>
-        <div className="char-count">{formData.content.length}/500</div>
+        <div className="char-count">
+          <span style={{ color: '#2572B9' }}>{formData.content.length}/</span>
+          <span style={{ color: '#A4A4A4' }}>500</span>
+        </div>
         <div className="textarea-wrapper">
           <textarea
             className="form-textarea"
@@ -445,7 +460,8 @@ export default function RecruitCreate() {
       {/* 동아리 분야 드롭다운 */}
       <div className="form-group" ref={categoryRef}>
         <label className="form-label">
-          동아리 분야<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>동아리 분야</span>
+          <span className="required">*</span>
         </label>
         <div className="dropdown-wrapper" ref={categoryDropdownRef}>
           <button
@@ -487,7 +503,8 @@ export default function RecruitCreate() {
       {/* 성별 드롭다운 */}
       <div className="form-group" ref={genderRef}>
         <label className="form-label">
-          성별<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>성별</span>
+          <span className="required">*</span>
         </label>
         <div className="dropdown-wrapper" ref={genderDropdownRef}>
           <button
@@ -529,7 +546,8 @@ export default function RecruitCreate() {
       {/* 모집 인원 */}
       <div className="form-group" ref={recruitCountRef}>
         <label className="form-label">
-          모집 인원<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>모집 인원</span>
+          <span className="required">*</span>
         </label>
         <div className="recruit-count-wrapper">
           <input
@@ -559,7 +577,8 @@ export default function RecruitCreate() {
       {/* 모집 시작일 */}
       <div className="form-group" ref={startDateRef}>
         <label className="form-label">
-          모집 시작일<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>모집 시작일</span>
+          <span className="required">*</span>
         </label>
         <div className="date-input-container full-width" ref={startDatePickerRef}>
           <button
@@ -593,7 +612,8 @@ export default function RecruitCreate() {
       {/* 모집 종료일 */}
       <div className="form-group" ref={endDateRef}>
         <label className="form-label">
-          모집 종료일<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>모집 종료일</span>
+          <span className="required">*</span>
         </label>
         <div className="date-input-container full-width" ref={endDatePickerRef}>
           <button
@@ -630,7 +650,8 @@ export default function RecruitCreate() {
       {/* 합격 발표일 */}
       <div className="form-group" ref={deadlineRef}>
         <label className="form-label">
-          합격 발표일<span className="required">*</span>
+          <span style={{ marginLeft : 8 }}>합격 발표일</span>
+          <span className="required">*</span>
         </label>
         <div className="date-input-container full-width" ref={deadlinePickerRef}>
           <button
@@ -655,16 +676,20 @@ export default function RecruitCreate() {
           {showDeadlinePicker && (
             <CalendarPicker dateField="deadline" setShowPicker={setShowDeadlinePicker} />
           )}
-          {deadlineError && (
-            <div className="error-message">{deadlineError}</div>
-          )}
         </div>
+        {deadlineError && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{deadlineError}</div>
+        )}
+        {emptyFieldError && emptyFieldError.includes('발표일') && (
+          <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
+        )}
       </div>
 
       {/* 담당자 정보 */}
+      <div className="section-divider" />
       <div className="form-group" ref={managerRef}>
         <label className="form-label">
-          담당자 정보<span className="required">*</span>
+          <span style={{ fontWeight : 600 }}>담당자 정보</span>
         </label>
         <div className="manager-info-container">
           <div className="manager-info-row">
@@ -698,6 +723,7 @@ export default function RecruitCreate() {
           <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
         )}
       </div>
+      <div className="section-divider" />
 
       {/* 제출 버튼 */}
       <button 

@@ -90,6 +90,8 @@ const ClubDetail = ({ club, isPublisher }) => {
                     ))}
                 </section>
 
+                <div className="section-divider" />
+
                 {/* 담당자 정보 */}
                 <section className="manager-info">
                     <h3>담당자 정보</h3>
