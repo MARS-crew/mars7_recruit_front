@@ -231,7 +231,7 @@ export default function SignUp() {
             focusColor="#FFC10033"
             marginBottom="0"
             borderColor="#FFC100"
-            maxLength="30"
+            maxLength="10"
             onChange={(e) => setUserName(e.target.value)}
             placeholder="이름을 입력해주세요."
           />

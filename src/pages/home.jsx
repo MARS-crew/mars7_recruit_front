@@ -177,7 +177,8 @@ function Home() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 40,
+                    width: 36,
+                    height: 18,
                   }}
                 >
                   <p
@@ -194,8 +195,8 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 14, width: 14 }} />
-                  <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
+                  <img src={person} style={{ height: 16, width: 16 }} />
+                  <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
                     00명
                   </p>
                 </div>
@@ -368,7 +369,8 @@ function Home() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 40,
+                    width: 36,
+                    height: 18,
                     borderRadius: 16,
                   }}
                 >
@@ -386,8 +388,8 @@ function Home() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <img src={person} style={{ height: 14, width: 14 }} />
-                  <p style={{ color: "#9EA3B2", fontSize: 8, margin: 0 }}>
+                  <img src={person} style={{ height: 16, width: 16 }} />
+                  <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
                     00명
                   </p>
                 </div>
