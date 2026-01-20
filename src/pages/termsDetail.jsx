@@ -1,10 +1,13 @@
 import React, { useEffect, useRef } from "react";
-
-import Header from "../components/Header";
+import { useLocation } from "react-router-dom";
+import Header from "../components/header";
 
 export default function TermsDetail() {
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
+  const location = useLocation();
 
+  //회원가입 페이지로 뒤로가기 버튼 클릭 시 데이터 전달
+  const signupData = location.state?.fromSignUp;
   // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
   useEffect(() => {
     if (containerRef.current) {
@@ -57,7 +60,7 @@ export default function TermsDetail() {
         backgroundColor: "#FFFFFF",
       }}
     >
-      <Header title="이용약관 동의" />
+      <Header title="이용약관 동의" backData={signupData} backPath="/signUp" />
 
       {/* 약관 소제목 영역 */}
       <div style={{ marginTop: 22, marginBottom: 8 }}>

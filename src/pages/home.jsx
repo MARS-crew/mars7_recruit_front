@@ -153,7 +153,6 @@ function Home() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    fontSize: 12,
                     margin: 0,
                     width: "100%",
                   }}
@@ -245,7 +244,7 @@ function Home() {
               >
                 <p
                   style={{
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: "500",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -342,7 +341,7 @@ function Home() {
               >
                 <p
                   style={{
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: "500",
                     overflow: "hidden",
                     textOverflow: "ellipsis",

@@ -2,9 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import arrow from "../icon/arrow.png";
 
-function Header({ title, showArrow = true }) {
+function Header({ title, showArrow = true, backData, backPath }) {
   const navigate = useNavigate();
-
+  const handleBack = () => {
+    if (backData && backPath) {
+      navigate(backPath, { state: { recoveredData: backData } });
+    } else {
+      navigate(-1);
+    }
+  };
   return (
     <div
       style={{
@@ -27,7 +33,7 @@ function Header({ title, showArrow = true }) {
             zIndex: 1,
             cursor: "pointer",
           }}
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
         >
           <img
             src={arrow}
