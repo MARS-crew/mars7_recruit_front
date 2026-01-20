@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import BottomNavBar from "../components/BottomNavBar";
-import Header from "../components/header";
+import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 
 const mockApplicants = [

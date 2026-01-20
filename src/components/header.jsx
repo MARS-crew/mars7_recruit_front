@@ -15,6 +15,7 @@ function Header({ title, showArrow = true }) {
         width: "100%",
         backgroundColor: "#FFFFFF",
         boxSizing: "border-box",
+        padding: "0 16px"
       }}
     >
       {showArrow && (
@@ -26,6 +27,7 @@ function Header({ title, showArrow = true }) {
             alignItems: "center",
             zIndex: 1,
             cursor: "pointer",
+            marginLeft: "4px"
           }}
           onClick={() => navigate(-1)}
         >
