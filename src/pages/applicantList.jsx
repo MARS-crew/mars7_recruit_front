@@ -52,8 +52,8 @@ export default function ApplicantList() {
           >
             <div
               style={{
-                width: 56,
-                height: 56,
+                width: 62,
+                height: 62,
                 borderRadius: "50%",
                 overflow: "hidden",
                 marginRight: 16,
@@ -68,16 +68,16 @@ export default function ApplicantList() {
             </div>
 
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: "bold", fontSize: 16 }}>
+              <div style={{ fontWeight: "bold", fontSize: 14, fontWeight: 700 }}>
                 {applicant.name}
                 <span
-                  style={{ color: "#888", fontWeight: "normal", marginLeft: 8 }}
+                  style={{ color: "#888", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
                 >
                   {applicant.gender} · {applicant.age}세
                 </span>
               </div>
 
-              <div style={{ color: "#666", fontSize: 14, marginTop: 4 }}>
+              <div style={{ color: "#666", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
                 {applicant.major} ({applicant.grade})
               </div>
             </div>
