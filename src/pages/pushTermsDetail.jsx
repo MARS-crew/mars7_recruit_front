@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 export default function pushTermsDetail() {
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
   const location = useLocation();
+  const signupData = location.state?.fromSignUp;
   // 2. 페이지 로딩 시 스크롤 최상단 이동 로직
   useEffect(() => {
     if (containerRef.current) {
