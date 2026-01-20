@@ -321,7 +321,7 @@ export default function SignUp() {
             </div>
           </div>
           <MessageText
-            marginTop={0}
+            marginTop={2}
             message={idError}
             color={useId ? "#4CAF50" : "#FF4D4D"}
           />
