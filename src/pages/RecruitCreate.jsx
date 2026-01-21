@@ -365,6 +365,9 @@ export default function RecruitCreate() {
   };
 
   return (
+  <div>
+    {/* 헤더 */}
+      <Header title="모집글 작성" />
     <div
       style={{
         padding: "0 16px",
@@ -375,9 +378,6 @@ export default function RecruitCreate() {
         backgroundColor: "#FFFFFF",
       }}
     >
-      {/* 헤더 */}
-      <Header title="모집글 작성" />
-
       {/* 제목 입력 */}
       <div className="title-input-section" ref={titleRef}>
         <input
@@ -733,5 +733,6 @@ export default function RecruitCreate() {
         작성하기
       </button>
     </div>
+  </div>
   );
 }
