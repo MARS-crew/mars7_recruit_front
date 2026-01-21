@@ -23,6 +23,19 @@ export const authApi = {
       throw error;
     }
   },
+  /**
+   * 아이디 중복확인 API
+   */
+  checkId: async (data) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/auth/check-id?usersId=${data.usersId}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * 로그인 API
