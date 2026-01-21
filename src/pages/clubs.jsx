@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import recruitApi from '../api/recruit';
 import Modal from '../components/Modal';
 import '../styles/Clubs.css';
 import Nobackheader from '../components/nobackheader';
@@ -12,6 +13,9 @@ export default function Clubs() {
   const [activeFilter, setActiveFilter] = useState('전체');
   const [showToast, setShowToast] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [recruits, setRecruits] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,72 +35,120 @@ export default function Clubs() {
     }
   }, [location]);
 
-  // 임시 동아리 데이터
-  const clubsData = [
-    {
-      id: 1,
-      dueDate: 'D-1',
-      title: '26학년도 ONE 신입부원을 모집합니다',
-      description: '26학년도 전공동아리 ONE에서 신입 부원을 모집합니다. 저희 전공동아리 ONE 웹응용소프트웨어공학과 등...',
-      category: '전공',
-      startDate: '26.02.18',
-      members: '00',
-      image: '../public/icons/clubimage.png'
-    },
-    {
-      id: 2,
-      dueDate: 'D-2',
-      title: '댄스 동아리 MOVE 신입 모집',
-      description: '댄스를 사랑하는 사람들의 모임! 초보자도 환영합니다.',
-      category: '취미',
-      startDate: '26.02.20',
-      members: '00',
-      image: '../public/icons/clubimage.png'
-    },
-    {
-      id: 3,
-      dueDate: 'D-3',
-      title: 'AI 연구회 신입부원 모집',
-      description: '인공지능과 머신러닝에 관심있는 학생들의 전공 동아리입니다.',
-      category: '전공',
-      startDate: '26.02.22',
-      members: '00',
-      image: '../public/icons/clubimage.png'
-    },
-    {
-      id: 4,
-      dueDate: 'D-4',
-      title: '사진 동아리 LENS 모집',
-      description: '사진 촬영과 편집을 함께 배우는 취미 동아리입니다.',
-      category: '취미',
-      startDate: '26.02.25',
-      members: '00',
-      image: '../public/icons/clubimage.png'
-    },
-    {
-      id: 5,
-      dueDate: 'D-5',
-      title: '웹 개발 스터디 그룹',
-      description: '프론트엔드와 백엔드 개발을 함께 공부하는 전공 동아리입니다.',
-      category: '전공',
-      startDate: '26.03.01',
-      members: '00',
-      image: '../public/icons/clubimage.png'
-    },
-  ];
+  const mapCategory = (raw) => {
+    if (!raw) return '전체';
+    if (raw === 'MAJOR') return '전공';
+    if (raw === 'HOBBY') return '취미';
+    return raw;
+  };
 
-  // 필터링된 데이터 (공백 제거 + 대소문자 무시)
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-  const filteredClubs = clubsData.filter(club => {
-    const matchesCategory = activeFilter === '전체' || club.category === activeFilter;
-    const matchesSearch =
-      normalizedSearch === '' ||
-      club.title.toLowerCase().includes(normalizedSearch) ||
-      club.description.toLowerCase().includes(normalizedSearch);
-    return matchesCategory && matchesSearch;
-  });
+  const mapFilterToField = (filter) => {
+    if (filter === '전공') return 'MAJOR';
+    if (filter === '취미') return 'HOBBY';
+    return 'ALL';
+  };
 
-  const isFiltering = normalizedSearch !== '' || activeFilter !== '전체';
+  const calculateDDay = (dueDate) => {
+    if (!dueDate) return '';
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+    
+    const diffTime = due - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return '마감';
+    if (diffDays === 0) return 'D-0';
+    return `D-${diffDays}`;
+  };
+
+  const normalizeRecruit = (item, index) => {
+    // field는 서버에서 'MAJOR', 'HOBBY' 등으로 옴
+    const category = mapCategory(item?.field ?? item?.category ?? item?.clubCategory);
+
+    // startDate 포맷팅 (ISO 형식 → YYYY-MM-DD)
+    let startDate = '';
+    if (item?.createdAt) {
+      const date = new Date(item.createdAt);
+      startDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+    } else if (item?.startDate) {
+      startDate = item.startDate;
+    }
+
+    // D-day 계산
+    const dDay = calculateDDay(item?.dueDate);
+
+    return {
+      id: item?.recruitId ?? item?.id ?? `recruit-${index}`,
+      title: item?.title ?? item?.recruitTitle ?? '제목 없음',
+      description: item?.description ?? item?.content ?? '',
+      category,
+      startDate,
+      dueDate: dDay,
+      members: item?.people ?? item?.members ?? item?.targetCount ?? '',
+      image: item?.posterImage ?? item?.thumbnailUrl ?? '/icons/clubimage.png',
+    };
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const keyword = searchTerm.trim();
+        let rawList;
+
+        if (keyword) {
+          // 검색어가 있으면 검색 API 사용
+          console.log('🔍 검색 키워드:', keyword);
+          rawList = await recruitApi.search(keyword);
+        } else {
+          // 검색어가 없으면 전체 조회 API 사용 (필터 적용)
+          const field = mapFilterToField(activeFilter);
+          console.log('📋 분야 필터:', field);
+          rawList = await recruitApi.getList(field);
+        }
+        
+        console.log('📦 API 응답:', rawList);
+        
+        const normalized = (rawList || []).map((item, index) =>
+          normalizeRecruit(item, index),
+        );
+        console.log('✅ 정규화된 데이터:', normalized);
+
+        if (!cancelled) {
+          setRecruits(normalized);
+        }
+      } catch (err) {
+        console.error('❌ API 에러:', err);
+        if (!cancelled) {
+          const errorMsg = err.message || '동아리 모집글을 불러오지 못했습니다.';
+          setError(errorMsg);
+          setRecruits([]);
+          alert(errorMsg);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchTerm, activeFilter]);
+
+  // 이미 서버에서 필터링되어 오므로 클라이언트 필터링 불필요
+  const filteredClubs = recruits;
+  const isFiltering = searchTerm.trim() !== '' || activeFilter !== '전체';
 
   return (
     <div style={{
@@ -138,35 +190,49 @@ export default function Clubs() {
 
       {/* 동아리 리스트 */}
       <div className="clubs-list">
-        {filteredClubs.length === 0 ? (
+        {error ? (
+          <div className="empty-state">
+            <p>{error}</p>
+          </div>
+        ) : loading ? (
+          <div className="empty-state">
+            <p>모집글을 불러오는 중입니다.</p>
+          </div>
+        ) : filteredClubs.length === 0 ? (
           <div className="empty-state">
             <p>{isFiltering ? '검색 결과가 없습니다.' : '현재 모집글이 없습니다.'}</p>
           </div>
         ) : (
-          filteredClubs.map((club, index) => (
-            <div 
-              key={club.id} 
-              className={`club-card ${index === filteredClubs.length - 1 ? 'last' : ''}`}
-              onClick={() => navigate(`/clubs/${club.id}`)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="club-content">
-                <h3 className="club-title">{club.title}</h3>
-                <p className="club-description">{club.description}</p>
-                <div className="club-info">
-                  <span className={`club-code ${club.dueDate === 'D-1' ? 'red' : ''}`}>{club.dueDate}</span>
-                  <span className="club-date">{club.startDate} 시작</span>
-                  <span className="club-members">
-                    <img src="../public/icons/user-icon.png" alt="멤버" className="member-icon" />
-                    <span className="club-members-count">{club.members}명</span>
-                  </span>
+          filteredClubs.map((club, index) => {
+            const dueDateLabel = club.dueDate || '모집중';
+            const startLabel = club.startDate ? `${club.startDate} 시작` : '시작일 미정';
+            const memberLabel = club.members ? `${club.members}명` : '인원 미정';
+
+            return (
+              <div 
+                key={club.id}
+                className={`club-card ${index === filteredClubs.length - 1 ? 'last' : ''}`}
+                onClick={() => navigate(`/clubs/${club.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="club-content">
+                  <h3 className="club-title">{club.title}</h3>
+                  <p className="club-description">{club.description}</p>
+                  <div className="club-info">
+                    <span className={`club-code ${dueDateLabel === 'D-1' ? 'red' : ''}`}>{dueDateLabel}</span>
+                    <span className="club-date">{startLabel}</span>
+                    <span className="club-members">
+                      <img src="/icons/user-icon.png" alt="멤버" className="member-icon" />
+                      <span className="club-members-count">{memberLabel}</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="club-image">
+                  <img src={club.image || '/icons/clubimage.png'} alt={club.title} />
                 </div>
               </div>
-              <div className="club-image">
-                <img src={club.image} alt={club.title} />
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
       {/* FAB 버튼 */}
