@@ -121,7 +121,7 @@ export default function SingUpDetail() {
           navigate("/");
         }
       } catch (error) {
-        alert(error.message || "회원가입 중 오류가 발생했습니다.");
+        setAddressError(error.message || "회원가입 중 오류가 발생했습니다.");
       }
     }
   };

@@ -8,6 +8,7 @@ import check from "../icon/check.png";
 import RightArrow from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 import { useNavigate, useLocation } from "react-router-dom";
+import { authApi } from "../api/auth";
 export default function SignUp() {
   //input 칸
   const majorRef = useRef(null);
@@ -193,24 +194,47 @@ export default function SignUp() {
     navigate(path, { state: { fromSignUp: currentInput } });
   };
   //아이디 중복 체크
-  const idChecked = () => {
-    //임시 중복  체크용
-    const nameT = "qwer";
+  const idChecked = async () => {
     setIdOk("");
     setIdError("");
     setUseId(false);
-    // 영문(대/소문자)과 숫자가 섞인 3~15자
-    const idRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{3,15}$/;
-    if (userId === nameT) {
-      setIdError("사용할 수 없는 아이디입니다.");
-      setIdOk("no");
-    } else if (!idRegex.test(userId)) {
-      setIdError("3-15자 영문자, 숫자 포함 후 작성해 주세요.");
-      setIdOk("");
-    } else {
-      setUseId(true);
+    if (!userId) {
+      setIdError("아이디를 입력해주세요.");
+      return;
+    }
 
-      setIdError("사용 가능한 아이디입니다.");
+    const idRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{3,15}$/;
+    if (!idRegex.test(userId)) {
+      setIdError("3-15자 영문자, 숫자 포함 후 작성해 주세요.");
+      setUseId(false);
+      return;
+    }
+
+    try {
+      const checkIdData = { usersId: userId };
+      console.log("API 요청 데이터:", checkIdData);
+
+      const result = await authApi.checkId(checkIdData);
+      console.log("API 응답 결과:", result); // 여기서 success: true가 오는지 확
+
+      if (result && result.success) {
+        setUseId(true);
+        setIdError("사용 가능한 아이디입니다.");
+        setIdOk("yes");
+      } else {
+        // success가 false로 올 경우 처리
+        setUseId(false);
+        setIdError("사용할 수 없는 아이디입니다.");
+      }
+    } catch (error) {
+      const serverResponse = error.response?.data;
+      const errorCode = serverResponse?.error?.code;
+      setUseId(false);
+      // 서버 에러(400, 409 등) 발생 시 상세 메시지 추출
+      if (errorCode === "DUPLICATE_USER") {
+        setIdError("이미 사용 중인 아이디입니다.");
+        setIdOk("");
+      }
     }
   };
   const containerRef = useRef(null); // 1. 최상단 div를 위한 Ref 추가
