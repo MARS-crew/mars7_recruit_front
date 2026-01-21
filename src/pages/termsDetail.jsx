@@ -49,69 +49,71 @@ export default function TermsDetail() {
   ];
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        padding: "0 16px",
-        height: "100vh", // 화면 전체 높이 고정
-        display: "flex",
-        flexDirection: "column",
-        boxSizing: "border-box",
-        backgroundColor: "#FFFFFF",
-      }}
-    >
+    <div>
       <Header title="이용약관 동의" backData={signupData} backPath="/signUp" />
 
-      {/* 약관 소제목 영역 */}
-      <div style={{ marginTop: 22, marginBottom: 8 }}>
-        <p
-          style={{
-            color: "#A4A4A4",
-            fontWeight: "600",
-            fontSize: "16px",
-            margin: 0,
-          }}
-        >
-          동미동락 서비스 이용약관
-        </p>
-      </div>
-
-      <hr />
-
-      {/* 스크롤이 발생하는 핵심 본문 영역 */}
       <div
+        ref={containerRef}
         style={{
-          marginTop: 16,
-          flex: 1, // 남은 공간을 모두 차지
-          overflowY: "auto", // 내용이 많아지면 자동으로 세로 스크롤 생성
-          paddingBottom: "40px", // 최하단 조항이 가려지지 않게 여유 공간 추가
-          WebkitOverflowScrolling: "touch", // iOS에서 부드러운 스크롤 적용
+          padding: "0 16px",
+          height: "100vh", // 화면 전체 높이 고정
+          display: "flex",
+          flexDirection: "column",
+          boxSizing: "border-box",
+          backgroundColor: "#FFFFFF",
         }}
       >
-        <div style={{ fontSize: "14px", lineHeight: "1.6" }}>
-          {sections.map((section, index) => (
-            <div key={index} style={{ marginBottom: "24px" }}>
-              <div
-                style={{
-                  fontWeight: "500", // Medium
-                  color: "#212121", // 색상 #212121
-                  marginBottom: "4px",
-                }}
-              >
-                {section.title}
+        {/* 약관 소제목 영역 */}
+        <div style={{ marginTop: 22, marginBottom: 8 }}>
+          <p
+            style={{
+              color: "#A4A4A4",
+              fontWeight: "600",
+              fontSize: "16px",
+              margin: 0,
+            }}
+          >
+            동미동락 서비스 이용약관
+          </p>
+        </div>
+
+        <hr />
+
+        {/* 스크롤이 발생하는 핵심 본문 영역 */}
+        <div
+          style={{
+            marginTop: 16,
+            flex: 1, // 남은 공간을 모두 차지
+            overflowY: "auto", // 내용이 많아지면 자동으로 세로 스크롤 생성
+            paddingBottom: "40px", // 최하단 조항이 가려지지 않게 여유 공간 추가
+            WebkitOverflowScrolling: "touch", // iOS에서 부드러운 스크롤 적용
+          }}
+        >
+          <div style={{ fontSize: "14px", lineHeight: "1.6" }}>
+            {sections.map((section, index) => (
+              <div key={index} style={{ marginBottom: "24px" }}>
+                <div
+                  style={{
+                    fontWeight: "500", // Medium
+                    color: "#212121", // 색상 #212121
+                    marginBottom: "4px",
+                  }}
+                >
+                  {section.title}
+                </div>
+                <div
+                  style={{
+                    fontWeight: "500", // Medium
+                    color: "#212121", // 색상 #212121
+                    whiteSpace: "pre-line",
+                    textIndent: "4px", // 첫 글자 들여쓰기
+                  }}
+                >
+                  {section.content}
+                </div>
               </div>
-              <div
-                style={{
-                  fontWeight: "500", // Medium
-                  color: "#212121", // 색상 #212121
-                  whiteSpace: "pre-line",
-                  textIndent: "4px", // 첫 글자 들여쓰기
-                }}
-              >
-                {section.content}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ function Header({ title, showArrow = true, backData, backPath }) {
         width: "100%",
         backgroundColor: "#FFFFFF",
         boxSizing: "border-box",
-        padding: "0 16px"
+        padding: "0 16px",
       }}
     >
       {showArrow && (
@@ -33,7 +33,7 @@ function Header({ title, showArrow = true, backData, backPath }) {
             alignItems: "center",
             zIndex: 1,
             cursor: "pointer",
-            marginLeft: "4px"
+            marginLeft: "4px",
           }}
           onClick={handleBack}
         >

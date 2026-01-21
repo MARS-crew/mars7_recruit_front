@@ -57,12 +57,10 @@ export default function SignUp() {
     "실내건축디자인과",
     "시각디자인과",
     "AR·VR콘텐츠디자인과",
-
     "경영학과",
     "세무회계학과",
     "유통마케팅학과",
     "호텔관광학과",
-
     "경영정보학과",
     "빅데이터경영과",
     "자유전공학과",
@@ -207,7 +205,7 @@ export default function SignUp() {
       setIdError("사용할 수 없는 아이디입니다.");
       setIdOk("no");
     } else if (!idRegex.test(userId)) {
-      setIdError("조건은 3-15자 영문자, 숫자 포함 후 작성해 주세요.");
+      setIdError("3-15자 영문자, 숫자 포함 후 작성해 주세요.");
       setIdOk("");
     } else {
       setUseId(true);
@@ -242,283 +240,285 @@ export default function SignUp() {
     return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
   };
   return (
-    <div
-      ref={containerRef} // ★ 이 Ref가 반드시 필요합니다
-      style={{
-        padding: "0 16px",
-        backgroundColor: "#FFFFFF",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div>
       <Header title="회원가입" />
       <div
+        ref={containerRef} // ★ 이 Ref가 반드시 필요합니다
         style={{
+          padding: "0 16px",
+          backgroundColor: "#FFFFFF",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
-          marginTop: "20px",
         }}
       >
-        {/* 이름 입력 */}
-        <div>
-          <Input
-            label="이름"
-            ref={nameRef}
-            error={!!nameError}
-            star={true}
-            value={userName}
-            focusColor="#FFC10033"
-            marginBottom="0px"
-            borderColor="#FFC100"
-            maxLength="10"
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="이름을 입력해주세요."
-          />
-          <div style={{ height: 30 }}>
-            <MessageText marginTop={2} message={nameError} color="#FF4D4D" />
-          </div>
-        </div>
-        <div>
-          <Input
-            label="전화번호"
-            ref={phoneRef}
-            error={!!phoneError}
-            star={true}
-            value={userPhone}
-            focusColor="#FFC10033"
-            marginBottom="0"
-            borderColor="#FFC100"
-            onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))} // 하이픈 자동 삽입 적용
-            placeholder="전화번호를 입력해주세요."
-          />
-          <div style={{ height: 30 }}>
-            <MessageText marginTop={2} message={phoneError} color="#FF4D4D" />
-          </div>
-        </div>
-        {/* 학년 선택 */}
-        <div>
-          <Select
-            label="학년"
-            value={grade}
-            ref={gradeRef}
-            error={!!gradeError}
-            options={gradeOptions}
-            customHeight={276}
-            placeholder="학년을 선택해주세요."
-            onChange={(val) => {
-              setGrade(val);
-            }}
-          />
-          <div style={{ height: 30 }}>
-            <MessageText marginTop={2} message={gradeError} color="#FF4D4D" />
-          </div>
-        </div>
-        {/* 학과 선택 */}
-        <div>
-          <Select
-            label="학과"
-            value={major}
-            options={majorOptions}
-            ref={majorRef}
-            error={!!majorError}
-            customHeight={276}
-            placeholder="학과를 선택해주세요."
-            onChange={(val) => {
-              setMajor(val);
-            }}
-          />
-          <div style={{ height: 30 }}>
-            <MessageText marginTop={2} message={majorError} color="#FF4D4D" />
-          </div>
-        </div>
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end", // 바닥 라인을 맞춤
-              width: "100%",
-            }}
-          >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginTop: "20px",
+          }}
+        >
+          {/* 이름 입력 */}
+          <div>
             <Input
-              label="아이디"
-              customWidth={"62%"}
-              value={userId}
+              label="이름"
+              ref={nameRef}
+              error={!!nameError}
               star={true}
-              ref={idRef}
-              maxLength="15"
-              error={!!idError && !useId}
-              marginBottom={0}
+              value={userName}
               focusColor="#FFC10033"
+              marginBottom="0px"
               borderColor="#FFC100"
-              onChange={(e) => {
-                setUserId(e.target.value);
-                setUseId(false);
-              }}
-              placeholder="아이디를 입력해주세요."
+              maxLength="10"
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="이름을 입력해주세요."
             />
-            {/* 버튼을 감싸는 영역 */}
-            <div style={{ width: "35%" }}>
-              <Button
-                onClick={idChecked}
-                label="중복확인"
-                fontWeight="semibold"
-                // 만약 Button 컴포넌트에 height props가 있다면 60으로 고정해주는 것이 좋습니다.
-                style={{ height: "60px", marginBottom: "0" }}
+            <div style={{ height: 30 }}>
+              <MessageText marginTop={2} message={nameError} color="#FF4D4D" />
+            </div>
+          </div>
+          <div>
+            <Input
+              label="전화번호"
+              ref={phoneRef}
+              error={!!phoneError}
+              star={true}
+              value={userPhone}
+              focusColor="#FFC10033"
+              marginBottom="0"
+              borderColor="#FFC100"
+              onChange={(e) => setUserPhone(formatPhoneNumber(e.target.value))} // 하이픈 자동 삽입 적용
+              placeholder="전화번호를 입력해주세요."
+            />
+            <div style={{ height: 30 }}>
+              <MessageText marginTop={2} message={phoneError} color="#FF4D4D" />
+            </div>
+          </div>
+          {/* 학년 선택 */}
+          <div>
+            <Select
+              label="학년"
+              value={grade}
+              ref={gradeRef}
+              error={!!gradeError}
+              options={gradeOptions}
+              customHeight={276}
+              placeholder="학년을 선택해주세요."
+              onChange={(val) => {
+                setGrade(val);
+              }}
+            />
+            <div style={{ height: 30 }}>
+              <MessageText marginTop={2} message={gradeError} color="#FF4D4D" />
+            </div>
+          </div>
+          {/* 학과 선택 */}
+          <div>
+            <Select
+              label="학과"
+              value={major}
+              options={majorOptions}
+              ref={majorRef}
+              error={!!majorError}
+              customHeight={276}
+              placeholder="학과를 선택해주세요."
+              onChange={(val) => {
+                setMajor(val);
+              }}
+            />
+            <div style={{ height: 30 }}>
+              <MessageText marginTop={2} message={majorError} color="#FF4D4D" />
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-end", // 바닥 라인을 맞춤
+                width: "100%",
+              }}
+            >
+              <Input
+                label="아이디"
+                customWidth={"62%"}
+                value={userId}
+                star={true}
+                ref={idRef}
+                maxLength="15"
+                error={!!idError && !useId}
+                marginBottom={0}
+                focusColor="#FFC10033"
+                borderColor="#FFC100"
+                onChange={(e) => {
+                  setUserId(e.target.value);
+                  setUseId(false);
+                }}
+                placeholder="아이디를 입력해주세요."
+              />
+              {/* 버튼을 감싸는 영역 */}
+              <div style={{ width: "35%" }}>
+                <Button
+                  onClick={idChecked}
+                  label="중복확인"
+                  fontWeight="semibold"
+                  // 만약 Button 컴포넌트에 height props가 있다면 60으로 고정해주는 것이 좋습니다.
+                  style={{ height: "60px", marginBottom: "0" }}
+                />
+              </div>
+            </div>
+            <div style={{ height: 30 }}>
+              <MessageText
+                marginTop={2}
+                message={idError}
+                color={useId ? "#4CAF50" : "#FF4D4D"}
               />
             </div>
           </div>
-          <div style={{ height: 30 }}>
-            <MessageText
-              marginTop={2}
-              message={idError}
-              color={useId ? "#4CAF50" : "#FF4D4D"}
+          <div>
+            <PasswordField
+              label="비밀번호"
+              value={userPw}
+              ref={pwRef}
+              maxLength="20"
+              error={!!pwError}
+              star={true}
+              marginBottom="0px"
+              onChange={(e) => {
+                setUserPw(e.target.value);
+              }}
+              focusColor="#FFC10033"
+              borderColor="#FFC100"
+              placeholder="비밀번호를 입력해주세요."
             />
+            <div style={{ height: 30 }}>
+              <MessageText marginTop={2} message={pwError} color="#FF4D4D" />
+            </div>
+          </div>
+          <div>
+            <PasswordField
+              label="비밀번호 확인"
+              value={userPwC}
+              ref={pwcRef}
+              maxLength="20"
+              marginBottom="0px"
+              error={!!pwcError}
+              star={true}
+              onChange={(e) => {
+                setUserPwC(e.target.value);
+              }}
+              focusColor="#FFC10033"
+              borderColor="#FFC100"
+              placeholder="비밀번호를 입력해주세요."
+            />
+            <div style={{ height: 40 }}>
+              <MessageText marginTop={2} message={pwcError} color="#FF4D4D" />
+            </div>
           </div>
         </div>
-        <div>
-          <PasswordField
-            label="비밀번호"
-            value={userPw}
-            ref={pwRef}
-            maxLength="20"
-            error={!!pwError}
-            star={true}
-            marginBottom="0px"
-            onChange={(e) => {
-              setUserPw(e.target.value);
-            }}
-            focusColor="#FFC10033"
-            borderColor="#FFC100"
-            placeholder="비밀번호를 입력해주세요."
-          />
-          <div style={{ height: 30 }}>
-            <MessageText marginTop={2} message={pwError} color="#FF4D4D" />
-          </div>
-        </div>
-        <div>
-          <PasswordField
-            label="비밀번호 확인"
-            value={userPwC}
-            ref={pwcRef}
-            maxLength="20"
-            marginBottom="0px"
-            error={!!pwcError}
-            star={true}
-            onChange={(e) => {
-              setUserPwC(e.target.value);
-            }}
-            focusColor="#FFC10033"
-            borderColor="#FFC100"
-            placeholder="비밀번호를 입력해주세요."
-          />
-          <div style={{ height: 40 }}>
-            <MessageText marginTop={2} message={pwcError} color="#FF4D4D" />
-          </div>
-        </div>
-      </div>
-      {/* 앱 푸시 동의 */}
+        {/* 앱 푸시 동의 */}
 
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          display: "inline-flex",
-          alignItems: "center",
-          height: 22,
-
-          gap: "10px",
-        }}
-      >
         <div
-          onClick={() => {
-            setAgree(!agree);
-            setAgreeError("");
-          }}
           style={{
-            display: "flex",
+            position: "relative",
+            width: "100%",
+            display: "inline-flex",
             alignItems: "center",
+            height: 22,
+
             gap: "10px",
-            cursor: "pointer",
           }}
         >
           <div
+            onClick={() => {
+              setAgree(!agree);
+              setAgreeError("");
+            }}
             style={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "4px",
-              border: agree ? "1px solid #FFC100" : "1px solid #D9D9D9",
-              backgroundColor: agree ? "#FFC100" : "#FFFFFF",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              gap: "10px",
+              cursor: "pointer",
             }}
           >
-            {agree && <img src={check} alt="checked" />}
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "4px",
+                border: agree ? "1px solid #FFC100" : "1px solid #D9D9D9",
+                backgroundColor: agree ? "#FFC100" : "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {agree && <img src={check} alt="checked" />}
+            </div>
+            <span style={{ fontSize: 14, color: "#9EA3B2" }}>
+              이용약관 동의 (필수)
+            </span>
           </div>
-          <span style={{ fontSize: 14, color: "#9EA3B2" }}>
-            이용약관 동의 (필수)
-          </span>
+          <div
+            onClick={() => goToTerms("/termsDetail")}
+            style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
+          >
+            <img src={RightArrow} alt="detail" />
+          </div>
         </div>
-        <div
-          onClick={() => goToTerms("/termsDetail")}
-          style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
-        >
-          <img src={RightArrow} alt="detail" />
+        <div style={{ minHeight: "24px" }}>
+          <MessageText marginTop={2} message={agreeError} color="#FF4D4D" />
         </div>
-      </div>
-      <div style={{ minHeight: "24px" }}>
-        <MessageText marginTop={2} message={agreeError} color="#FF4D4D" />
-      </div>
-      {/* 2. 앱 푸시 동의 (선택) */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          display: "inline-flex",
-          alignItems: "center",
-          height: 22,
-          gap: "10px",
-        }}
-      >
+        {/* 2. 앱 푸시 동의 (선택) */}
         <div
-          onClick={() => setAppPush(!appPush)}
           style={{
-            display: "flex",
+            position: "relative",
+            width: "100%",
+            display: "inline-flex",
             alignItems: "center",
+            height: 22,
             gap: "10px",
-            cursor: "pointer",
           }}
         >
           <div
+            onClick={() => setAppPush(!appPush)}
             style={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "4px",
-              border: appPush ? "1px solid #FFC100" : "1px solid #D9D9D9",
-              backgroundColor: appPush ? "#FFC100" : "#FFFFFF",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              gap: "10px",
+              cursor: "pointer",
             }}
           >
-            {appPush && <img src={check} alt="checked" />}
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "4px",
+                border: appPush ? "1px solid #FFC100" : "1px solid #D9D9D9",
+                backgroundColor: appPush ? "#FFC100" : "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {appPush && <img src={check} alt="checked" />}
+            </div>
+            <span style={{ fontSize: 14, color: "#9EA3B2" }}>
+              앱 푸시 수신 동의 (선택)
+            </span>
           </div>
-          <span style={{ fontSize: 14, color: "#9EA3B2" }}>
-            앱 푸시 수신 동의 (선택)
-          </span>
+          <div
+            onClick={() => goToTerms("/pushTermsDetail")}
+            style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
+          >
+            <img src={RightArrow} alt="detail" />
+          </div>
         </div>
-        <div
-          onClick={() => goToTerms("/pushTermsDetail")}
-          style={{ position: "absolute", right: "3.5px", cursor: "pointer" }}
-        >
-          <img src={RightArrow} alt="detail" />
-        </div>
-      </div>
 
-      <div style={{ marginTop: 35 }}>
-        <Button label="다음" onClick={handleSingUP} />
+        <div style={{ marginTop: 35 }}>
+          <Button label="다음" onClick={handleSingUP} />
+        </div>
       </div>
     </div>
   );

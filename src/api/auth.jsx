@@ -35,11 +35,6 @@ export const authApi = {
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "로그인 중 오류가 발생했습니다.",
-        );
-      }
       throw error;
     }
   },

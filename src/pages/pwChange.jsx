@@ -68,85 +68,87 @@ export default function PwChange() {
   }, []);
 
   return (
-    <div
-      style={{
-        padding: "0 16px",
-        backgroundColor: "#FFFFFF",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-      }}
-    >
+    <div>
+      {" "}
       <Header title="비밀번호 변경" />
+      <div
+        style={{
+          padding: "0 16px",
+          backgroundColor: "#FFFFFF",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+        }}
+      >
+        <div style={{ marginTop: 10 }}>
+          <div style={{ height: 100, marginTop: 20 }}>
+            <PasswordField
+              ref={pwRef}
+              label="변경할 비밀번호"
+              value={userPw}
+              error={!!pwError}
+              star={true}
+              onChange={(e) => setUserPw(e.target.value)}
+              focusColor="#FFC10033"
+              borderColor="#FFC100"
+              placeholder="새 비밀번호를 입력해주세요."
+            />
+            <MessageText marginTop={-10} message={pwError} color="#FF4D4D" />
+          </div>
 
-      <div style={{ marginTop: 10 }}>
-        <div style={{ height: 100, marginTop: 20 }}>
-          <PasswordField
-            ref={pwRef}
-            label="변경할 비밀번호"
-            value={userPw}
-            error={!!pwError}
-            star={true}
-            onChange={(e) => setUserPw(e.target.value)}
-            focusColor="#FFC10033"
-            borderColor="#FFC100"
-            placeholder="새 비밀번호를 입력해주세요."
-          />
-          <MessageText marginTop={-10} message={pwError} color="#FF4D4D" />
+          <div style={{ height: 100, marginTop: 20 }}>
+            <PasswordField
+              ref={pwcRef}
+              label="비밀번호 확인"
+              value={userPwC}
+              error={!!pwcError}
+              star={true}
+              onChange={(e) => setUserPwC(e.target.value)}
+              focusColor="#FFC10033"
+              borderColor="#FFC100"
+              placeholder="비밀번호를 한 번 더 입력해주세요."
+            />
+            <MessageText marginTop={-10} message={pwcError} color="#FF4D4D" />
+          </div>
         </div>
 
-        <div style={{ height: 100, marginTop: 20 }}>
-          <PasswordField
-            ref={pwcRef}
-            label="비밀번호 확인"
-            value={userPwC}
-            error={!!pwcError}
-            star={true}
-            onChange={(e) => setUserPwC(e.target.value)}
-            focusColor="#FFC10033"
-            borderColor="#FFC100"
-            placeholder="비밀번호를 한 번 더 입력해주세요."
-          />
-          <MessageText marginTop={-10} message={pwcError} color="#FF4D4D" />
+        <div style={{ marginTop: 37 }}>
+          <Button label="저장" onClick={pwcheck} />
         </div>
-      </div>
 
-      <div style={{ marginTop: 37 }}>
-        <Button label="저장" onClick={pwcheck} />
-      </div>
+        {/* 3. 토스트 UI (하단 고정) */}
+        {showToast && (
+          <div
+            style={{
+              position: "fixed",
+              bottom: "100px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              color: "white",
+              padding: "12px 24px",
+              borderRadius: "30px",
+              fontSize: "14px",
+              zIndex: 10000,
+              whiteSpace: "nowrap",
+              animation: "fadeInOut 2s",
+            }}
+          >
+            비밀번호가 변경되었습니다.
+          </div>
+        )}
 
-      {/* 3. 토스트 UI (하단 고정) */}
-      {showToast && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "100px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            color: "white",
-            padding: "12px 24px",
-            borderRadius: "30px",
-            fontSize: "14px",
-            zIndex: 10000,
-            whiteSpace: "nowrap",
-            animation: "fadeInOut 2s",
-          }}
-        >
-          비밀번호가 변경되었습니다.
-        </div>
-      )}
-
-      {/* 토스트 애니메이션 스타일 */}
-      <style>{`
+        {/* 토스트 애니메이션 스타일 */}
+        <style>{`
         @keyframes fadeInOut {
-          0% { opacity: 0; bottom: 30px; }
-          15% { opacity: 1; bottom: 50px; }
-          85% { opacity: 1; bottom: 50px; }
-          100% { opacity: 0; bottom: 30px; }
+          0% { opacity: 0; bottom: 70px; }
+          15% { opacity: 1; bottom: 100px; }
+          85% { opacity: 1; bottom: 100px; }
+          100% { opacity: 0; bottom: 70px; }
         }
       `}</style>
+      </div>
     </div>
   );
 }
