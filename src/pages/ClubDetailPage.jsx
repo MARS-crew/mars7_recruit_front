@@ -1,9 +1,10 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import ClubDetail from './ClubDetail';
 
 const ClubDetailPage = () => {
     const { id } = useParams(); // URL에서 동아리 ID를 가져옵니다.
+    const location = useLocation();
     
     // TODO: 실제로는 API에서 동아리 정보를 가져와야 합니다.
     // 임시 동아리 데이터 (clubs.jsx와 동일한 데이터)
@@ -73,8 +74,8 @@ const ClubDetailPage = () => {
     const club = clubsData[id] || clubsData[1]; // ID에 해당하는 동아리 데이터
     
     // TODO: 로그인한 사용자가 게시자인지 지원자인지 확인하는 로직
-    // true 이면 게시자 false이면 지원자 시점으로 화면을 렌더링
-    const isPublisher = true;
+    // location.state?.isPublisher 로 전달된 값 우선, 기본은 지원자(false)
+    const isPublisher = Boolean(location.state?.isPublisher);
 
     return <ClubDetail club={club} isPublisher={isPublisher} />;
 };

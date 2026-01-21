@@ -239,8 +239,7 @@ export default function Clubs() {
       <button
         className="fab-button"
         onClick={() => {
-          navigate('/recruit');
-          // setLoginOpen(true); // 로그인 모달을 다시 사용할 때 주석 해제
+          setLoginOpen(true); // 로그인 모달을 다시 사용할 때 주석 해제
         }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -249,14 +248,12 @@ export default function Clubs() {
 
       </button>
 
-      {false && (
         <Modal
           isOpen={LoginOpen}
           lBtn="취소"
           onClose={() => setLoginOpen(false)}
           onRightClick={() => navigate('/login')}
         />
-      )}
       
       {/* 토스트 팝업 */}
       {showToast && (
