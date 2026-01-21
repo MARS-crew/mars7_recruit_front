@@ -1,26 +1,40 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
-import { getResumeDetail } from "../api/resume";
+import { getResumeDetail, updateResumeStatus } from "../api/resume";
 
 export default function ApplicantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const resumeId = id;
+
+  const recruitId =
+    location.state?.recruitId ??
+    new URLSearchParams(location.search).get("recruitId");
 
   const [modalType, setModalType] = useState(null);
   const [applicant, setApplicant] = useState(null);
 
   const closeModal = () => setModalType(null);
 
-  const handleConfirm = () => {
-    // 지원서 상태 업데이트 api 추가 예정
-    closeModal();
+  const handleConfirm = async () => {
+    if (!modalType) return;
+
+    const status = modalType === "pass" ? "PASS" : "FAIL";
+
+    try {
+      await updateResumeStatus(recruitId, resumeId, status);
+      setApplicant((prev) => (prev ? { ...prev, status } : prev));
+      closeModal();
+    } catch (e) {
+      console.error("지원서 상태 업데이트 실패", e);
+    }
   };
 
   useEffect(() => {
-    const resumeId = id;
-
     if (!resumeId) {
       setApplicant(null);
       return;
@@ -29,7 +43,8 @@ export default function ApplicantDetail() {
     const fetchDetail = async () => {
       try {
         const res = await getResumeDetail(resumeId);
-        setApplicant(res.data);
+
+        setApplicant(res?.data?.data ?? null);
       } catch (e) {
         console.error("지원서 상세 조회 실패", e);
         setApplicant(null);
@@ -37,8 +52,7 @@ export default function ApplicantDetail() {
     };
 
     fetchDetail();
-  }, [id]);
-
+  }, [resumeId]);
 
   if (!applicant) {
     return (
@@ -57,7 +71,14 @@ export default function ApplicantDetail() {
 
       <div style={{ padding: 24 }}>
         {/* 제목 */}
-        <h2 style={{ margin: "8px 0 10px", fontSize: 20, fontWeight: 600, marginBottom: 30 }}>
+        <h2
+          style={{
+            margin: "8px 0 10px",
+            fontSize: 20,
+            fontWeight: 600,
+            marginBottom: 30,
+          }}
+        >
           {applicant.title}
         </h2>
 
@@ -73,16 +94,18 @@ export default function ApplicantDetail() {
             }}
           >
             <img
-              src={applicant.profileImageUrl || Profile}
+              src={Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
 
           <div>
-            <div style={{ fontWeight: 600, fontSize: 16 }}>{applicant.name}</div>
+            <div style={{ fontWeight: 600, fontSize: 16 }}>
+              {applicant.userName}
+            </div>
             <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
-              {applicant.gender} · {applicant.age}세 / {applicant.major} {applicant.grade}
+              {applicant.major} {applicant.grade}학년
             </div>
           </div>
         </div>
@@ -92,12 +115,19 @@ export default function ApplicantDetail() {
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
           <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>주소</div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>{applicant.address}</div>
-          </div>
-          <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>연락처</div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>{applicant.phone}</div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                width: 64,
+                color: "#999",
+              }}
+            >
+              연락처
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
+              {applicant.phoneNumber}
+            </div>
           </div>
         </div>
 
@@ -105,9 +135,19 @@ export default function ApplicantDetail() {
 
         {/* 자기소개 */}
         <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>자기소개</div>
-          <p style={{ fontWeight: 400, fontSize: 14, margin: 0, lineHeight: 1.7, color: "#333" }}>
-            {applicant.intro}
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>
+            자기소개
+          </div>
+          <p
+            style={{
+              fontWeight: 400,
+              fontSize: 14,
+              margin: 0,
+              lineHeight: 1.7,
+              color: "#333",
+            }}
+          >
+            {applicant.selfIntroduce}
           </p>
         </div>
 
