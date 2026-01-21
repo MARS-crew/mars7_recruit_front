@@ -26,6 +26,17 @@ const ClubDetail = ({ club, isPublisher }) => {
         .filter(Boolean);
 
     return (
+        <div>
+                {/* Header: 게시자 전용 헤더 vs 기본 헤더 */}
+        {isPublisher ? (
+            <Clubheader
+                title="동아리 모집"
+                onEdit={() => navigate('/recruit', { state: { club } })}
+                onDelete={() => setShowDeleteModal(true)}
+            />
+        ) : (
+            <Header title="동아리 모집" />
+        )}
         <div style={{
         padding: "0 16px",
         minHeight: "100vh",
@@ -34,17 +45,6 @@ const ClubDetail = ({ club, isPublisher }) => {
         boxSizing: "border-box",
         backgroundColor: "#FFFFFF",
       }}>
-            {/* Header: 게시자 전용 헤더 vs 기본 헤더 */}
-            {isPublisher ? (
-                <Clubheader
-                    title="동아리 모집"
-                    onEdit={() => navigate('/recruit', { state: { club } })}
-                    onDelete={() => setShowDeleteModal(true)}
-                />
-            ) : (
-                <Header title="동아리 모집" />
-            )}
-
             <div className="club-detail-content">
                 {/* 동아리 카테고리 태그 */}
                 <div className="club-category-tag">
@@ -189,6 +189,7 @@ const ClubDetail = ({ club, isPublisher }) => {
                 onClose={() => setShowToast(false)}
             />
         </div>
+    </div>
     );
 };
 

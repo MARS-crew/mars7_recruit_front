@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import recruitApi from '../api/recruit';
 import Header from '../components/header';
 import '../styles/RecruitCreate.css';
 
@@ -290,7 +291,7 @@ export default function RecruitCreate() {
     </div>
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 필수 입력 검증 순서대로 확인
     if (!formData.title) {
       setEmptyFieldError('제목을 입력해 주세요.');
@@ -300,6 +301,12 @@ export default function RecruitCreate() {
 
     if (!formData.content) {
       setEmptyFieldError('모집글을 입력해 주세요.');
+      contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (uploadedImages.length === 0) {
+      setEmptyFieldError('사진을 추가해 주세요.');
       contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -359,9 +366,46 @@ export default function RecruitCreate() {
     }
 
     setEmptyFieldError('');
-    // 폼 제출 로직
-    console.log('Form submitted:', formData);
-    navigate('/clubs');
+
+    const toIsoDateTime = (value) => {
+      if (!value) return null;
+      const normalized = value.includes('T') ? value : `${value}T00:00:00`;
+      const d = new Date(normalized);
+      if (Number.isNaN(d.getTime())) return null;
+      return d.toISOString();
+    };
+    
+    // 토큰 확인
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+    
+    // 서버에 전송할 데이터 포맷팅
+    const submitData = {
+      title: formData.title,
+      content: formData.content,
+      field: formData.category === '취미동아리' ? 'HOBBY' : 'MAJOR',
+      gender: formData.gender === '무관' ? 'ANY' : formData.gender === '남자' ? 'M' : 'F',
+      people: parseInt(formData.recruitCount),
+      startDate: toIsoDateTime(formData.startDate),
+      dueDate: toIsoDateTime(formData.endDate),
+      resultDate: toIsoDateTime(formData.deadline),
+      posterImage: uploadedImages[0]?.preview || null,
+    };
+
+    try {
+      console.log('📝 모집글 작성 중...', submitData);
+      const response = await recruitApi.create(submitData);
+      console.log('✅ 모집글 작성 완료:', response);
+      alert('모집글이 작성되었습니다!');
+      navigate('/clubs');
+    } catch (error) {
+      console.error('❌ 모집글 작성 실패:', error);
+      alert(error.message || '모집글 작성에 실패했습니다.');
+    }
   };
 
   return (
@@ -452,7 +496,7 @@ export default function RecruitCreate() {
             ))}
           </div>
         )}
-        {emptyFieldError && emptyFieldError.includes('모집글') && (
+        {emptyFieldError && (emptyFieldError.includes('모집글') || emptyFieldError.includes('사진')) && (
           <div className="error-message" style={{ marginTop: '8px' }}>{emptyFieldError}</div>
         )}
       </div>
@@ -559,11 +603,23 @@ export default function RecruitCreate() {
             max="100"
             onChange={(e) => {
               let value = e.target.value;
-              // 입력값이 100을 넘으면 100으로 제한
-              if (value && Number(value) > 100) {
-                value = '100';
+              // 숫자만 허용 (정수)
+              if (value === '') {
+                setFormData({ ...formData, recruitCount: '' });
+              } else {
+                const numValue = parseInt(value, 10);
+                // 1 이상 100 이하로 제한
+                if (!isNaN(numValue)) {
+                  if (numValue < 0) {
+                    value = '0';
+                  } else if (numValue > 100) {
+                    value = '100';
+                  } else {
+                    value = String(numValue);
+                  }
+                  setFormData({ ...formData, recruitCount: value });
+                }
               }
-              setFormData({ ...formData, recruitCount: value });
               if (emptyFieldError.includes('모집 인원')) setEmptyFieldError('');
             }}
           />
