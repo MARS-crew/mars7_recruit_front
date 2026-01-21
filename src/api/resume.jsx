@@ -4,7 +4,7 @@ import { axiosInstance } from "./axios";
 export const getApplicants = (recruitId) =>
   axiosInstance.get(`/api/resumes/${recruitId}/applicants`);
 
-// 지원서 상세 조회 (게시자)
+// 지원자 지원서 상세 조회 (게시자)
 export const getResumeDetail = (resumeId) =>
   axiosInstance.get(`/api/resumes/${resumeId}/detail`);
 
