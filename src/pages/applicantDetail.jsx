@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 import { getResumeDetail, updateResumeStatus } from "../api/resume";
 
 export default function ApplicantDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const resumeId = id;
@@ -57,7 +56,7 @@ export default function ApplicantDetail() {
   if (!applicant) {
     return (
       <div style={{ paddingBottom: 40 }}>
-        <Header title="지원서 조회" leftAction={() => navigate(-1)} />
+        <Header title="지원서 조회" />
         <div style={{ padding: 24 }}>
           <p>지원서를 찾을 수 없습니다.</p>
         </div>
@@ -67,7 +66,7 @@ export default function ApplicantDetail() {
 
   return (
     <div style={{ paddingBottom: 40 }}>
-      <Header title="지원서 조회" leftAction={() => navigate(-1)} />
+      <Header title="지원서 조회" />
 
       <div style={{ padding: 24 }}>
         {/* 제목 */}
