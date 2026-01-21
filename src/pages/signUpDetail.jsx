@@ -137,168 +137,173 @@ export default function SingUpDetail() {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        padding: "0 16px",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        boxSizing: "border-box",
-        backgroundColor: "#FFFFFF",
-      }}
-    >
+    <div>
       <Header title={"회원가입"} />
-
-      <div style={{ flex: 1 }}>
-        {/* 프로필 이미지 */}
-        <div
-          style={{ display: "flex", justifyContent: "center", marginTop: 22 }}
-        >
+      <div
+        ref={containerRef}
+        style={{
+          padding: "0 16px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          boxSizing: "border-box",
+          backgroundColor: "#FFFFFF",
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          {/* 프로필 이미지 */}
           <div
-            style={{
-              position: "relative",
-              width: 120,
-              height: 120,
-              cursor: "pointer",
-            }}
-            onClick={handleImageClick}
+            style={{ display: "flex", justifyContent: "center", marginTop: 22 }}
           >
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-            <img
-              src={profileImg}
-              alt="user"
+            <div
               style={{
+                position: "relative",
                 width: 120,
                 height: 120,
-                borderRadius: isDefaultImage ? "0%" : "50%",
-                objectFit: isDefaultImage ? "contain" : "cover",
+                cursor: "pointer",
               }}
-            />
-          </div>
-        </div>
-
-        {/* 입력 폼 */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginTop: 62,
-          }}
-        >
-          {/* 성별 */}
-          <div>
-            <Select
-              ref={genderRef}
-              label="성별"
-              value={gender}
-              error={!!genderError}
-              options={genderOption}
-              placeholder="성별 선택"
-              onChange={(val) => {
-                setGender(val);
-                setGenderError("");
-              }}
-              borderColor={genderError ? "#FF4D4D" : "#D9D9D9"}
-            />
-            <div style={{ height: 28 }}>
-              <MessageText
-                marginTop={2}
-                message={genderError}
-                color="#FF4D4D"
-              />
-            </div>
-          </div>
-
-          {/* 생년월일 */}
-          <div>
-            <div
-              style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}
+              onClick={handleImageClick}
             >
-              <div style={{ flex: 1 }}>
-                <Select
-                  ref={yearRef}
-                  value={year}
-                  label="생년월일"
-                  customHeight={276}
-                  options={yearOptions}
-                  placeholder="년"
-                  onChange={(val) => {
-                    setYear(val);
-                    setBirthError("");
-                  }}
-                  borderColor={birthError && !year ? "#FF4D4D" : "#D9D9D9"}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <Select
-                  value={month}
-                  options={monthOptions}
-                  top="73px"
-                  placeholder="월"
-                  customHeight={276}
-                  onChange={(val) => {
-                    setMonth(val);
-                    setBirthError("");
-                  }}
-                  borderColor={birthError && !month ? "#FF4D4D" : "#D9D9D9"}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <Select
-                  value={day}
-                  label=""
-                  top="73px"
-                  options={dayOptions}
-                  placeholder="일"
-                  customHeight={276}
-                  onChange={(val) => {
-                    setDay(val);
-                    setBirthError("");
-                  }}
-                  borderColor={birthError && !day ? "#FF4D4D" : "#D9D9D9"}
-                />
-              </div>
-            </div>
-            <div style={{ height: 28 }}>
-              <MessageText marginTop={2} message={birthError} color="#FF4D4D" />
-            </div>
-          </div>
-
-          {/* 주소 (특수문자 검사 적용) */}
-          <div>
-            <Input
-              label="주소"
-              ref={addressRef}
-              error={!!addressError}
-              star={true}
-              value={address}
-              focusColor="#FFC10033"
-              marginBottom="0"
-              maxLength="50"
-              borderColor={addressError ? "#FF4D4D" : "#D9D9D9"}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="주소를 입력해주세요."
-            />
-            <div style={{ height: 28 }}>
-              <MessageText
-                marginTop={2}
-                message={addressError}
-                color="#FF4D4D"
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              <img
+                src={profileImg}
+                alt="user"
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: isDefaultImage ? "0%" : "50%",
+                  objectFit: isDefaultImage ? "contain" : "cover",
+                }}
               />
             </div>
           </div>
-        </div>
-      </div>
 
-      <div style={{ marginTop: 40, marginBottom: 35 }}>
-        <Button label="회원가입" onClick={handleComplete} />
+          {/* 입력 폼 */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginTop: 62,
+            }}
+          >
+            {/* 성별 */}
+            <div>
+              <Select
+                ref={genderRef}
+                label="성별"
+                value={gender}
+                error={!!genderError}
+                options={genderOption}
+                placeholder="성별 선택"
+                onChange={(val) => {
+                  setGender(val);
+                  setGenderError("");
+                }}
+                borderColor={genderError ? "#FF4D4D" : "#D9D9D9"}
+              />
+              <div style={{ height: 28 }}>
+                <MessageText
+                  marginTop={2}
+                  message={genderError}
+                  color="#FF4D4D"
+                />
+              </div>
+            </div>
+
+            {/* 생년월일 */}
+            <div>
+              <div
+                style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}
+              >
+                <div style={{ flex: 1 }}>
+                  <Select
+                    ref={yearRef}
+                    value={year}
+                    label="생년월일"
+                    customHeight={276}
+                    options={yearOptions}
+                    placeholder="년"
+                    onChange={(val) => {
+                      setYear(val);
+                      setBirthError("");
+                    }}
+                    borderColor={birthError && !year ? "#FF4D4D" : "#D9D9D9"}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Select
+                    value={month}
+                    options={monthOptions}
+                    top="73px"
+                    placeholder="월"
+                    customHeight={276}
+                    onChange={(val) => {
+                      setMonth(val);
+                      setBirthError("");
+                    }}
+                    borderColor={birthError && !month ? "#FF4D4D" : "#D9D9D9"}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Select
+                    value={day}
+                    label=""
+                    top="73px"
+                    options={dayOptions}
+                    placeholder="일"
+                    customHeight={276}
+                    onChange={(val) => {
+                      setDay(val);
+                      setBirthError("");
+                    }}
+                    borderColor={birthError && !day ? "#FF4D4D" : "#D9D9D9"}
+                  />
+                </div>
+              </div>
+              <div style={{ height: 28 }}>
+                <MessageText
+                  marginTop={2}
+                  message={birthError}
+                  color="#FF4D4D"
+                />
+              </div>
+            </div>
+
+            {/* 주소 (특수문자 검사 적용) */}
+            <div>
+              <Input
+                label="주소"
+                ref={addressRef}
+                error={!!addressError}
+                star={true}
+                value={address}
+                focusColor="#FFC10033"
+                marginBottom="0"
+                maxLength="50"
+                borderColor={addressError ? "#FF4D4D" : "#D9D9D9"}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="주소를 입력해주세요."
+              />
+              <div style={{ height: 28 }}>
+                <MessageText
+                  marginTop={2}
+                  message={addressError}
+                  color="#FF4D4D"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 40, marginBottom: 35 }}>
+          <Button label="회원가입" onClick={handleComplete} />
+        </div>
       </div>
     </div>
   );

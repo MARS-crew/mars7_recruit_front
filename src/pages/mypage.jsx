@@ -157,7 +157,12 @@ export default function MyPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setLoginOpen(true); // 렌더링 직후 모달을 열기
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setLoginOpen(true);
+    } else {
+      setLoginOpen(false);
+    }
   }, []);
   return (
     <div>
@@ -402,10 +407,10 @@ export default function MyPage() {
       {/* 토스트 애니메이션 스타일 */}
       <style>{`
         @keyframes fadeInOut {
-          0% { opacity: 0; bottom: 30px; }
-          15% { opacity: 1; bottom: 50px; }
-          85% { opacity: 1; bottom: 50px; }
-          100% { opacity: 0; bottom: 30px; }
+          0% { opacity: 0; bottom: 70px; }
+          15% { opacity: 1; bottom: 100px; }
+          85% { opacity: 1; bottom: 100px; }
+          100% { opacity: 0; bottom: 70px; }
         }
       `}</style>
     </div>
