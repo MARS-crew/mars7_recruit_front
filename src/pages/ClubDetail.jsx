@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ClubDetail.css';
 import Clubheader from '../components/clubheader';
+import Header from '../components/header';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
 
@@ -33,12 +34,16 @@ const ClubDetail = ({ club, isPublisher }) => {
         boxSizing: "border-box",
         backgroundColor: "#FFFFFF",
       }}>
-            {/* Header */}
-            <Clubheader
-                title="동아리 모집"
-                onEdit={() => navigate('/recruit', { state: { club } })}
-                onDelete={() => setShowDeleteModal(true)}
-            />
+            {/* Header: 게시자 전용 헤더 vs 기본 헤더 */}
+            {isPublisher ? (
+                <Clubheader
+                    title="동아리 모집"
+                    onEdit={() => navigate('/recruit', { state: { club } })}
+                    onDelete={() => setShowDeleteModal(true)}
+                />
+            ) : (
+                <Header title="동아리 모집" />
+            )}
 
             <div className="club-detail-content">
                 {/* 동아리 카테고리 태그 */}
