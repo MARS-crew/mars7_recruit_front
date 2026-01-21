@@ -118,7 +118,6 @@ export default function SingUpDetail() {
         const response = await authApi.signup(finalData);
 
         if (response) {
-          alert("회원가입이 완료되었습니다!");
           navigate("/");
         }
       } catch (error) {
