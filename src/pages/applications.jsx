@@ -1,40 +1,19 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getMyResumes } from "../api/resume";
 import BottomNavBar from "../components/BottomNavBar";
 import Nobackheader from "../components/nobackheader";
 
-// 더미 데이터
-const mockApplications = [
-  {
-    id: 1,
-    status: "reject",
-    title: "2026년도 전공동아리 ONE 신입...",
-    summary: "어떤일이든 최선을 다하겠습니다. 포기하지 않는 지원자...",
-    date: "2025.12.23",
-  },
-  {
-    id: 2,
-    status: "pass",
-    title: "2026년도 전공동아리 ONE 신입...",
-    summary: "어떤일이든 최선을 다하겠습니다. 포기하지 않는 지원자...",
-    date: "2025.12.23",
-  },
-  {
-    id: 3,
-    status: "pending",
-    title: "2026년도 전공동아리 ONE 신입...",
-    summary: "어떤일이든 최선을 다하겠습니다. 포기하지 않는 지원자...",
-    date: "2025.12.23",
-  },
-];
-
 function StatusPill({ status }) {
+  const s = status ?? "INPROGRESS";
+
   const map = {
-    reject: { label: "불합격", border: "#FF4D4D", bg: "#FFECEC", color: "#FF4D4D" },
-    pass: { label: "합격", border: "#2B7FFF", bg: "#E8F1FF", color: "#2B7FFF" },
-    pending: { label: "심사중", border: "#CFCFCF", bg: "#F5F5F5", color: "#888" },
+    INPROGRESS: { label: "심사중", border: "#CFCFCF", bg: "#F5F5F5", color: "#888" },
+    PASS: { label: "합격", border: "#2B7FFF", bg: "#E8F1FF", color: "#2B7FFF" },
+    FAIL: { label: "불합격", border: "#FF4D4D", bg: "#FFECEC", color: "#FF4D4D" },
   };
 
-  const s = map[status] ?? map.pending;
+  const v = map[s] ?? map.INPROGRESS;
 
   return (
     <span
@@ -46,39 +25,72 @@ function StatusPill({ status }) {
         height: 32,
         padding: "0 14px",
         borderRadius: 999,
-        border: `1.5px solid ${s.border}`,
-        background: s.bg,
-        color: s.color,
+        border: `1.5px solid ${v.border}`,
+        background: v.bg,
+        color: v.color,
         fontWeight: 500,
         fontSize: 13,
         flexShrink: 0,
       }}
     >
-      {s.label}
+      {v.label}
     </span>
   );
 }
 
 export default function Applications() {
   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const fetchMyResumes = async () => {
+      try {
+        const res = await getMyResumes();
+        const list = res?.data?.data ?? [];
+        setItems(Array.isArray(list) ? list : []);
+      } catch (e) {
+        console.error("내 지원서 목록 조회 실패", e);
+        setItems([]);
+      }
+    };
+
+    fetchMyResumes();
+  }, []);
+
+  const formatDate = (iso) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div style={{ paddingBottom: 72 }}>
-      <Nobackheader title = "지원서 목록"/>
+      <Nobackheader title="지원서 목록" />
 
       <div style={{ padding: "0 16px" }}>
         <div style={{ height: 10 }} />
 
         <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {mockApplications.map((item) => (
+          {items.map((item) => (
             <li
-              key={item.id}
+              key={item.resumeId}
               style={{
                 borderBottom: "1px solid #eee",
                 cursor: "pointer",
                 userSelect: "none",
               }}
-              onClick={() => navigate(`/applications/${item.id}`)}
+              onClick={() =>
+                navigate(`/applications/${item.resumeId}`, {
+                  state: { recruitId: item.recruitId },
+                })
+              }
             >
               <div
                 style={{
@@ -114,7 +126,7 @@ export default function Applications() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {item.summary}
+                    {item.selfIntroduce}
                   </div>
                 </div>
               </div>
@@ -126,7 +138,7 @@ export default function Applications() {
                   fontSize: 12,
                 }}
               >
-                {item.date}
+                {formatDate(item.createdAt)}
               </div>
             </li>
           ))}
