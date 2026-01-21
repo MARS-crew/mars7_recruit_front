@@ -1,59 +1,52 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
-
-// 더미 데이터
-const mockApplicants = [
-  {
-    id: 1,
-    name: "진선정",
-    gender: "여자",
-    age: 22,
-    major: "컴퓨터소프트웨어공학과",
-    grade: "3학년",
-    title: "어떤 일이든 최선을 다하겠습니다.",
-    address: "경기도 광명시",
-    phone: "010-0000-0000",
-    intro:
-      "첫 번째 자기소개입니다.",
-  },
-  {
-    id: 2,
-    name: "진선정",
-    gender: "여자",
-    age: 22,
-    major: "컴퓨터소프트웨어공학과",
-    grade: "3학년",
-    title: "열심히 하겠습니다.",
-    address: "서울특별시",
-    phone: "010-0000-0000",
-    intro: "두 번째 자기소개입니다.",
-  },
-];
+import { getResumeDetail } from "../api/resume";
 
 export default function ApplicantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [modalType, setModalType] = useState(null);
+  const [applicant, setApplicant] = useState(null);
 
   const closeModal = () => setModalType(null);
 
   const handleConfirm = () => {
+    // 지원서 상태 업데이트 api 추가 예정
     closeModal();
   };
 
-  const applicant = useMemo(() => {
-    const numId = Number(id);
-    return mockApplicants.find((a) => a.id === numId);
+  useEffect(() => {
+    const resumeId = id;
+
+    if (!resumeId) {
+      setApplicant(null);
+      return;
+    }
+
+    const fetchDetail = async () => {
+      try {
+        const res = await getResumeDetail(resumeId);
+        setApplicant(res.data);
+      } catch (e) {
+        console.error("지원서 상세 조회 실패", e);
+        setApplicant(null);
+      }
+    };
+
+    fetchDetail();
   }, [id]);
+
 
   if (!applicant) {
     return (
-      <div style={{ padding: 24 }}>
-        <button onClick={() => navigate(-1)}>뒤로</button>
-        <p style={{ marginTop: 12 }}>지원자를 찾을 수 없습니다.</p>
+      <div style={{ paddingBottom: 40 }}>
+        <Header title="지원서 조회" leftAction={() => navigate(-1)} />
+        <div style={{ padding: 24 }}>
+          <p>지원서를 찾을 수 없습니다.</p>
+        </div>
       </div>
     );
   }
@@ -77,11 +70,10 @@ export default function ApplicantDetail() {
               borderRadius: "50%",
               overflow: "hidden",
               flexShrink: 0,
-              background: "#FFC107",
             }}
           >
             <img
-              src={Profile}
+              src={applicant.profileImageUrl || Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -90,8 +82,7 @@ export default function ApplicantDetail() {
           <div>
             <div style={{ fontWeight: 600, fontSize: 16 }}>{applicant.name}</div>
             <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
-              {applicant.gender} · {applicant.age}세 / {applicant.major}{" "}
-              {applicant.grade}
+              {applicant.gender} · {applicant.age}세 / {applicant.major} {applicant.grade}
             </div>
           </div>
         </div>
@@ -114,9 +105,7 @@ export default function ApplicantDetail() {
 
         {/* 자기소개 */}
         <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>
-            자기소개
-          </div>
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>자기소개</div>
           <p style={{ fontWeight: 400, fontSize: 14, margin: 0, lineHeight: 1.7, color: "#333" }}>
             {applicant.intro}
           </p>
@@ -141,7 +130,7 @@ export default function ApplicantDetail() {
               background: "rgba(37, 114, 185, 0.2)",
               color: "#2572B9",
               fontWeight: 400,
-              fontSize: 20
+              fontSize: 20,
             }}
           >
             합격
@@ -157,7 +146,7 @@ export default function ApplicantDetail() {
               background: "rgba(255, 56, 60, 0.2)",
               color: "#FF383C",
               fontWeight: 400,
-              fontSize: 20
+              fontSize: 20,
             }}
           >
             불합격
@@ -242,7 +231,7 @@ export default function ApplicantDetail() {
                   border: "1px solid #E5E5E5",
                   background: "#fff",
                   fontWeight: 500,
-                  fontSize: 16
+                  fontSize: 16,
                 }}
               >
                 취소
@@ -259,7 +248,7 @@ export default function ApplicantDetail() {
                   background: modalType === "pass" ? "#2572B9" : "#FF383C",
                   color: "#fff",
                   fontWeight: 500,
-                  fontSize: 16
+                  fontSize: 16,
                 }}
               >
                 확인
