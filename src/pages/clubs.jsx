@@ -216,8 +216,19 @@ export default function Clubs() {
                 style={{ cursor: 'pointer' }}
               >
                 <div className="club-content">
-                  <h3 className="club-title">{club.title}</h3>
-                  <p className="club-description">{club.description}</p>
+                  <h3 className="club-title" style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    display: 'block'
+                  }}>{club.title}</h3>
+                  <p className="club-description" style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}>{club.description}</p>
                   <div className="club-info">
                     <span className={`club-code ${dueDateLabel === 'D-1' ? 'red' : ''}`}>{dueDateLabel}</span>
                     <span className="club-date">{startLabel}</span>
