@@ -2,46 +2,37 @@ import { useNavigate } from "react-router-dom";
 import BottomNavBar from "../components/BottomNavBar";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
+import { useEffect, useState } from "react";
+import { getApplicants } from "../api/resume";
 
-const mockApplicants = [
-  {
-    id: 1,
-    name: "진선정",
-    gender: "여자",
-    age: 22,
-    major: "컴퓨터소프트웨어공학과",
-    grade: "3학년",
-    title: "어떤 일이든 최선을 다하겠습니다.",
-    address: "경기도 광명시",
-    phone: "010-0000-0000",
-    intro: "첫 번째 자기소개입니다.",
-  },
-  {
-    id: 2,
-    name: "진선정",
-    gender: "여자",
-    age: 22,
-    major: "컴퓨터소프트웨어공학과",
-    grade: "3학년",
-    title: "열심히 하겠습니다.",
-    address: "서울특별시",
-    phone: "010-0000-0000",
-    intro: "두 번째 자기소개입니다.",
-  },
-];
-
-export default function ApplicantList() {
+export default function ApplicantList({ recruitId = 1 }) {
   const navigate = useNavigate();
+  const [applicants, setApplicants] = useState([]);
+
+useEffect(() => {
+  const fetchApplicants = async () => {
+    try {
+      const res = await getApplicants(recruitId);
+      const list = res?.data?.data ?? [];
+      setApplicants(list);
+    } catch (e) {
+      console.error("지원자 목록 조회 실패", e);
+      setApplicants([]);
+    }
+  };
+
+  fetchApplicants();
+}, [recruitId]);
 
   return (
     <div style={{ paddingBottom: 72 }}>
       <Header title="지원자 목록" />
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {mockApplicants.map((applicant) => (
+        {applicants.map((applicant) => (
           <li
-            key={applicant.id}
-            onClick={() => navigate(`/applicants/${applicant.id}`)}
+            key={applicant.resumeId}
+            onClick={() => navigate(`/applicants/${applicant.resumeId}`)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -60,8 +51,9 @@ export default function ApplicantList() {
                 flexShrink: 0,
               }}
             >
+              {/* 프로필 */}
               <img
-                src={Profile}
+                src={applicant.profileImage || Profile}
                 alt="프로필"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
@@ -73,17 +65,17 @@ export default function ApplicantList() {
                 <span
                   style={{ color: "#888", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
                 >
-                  {applicant.gender} · {applicant.age}세
+                  {applicant.gender === "F" ? "여자" : "남자"} · {applicant.age}세
                 </span>
               </div>
 
               <div style={{ color: "#666", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
-                {applicant.major} ({applicant.grade})
+                {applicant.major} ({applicant.grade}학년)
               </div>
             </div>
 
             <div style={{ fontSize: 12, color: "#bbb" }}>
-              {applicant.appliedAt}
+              {applicant.createdAt ? new Date(applicant.createdAt).toLocaleDateString() : ""}
             </div>
           </li>
         ))}
