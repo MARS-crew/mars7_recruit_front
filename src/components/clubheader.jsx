@@ -62,7 +62,7 @@ function Header({ title, showArrow = true, menu = true, onEdit, onDelete }) {
             alignItems: "center",
             zIndex: 1,
             cursor: "pointer",
-            marginLeft: "-12px",
+            marginLeft: "4px",
           }}
           onClick={() => navigate(-1)}
         >

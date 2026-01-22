@@ -51,17 +51,19 @@ export default function Clubs() {
   const calculateDDay = (dueDate) => {
     if (!dueDate) return '';
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // 한국 시간 기준 오늘 날짜 (YYYY-MM-DD)
+    const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+    koreaToday.setHours(0, 0, 0, 0);
     
-    const due = new Date(dueDate);
+    // 종료일 날짜만 추출 (시간 제거)
+    const dateOnly = typeof dueDate === 'string' ? dueDate.split('T')[0] : dueDate;
+    const due = new Date(dateOnly);
     due.setHours(0, 0, 0, 0);
     
-    const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // 날짜 차이 계산 (시간 무관)
+    const diffDays = Math.floor((due.getTime() - koreaToday.getTime()) / 86400000);
     
     if (diffDays < 0) return '마감';
-    if (diffDays === 0) return 'D-0';
     return `D-${diffDays}`;
   };
 
@@ -71,8 +73,8 @@ export default function Clubs() {
 
     // startDate 포맷팅 (ISO 형식 → YYYY-MM-DD)
     let startDate = '';
-    if (item?.createdAt) {
-      const date = new Date(item.createdAt);
+    if (item?.startDate) {
+      const date = new Date(item.startDate);
       startDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
     } else if (item?.startDate) {
       startDate = item.startDate;
@@ -120,10 +122,21 @@ export default function Clubs() {
         const normalized = (rawList || []).map((item, index) =>
           normalizeRecruit(item, index),
         );
+        
+        // 종료일이 지난 모집글 필터링
+        const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+        koreaToday.setHours(0, 0, 0, 0);
+        
+        const activeRecruits = normalized.filter((item) => {
+          if (!item.dueDate || item.dueDate === '마감') return false;
+          return true;
+        });
+        
         console.log('✅ 정규화된 데이터:', normalized);
+        console.log('🔥 활성 모집글:', activeRecruits);
 
         if (!cancelled) {
-          setRecruits(normalized);
+          setRecruits(activeRecruits);
         }
       } catch (err) {
         console.error('❌ API 에러:', err);
@@ -230,7 +243,7 @@ export default function Clubs() {
                     WebkitBoxOrient: 'vertical',
                   }}>{club.description}</p>
                   <div className="club-info">
-                    <span className={`club-code ${dueDateLabel === 'D-1' ? 'red' : ''}`}>{dueDateLabel}</span>
+                    <span className={`club-code ${dueDateLabel === 'D-0' || dueDateLabel === 'D-1' ? 'red' : ''}`}>{dueDateLabel}</span>
                     <span className="club-date">{startLabel}</span>
                     <span className="club-members">
                       <img src="/icons/user-icon.png" alt="멤버" className="member-icon" />
@@ -250,7 +263,12 @@ export default function Clubs() {
       <button
         className="fab-button"
         onClick={() => {
-          setLoginOpen(true); // 로그인 모달을 다시 사용할 때 주석 해제
+          const token = localStorage.getItem('accessToken');
+          if (!token) {
+            setLoginOpen(true);
+          } else {
+            navigate('/recruit');
+          }
         }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
