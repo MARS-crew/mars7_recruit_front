@@ -111,6 +111,7 @@ export default function Applications() {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      maxWidth: "100%"
                     }}
                   >
                     {item.title}
