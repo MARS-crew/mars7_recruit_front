@@ -8,16 +8,15 @@ import Button from "../components/Button";
 import Toggle from "../components/Toggle";
 import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
-
+import mypageApi from "../api/mypage";
 import Modal from "../components/Modal";
 import Header from "../components/header";
 
 export default function MyPage() {
   const navigate = useNavigate();
-
+  const [userData, setUserData] = useState(null);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSave, setIsSave] = useState(false);
   const [LoginOpen, setLoginOpen] = useState(false);
   // Refs
   const nameRef = useRef(null);
@@ -27,10 +26,10 @@ export default function MyPage() {
   const fileInputRef = useRef(null);
 
   // States
-  const [userName, setUserName] = useState("김보성");
-  const [userPhone, setUserPhone] = useState("010-1234-1234");
-  const [grade, setGrade] = useState("1학년");
-  const [major, setMajor] = useState("컴퓨터정보공학과");
+  const [userName, setUserName] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [grade, setGrade] = useState("");
+  const [major, setMajor] = useState("");
   const [appPush, setAppPush] = useState(false);
   const [profileImg, setProfileImg] = useState(userImage);
 
@@ -46,28 +45,30 @@ export default function MyPage() {
   const isDefaultImage = profileImg === userImage;
 
   const majorOptions = [
-    "자유전공학부",
-    "컴퓨터소프트웨어공학과",
-    "컴퓨터정보공학과",
-    "인공지능소프트웨어학과",
-    "웹응용소프트웨어공학과",
-    "빅데이터경영과",
     "기계공학과",
     "기계설계공학과",
     "자동화공학과",
-    "로봇공학과",
+    "로봇소프트웨어과",
     "전기공학과",
-    "전자공학과",
-    "정보통신공학과",
     "반도체전자공학과",
+    "정보통신공학과",
+    "소방안전관리과",
+    "웹응용소프트웨어공학과",
+    "컴퓨터소프트웨어공학과",
+    "인공지능소프트웨어학과",
     "생명화학공학과",
+    "바이오융합공학과",
     "건축과",
-    "실내디자인과",
+    "실내건축디자인과",
     "시각디자인과",
+    "AR·VR콘텐츠디자인과",
     "경영학과",
     "세무회계학과",
-    "관광컨벤션학과",
-    "소방안전관리과",
+    "유통마케팅학과",
+    "호텔관광학과",
+    "경영정보학과",
+    "빅데이터경영과",
+    "자유전공학과",
   ].sort();
 
   const gradeOptions = ["1학년", "2학년", "3학년", "4학년"];
@@ -90,7 +91,7 @@ export default function MyPage() {
     return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
   };
 
-  const saveHandle = () => {
+  const saveHandle = async () => {
     // 에러 초기화
     setNameError("");
     setPhoneError("");
@@ -136,13 +137,32 @@ export default function MyPage() {
     }
 
     if (isValid) {
-      // 2. 알럿 대신 토스트 활성화
-      setShowToast(true);
+      const patchData = {
+        name: userName,
+        phoneNumber: userPhone,
+        grade: parseInt(grade.replace("학년", "")),
+        major: major,
+        profileImage: profileImg,
+        apppushAgreed: appPush,
+      };
+      try {
+        console.log("서버 전송 데이터:", patchData);
+        const response = await mypageApi.mypageUpdate(patchData);
 
-      // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
-      setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
+        // response가 존재하거나 response.success가 true인 경우 (서버 명세에 따라 수정)
+        if (response) {
+          setShowToast(true);
+          console.log("토스트 활성화됨"); // 디버깅용 로그
+
+          // 2초 뒤에 토스트 숨기기
+          setTimeout(() => {
+            setShowToast(false);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error("저장 실패:", error);
+      }
+      // 2. 알럿 대신 토스트 활성화
     } else if (firstErrorRef) {
       firstErrorRef.current?.focus();
     }
@@ -160,9 +180,28 @@ export default function MyPage() {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setLoginOpen(true);
-    } else {
-      setLoginOpen(false);
+      return; // 토큰 없으면 로직 중단
     }
+
+    const fetchMypageData = async () => {
+      try {
+        const response = await mypageApi.mypage();
+        if (response.success) {
+          const res = response.data;
+          setUserData(res);
+          // API 데이터를 입력 폼 상태와 동기화
+          setUserName(res.name);
+          setUserPhone(res.phoneNumber);
+          setGrade(`${res.grade}학년`);
+          setMajor(res.major);
+          setAppPush(res.apppushAgreed);
+          if (res.profileImage) setProfileImg(res.profileImage);
+        }
+      } catch (err) {
+        console.error("마이페이지 로드 실패:", err);
+      }
+    };
+    fetchMypageData();
   }, []);
   return (
     <div>
