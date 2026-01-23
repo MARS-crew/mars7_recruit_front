@@ -163,6 +163,18 @@ export default function MyPage() {
   const ModalLoginConfirm = () => {
     navigate("/login");
   };
+  const ModaldeleteAccount = async () => {
+    try {
+      await authApi.deleteAccount();
+    } catch (error) {
+      console.log(error.message, "오류발생");
+    } finally {
+      // 탈퇴 후에는 무조건 토큰을 지우고 메인으로 보냄
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -355,7 +367,7 @@ export default function MyPage() {
             rBtn="탈퇴"
             isOpen={isWithdrawOpen}
             onClose={() => setIsWithdrawOpen(false)}
-            onRightClick={ModalLogoutConfirm}
+            onRightClick={ModaldeleteAccount}
           />
         </div>
 
