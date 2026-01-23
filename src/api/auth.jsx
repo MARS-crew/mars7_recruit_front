@@ -51,6 +51,18 @@ export const authApi = {
       throw error;
     }
   },
+  /**
+   * 로그아웃
+   */
+  // src/api/auth.jsx
+  logout: async () => {
+    try {
+      const response = await axiosInstance.post(`/api/v1/auth/logout`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * 비밀번호 변경 API
