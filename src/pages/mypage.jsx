@@ -9,6 +9,7 @@ import Toggle from "../components/Toggle";
 import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 import mypageApi from "../api/mypage";
+import { authApi } from "../api/auth";
 import Modal from "../components/Modal";
 import Header from "../components/header";
 
@@ -32,6 +33,7 @@ export default function MyPage() {
   const [major, setMajor] = useState("");
   const [appPush, setAppPush] = useState(false);
   const [profileImg, setProfileImg] = useState(userImage);
+  const [toastMsg, setToastMsg] = useState("");
 
   // Error States
   const [nameError, setNameError] = useState("");
@@ -149,7 +151,10 @@ export default function MyPage() {
         console.log("서버 전송 데이터:", patchData);
         const response = await mypageApi.mypageUpdate(patchData);
 
-        // response가 존재하거나 response.success가 true인 경우 (서버 명세에 따라 수정)
+        // 2. 알럿 대신 토스트 활성화
+        setToastMsg("저장되었습니다.");
+        setShowToast(true);
+
         if (response) {
           setShowToast(true);
           console.log("토스트 활성화됨"); // 디버깅용 로그
@@ -168,11 +173,51 @@ export default function MyPage() {
     }
   };
 
-  const ModalLogoutConfirm = () => {
-    navigate("/");
+  const ModalLogoutConfirm = async () => {
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.log(error.message, "오류발생");
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
   };
   const ModalLoginConfirm = () => {
     navigate("/login");
+  };
+  const ModaldeleteAccount = async () => {
+    try {
+      await authApi.deleteAccount();
+    } catch (error) {
+      console.log(error.message, "오류발생");
+    } finally {
+      // 탈퇴 후에는 무조건 토큰을 지우고 메인으로 보냄
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
+  };
+
+  // 푸시 알람 설정!
+  const handlePushToggle = async () => {
+    const prev = appPush;
+    const next = !prev;
+
+    setAppPush(next);
+
+    try {
+      const response = await mypageApi.mypageUpdatePush();
+
+      if (response.success) {
+        // 서버 값으로 최종 동기화 (선택)
+        setAppPush(response.data.apppushAgreed);
+      }
+    } catch (error) {
+      setAppPush(prev);
+      console.error("푸시 변경 실패:", error);
+    }
   };
 
   useEffect(() => {
@@ -182,7 +227,7 @@ export default function MyPage() {
       setLoginOpen(true);
       return; // 토큰 없으면 로직 중단
     }
-
+    //마이페이지 수정 기능
     const fetchMypageData = async () => {
       try {
         const response = await mypageApi.mypage();
@@ -199,6 +244,12 @@ export default function MyPage() {
         }
       } catch (err) {
         console.error("마이페이지 로드 실패:", err);
+        if (
+          err.message.includes("401") ||
+          !localStorage.getItem("accessToken")
+        ) {
+          navigate("/login");
+        }
       }
     };
     fetchMypageData();
@@ -330,7 +381,7 @@ export default function MyPage() {
             <Toggle
               id="app-push"
               checked={appPush}
-              onChange={() => setAppPush(!appPush)}
+              onChange={handlePushToggle}
             />
           </div>
 
@@ -385,7 +436,7 @@ export default function MyPage() {
             rBtn="탈퇴"
             isOpen={isWithdrawOpen}
             onClose={() => setIsWithdrawOpen(false)}
-            onRightClick={ModalLogoutConfirm}
+            onRightClick={ModaldeleteAccount}
           />
         </div>
 
@@ -419,7 +470,7 @@ export default function MyPage() {
         onRightClick={ModalLoginConfirm}
         isOpen={LoginOpen}
         lBtn="취소"
-        onClose={() => setLoginOpen(false)}
+        onClose={() => navigate(-1)}
       />
       {/* 3. 토스트 UI (하단 고정) */}
       {showToast && (
@@ -439,7 +490,7 @@ export default function MyPage() {
             animation: "fadeInOut 2s",
           }}
         >
-          저장되었습니다.
+          {toastMsg}
         </div>
       )}
 

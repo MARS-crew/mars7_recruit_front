@@ -16,9 +16,9 @@ export const authApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "회원가입 중 오류가 발생했습니다.",
-        );
+        const errorMessage =
+          error.response?.data?.error?.message || "회원가입 실패";
+        throw new Error(errorMessage);
       }
       throw error;
     }
@@ -51,18 +51,27 @@ export const authApi = {
       throw error;
     }
   },
+  /**
+   * 로그아웃
+   */
+  // src/api/auth.jsx
+  logout: async () => {
+    try {
+      const response = await axiosInstance.post(`/api/v1/auth/logout`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * 비밀번호 변경 API
    */
-  changePassword: async (password, token) => {
+  changePassword: async (data) => {
     try {
-      const response = await axios.patch(
-        `${API_BASE_URL}/api/v1/mypage/password`,
-        {
-          password,
-          resetToken: token,
-        },
+      const response = await axiosInstance.patch(
+        `/api/v1/mypage/password`,
+        data,
       );
       return response.data;
     } catch (error) {

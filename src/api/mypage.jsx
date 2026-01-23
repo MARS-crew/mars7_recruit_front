@@ -33,6 +33,18 @@ const mypageApi = {
       throw error;
     }
   },
+  // api/mypage.js 수정
+  mypageUpdatePush: async () => {
+    try {
+      const response = await axiosInstance.patch(`/api/v1/mypage/push`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || "푸시 상태 변경 실패");
+      }
+      throw error;
+    }
+  },
 };
 
 export default mypageApi;
