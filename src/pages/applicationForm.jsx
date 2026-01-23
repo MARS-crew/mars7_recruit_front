@@ -37,7 +37,7 @@ export default function ApplicationForm() {
     const fetchMyProfile = async () => {
       try {
         const res = await getMyPageInfo();
-        setProfile(res?.data ?? null);
+        setProfile(res?.data?.data ?? null);
       } catch (e) {
         console.error("마이페이지 정보 불러오기 실패", e);
         setProfile(null);
@@ -45,7 +45,7 @@ export default function ApplicationForm() {
     };
 
     fetchMyProfile();
-  }, [recruitId]);
+  }, []);
 
   const handleConfirm = async () => {
     if (!recruitId) {
@@ -111,7 +111,7 @@ export default function ApplicationForm() {
             }}
           >
             <img
-              src={profile?.profileImageUrl || Profile}
+              src={profile?.profileImage || Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -122,7 +122,7 @@ export default function ApplicationForm() {
               {profile?.name ?? ""}
             </div>
             <div style={{ marginTop: 6, fontSize: 13, color: "#8A8FA3" }}>
-              {profile?.gender ?? ""} · {profile?.age ?? ""}세 / {profile?.major ?? ""} {profile?.grade ?? ""}
+              {profile?.major ?? ""} {profile?.grade ? `· ${profile.grade}학년` : ""}
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function ApplicationForm() {
               주소
             </div>
             <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
-              {profile?.address ?? ""}
+              {profile?.address ?? "-"}
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export default function ApplicationForm() {
               연락처
             </div>
             <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
-              {profile?.phone ?? ""}
+              {profile?.phoneNumber ?? ""}
             </div>
           </div>
         </div>

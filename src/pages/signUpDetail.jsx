@@ -110,10 +110,8 @@ export default function SingUpDetail() {
         profileImage: profileImg,
         address: address,
       };
-
+      console.log("최종 전송 데이터:", finalData);
       try {
-        console.log("서버 전송 데이터:", finalData);
-
         // API 호출
         const response = await authApi.signup(finalData);
 
@@ -121,7 +119,8 @@ export default function SingUpDetail() {
           navigate("/");
         }
       } catch (error) {
-        setAddressError(error.message || "회원가입 중 오류가 발생했습니다.");
+        console.log("에러", error.message);
+        setAddressError(error.message);
       }
     }
   };

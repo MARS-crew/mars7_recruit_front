@@ -16,9 +16,9 @@ export const authApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "회원가입 중 오류가 발생했습니다.",
-        );
+        const errorMessage =
+          error.response?.data?.error?.message || "회원가입 실패";
+        throw new Error(errorMessage);
       }
       throw error;
     }
