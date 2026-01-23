@@ -62,10 +62,6 @@ const ClubDetail = ({ club, isPublisher }) => {
                         <span className="condition-value">{club.recruitCount || '00'}명</span>
                     </div>
                     <div className="condition-item">
-                        <span className="condition-label">연령대</span>
-                        <span className="condition-value">{club.ageRange || '무관'}</span>
-                    </div>
-                    <div className="condition-item">
                         <span className="condition-label">성별</span>
                         <span className="condition-value">{club.gender || '무관'}</span>
                     </div>
@@ -117,27 +113,27 @@ const ClubDetail = ({ club, isPublisher }) => {
                         <div className="stats-grid">
                             <div className="stat-item">
                                 <span className="stat-label">조회수</span>
-                                <span className="stat-value">{club.viewCount || 6}</span>
+                                <span className="stat-value">{club.viewCount }</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">총 지원자</span>
-                                <span className="stat-value">{club.totalApplicants || 2}명</span>
+                                <span className="stat-value">{club.totalApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">열람한 지원자</span>
-                                <span className="stat-value">{club.viewedApplicants || 1}명</span>
+                                <span className="stat-value">{club.viewedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">미열람 지원자</span>
-                                <span className="stat-value">{club.unviewedApplicants || 1}명</span>
+                                <span className="stat-value">{club.unviewedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">합격자</span>
-                                <span className="stat-value">{club.acceptedApplicants || 0}명</span>
+                                <span className="stat-value">{club.acceptedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">불합격자</span>
-                                <span className="stat-value">{club.rejectedApplicants || 0}명</span>
+                                <span className="stat-value">{club.rejectedApplicants }명</span>
                             </div>
                         </div>
                     </section>

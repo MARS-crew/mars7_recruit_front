@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import recruitApi from '../api/recruit';
 import Header from '../components/header';
+import Modal from '../components/Modal';
+import Toast from '../components/Toast';
 import '../styles/RecruitCreate.css';
 
 export default function RecruitCreate() {
@@ -19,8 +21,8 @@ export default function RecruitCreate() {
       startDate: '',
       endDate: '',
       deadline: '',
-      managerName: '최예은',
-      phoneNumber: '010-9017-0806'
+      managerName: '',
+      phoneNumber: ''
     }),
     []
   );
@@ -35,6 +37,8 @@ export default function RecruitCreate() {
   const [deadlineError, setDeadlineError] = useState('');
   const [emptyFieldError, setEmptyFieldError] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  // const [LoginOpen, setLoginOpen] = useState(false);
   
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -61,6 +65,14 @@ export default function RecruitCreate() {
   const categoryOptions = ['취미동아리', '전공동아리'];
   const genderOptions = ['남자', '여자', '무관'];
 
+  const readFileAsDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
   const normalizeDateString = (value) => {
     if (!value) return '';
     const cleaned = value.trim().replace(/\./g, '-');
@@ -83,6 +95,20 @@ export default function RecruitCreate() {
     };
   };
 
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  //   const token = localStorage.getItem('accessToken');
+  //   if (!token) {
+  //     setLoginOpen(true);
+  //     return;
+  //   }
+  //   setLoginOpen(false);
+  // }, []);
+
+  // const ModalLoginConfirm = () => {
+  //   navigate('/login');
+  // };
+
   const mapClubToFormData = (club) => ({
     title: club?.title || '',
     content: club?.description || club?.content || '',
@@ -97,11 +123,31 @@ export default function RecruitCreate() {
   });
 
   useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        // 사용자의 모집글 목록 조회
+        const rawList = await recruitApi.getList('ALL');
+        if (rawList && rawList.length > 0) {
+          // 첫 번째 모집글의 상세 정보 조회 (게시자 상세)
+          const recruitId = rawList[0].recruitId;
+          const ownerDetail = await recruitApi.getOwnerDetail(recruitId);
+          if (ownerDetail?.userName && ownerDetail?.userPhoneNumber) {
+            setFormData((prev) => ({
+              ...prev,
+              managerName: ownerDetail.userName,
+              phoneNumber: ownerDetail.userPhoneNumber
+            }));
+          }
+        }
+      } catch (error) {
+        console.log('⚠️ 사용자 정보 로드 실패:', error.message);
+      }
+    };
+
     if (prefilledClub) {
       const mappedData = mapClubToFormData(prefilledClub);
       setFormData((prev) => ({ ...prev, ...mappedData }));
       
-      // 포스터 이미지 추가
       if (prefilledClub.posterImage) {
         const posterImage = {
           file: null,
@@ -110,26 +156,34 @@ export default function RecruitCreate() {
         };
         setUploadedImages([posterImage]);
       }
+    } else {
+      fetchUserInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefilledClub]);
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
-      isExisting: false
-    }));
-    setUploadedImages(prev => [...prev, ...newImages]);
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const fileEntries = await Promise.all(
+      files.map(async (file) => ({
+        file,
+        preview: await readFileAsDataUrl(file), // base64 data URL로 저장해 새로고침에도 유지
+        isExisting: false,
+      })),
+    );
+    setUploadedImages((prev) => [...prev, ...fileEntries]);
+
+    // 동일 파일을 다시 선택할 수 있도록 입력값을 비워준다.
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
   const handleImageDelete = (index) => {
-    setUploadedImages(prev => {
+    setUploadedImages((prev) => {
       const newImages = [...prev];
-      if (newImages[index].file) {
-        URL.revokeObjectURL(newImages[index].preview);
-      }
       newImages.splice(index, 1);
       return newImages;
     });
@@ -394,14 +448,19 @@ export default function RecruitCreate() {
       dueDate: toIsoDateTime(formData.endDate),
       resultDate: toIsoDateTime(formData.deadline),
       posterImage: uploadedImages[0]?.preview || null,
+      managerName: formData.managerName,
+      contact: formData.phoneNumber,
     };
 
     try {
       console.log('📝 모집글 작성 중...', submitData);
       const response = await recruitApi.create(submitData);
       console.log('✅ 모집글 작성 완료:', response);
-      alert('모집글이 작성되었습니다!');
-      navigate('/clubs');
+      
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/clubs');
+      }, 1500);
     } catch (error) {
       console.error('❌ 모집글 작성 실패:', error);
       alert(error.message || '모집글 작성에 실패했습니다.');
@@ -769,7 +828,24 @@ export default function RecruitCreate() {
               placeholder="010-0000-0000"
               value={formData.phoneNumber}
               onChange={(e) => {
-                setFormData({ ...formData, phoneNumber: e.target.value });
+                const value = e.target.value;
+                // 숫자만 추출
+                const numbers = value.replace(/[^\d]/g, '');
+                
+                // 최대 11자리까지만 허용
+                if (numbers.length > 11) return;
+                
+                // 포맷팅: xxx-xxxx-xxxx
+                let formatted = '';
+                if (numbers.length <= 3) {
+                  formatted = numbers;
+                } else if (numbers.length <= 7) {
+                  formatted = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+                } else {
+                  formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+                }
+                
+                setFormData({ ...formData, phoneNumber: formatted });
                 if (emptyFieldError.includes('담당자')) setEmptyFieldError('');
               }}
             />
@@ -788,6 +864,25 @@ export default function RecruitCreate() {
       >
         작성하기
       </button>
+
+      {/* 토스트 팝업 */}
+      <Toast
+        message="등록되었습니다."
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+      {/* <Modal
+        isOpen={LoginOpen}
+        title="로그인"
+        content="로그인이 필요합니다."
+        lBtn="취소"
+        rBtn="로그인"
+        onClose={() => setLoginOpen(false)}
+        onRightClick={() => {
+          setLoginOpen(false);
+          ModalLoginConfirm();
+        }}
+      /> */}
     </div>
   </div>
   );

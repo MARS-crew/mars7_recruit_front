@@ -77,6 +77,42 @@ export const recruitApi = {
       throw error;
     }
   },
+  /**
+   * 모집글 상세 조회 (지원자용)
+   */
+  getDetail: async (recruitId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_BASE_URL}/api/v1/recruits/${recruitId}`,
+      );
+      return response.data?.data ?? response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "상세 정보를 불러오지 못했습니다.",
+        );
+      }
+      throw error;
+    }
+  },
+  /**
+   * 모집글 상세 조회 (게시자용)
+   */
+  getOwnerDetail: async (recruitId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_BASE_URL}/api/v1/recruits/${recruitId}/owner`,
+      );
+      return response.data?.data ?? response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "게시자 상세 조회에 실패했습니다.",
+        );
+      }
+      throw error;
+    }
+  },
 };
 
 export default recruitApi;
