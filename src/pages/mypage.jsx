@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import Toggle from "../components/Toggle";
 import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
-
+import { authApi } from "../api/auth";
 import Modal from "../components/Modal";
 import Header from "../components/header";
 
@@ -17,7 +17,6 @@ export default function MyPage() {
 
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSave, setIsSave] = useState(false);
   const [LoginOpen, setLoginOpen] = useState(false);
   // Refs
   const nameRef = useRef(null);
@@ -33,6 +32,7 @@ export default function MyPage() {
   const [major, setMajor] = useState("컴퓨터정보공학과");
   const [appPush, setAppPush] = useState(false);
   const [profileImg, setProfileImg] = useState(userImage);
+  const [toastMsg, setToastMsg] = useState("");
 
   // Error States
   const [nameError, setNameError] = useState("");
@@ -137,6 +137,7 @@ export default function MyPage() {
 
     if (isValid) {
       // 2. 알럿 대신 토스트 활성화
+      setToastMsg("저장되었습니다.");
       setShowToast(true);
 
       // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
@@ -148,8 +149,18 @@ export default function MyPage() {
     }
   };
 
-  const ModalLogoutConfirm = () => {
-    navigate("/");
+  const ModalLogoutConfirm = async () => {
+    try {
+      const response = await authApi.logout();
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      if (response) {
+        navigate("/");
+      }
+    } catch (error) {
+      localStorage.removeItem("accessToken");
+      setToastMsg("오류가 발생했습니다.");
+    }
   };
   const ModalLoginConfirm = () => {
     navigate("/login");
@@ -380,7 +391,7 @@ export default function MyPage() {
         onRightClick={ModalLoginConfirm}
         isOpen={LoginOpen}
         lBtn="취소"
-        onClose={() => setLoginOpen(false)}
+        onClose={() => navigate(-1)}
       />
       {/* 3. 토스트 UI (하단 고정) */}
       {showToast && (
@@ -400,7 +411,7 @@ export default function MyPage() {
             animation: "fadeInOut 2s",
           }}
         >
-          저장되었습니다.
+          {toastMsg}
         </div>
       )}
 
