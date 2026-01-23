@@ -151,15 +151,13 @@ export default function MyPage() {
 
   const ModalLogoutConfirm = async () => {
     try {
-      const response = await authApi.logout();
+      await authApi.logout();
+    } catch (error) {
+      console.log(error.message, "오류발생");
+    } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      if (response) {
-        navigate("/");
-      }
-    } catch (error) {
-      localStorage.removeItem("accessToken");
-      setToastMsg("오류가 발생했습니다.");
+      navigate("/");
     }
   };
   const ModalLoginConfirm = () => {
