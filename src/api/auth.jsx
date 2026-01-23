@@ -67,14 +67,11 @@ export const authApi = {
   /**
    * 비밀번호 변경 API
    */
-  changePassword: async (password, token) => {
+  changePassword: async (data) => {
     try {
-      const response = await axios.patch(
-        `${API_BASE_URL}/api/v1/mypage/password`,
-        {
-          password,
-          resetToken: token,
-        },
+      const response = await axiosInstance.patch(
+        `/api/v1/mypage/password`,
+        data,
       );
       return response.data;
     } catch (error) {
