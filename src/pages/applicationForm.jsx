@@ -1,46 +1,83 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Profile from "../icon/Profile.png";
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-const mockApplicationForm = [
-  {
-    id: 1,
-    title: "",
-    name: "진선정",
-    gender: "여자",
-    age: 22,
-    major: "컴퓨터소프트웨어공학과",
-    grade: "3학년",
-    address: "경기도 광명시",
-    phone: "010-0000-0000",
-    intro: "",
-  }
-];
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { createResume } from "../api/resume";
+import { getMyPageInfo } from "../api/resume";
 
 export default function ApplicationForm() {
-    const navigate = useNavigate();
-    const data = useMemo(() => mockApplicationForm[0], []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-    const INTRO_MAX = 500;
+  const recruitId = useMemo(() => {
+    return (
+      location.state?.recruitId ??
+      searchParams.get("recruitId")
+    );
+  }, [location.state, searchParams]);
 
-    const [title, setTitle] = useState(data.title);
-    const [intro, setIntro] = useState(data.intro);
+  const INTRO_MAX = 500;
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [intro, setIntro] = useState("");
+  const [profile, setProfile] = useState(null);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleConfirm = () => {
-        alert("지원 완료");
-        closeModal();
-        navigate("/applications")
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    if (isSubmitting) return;
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    const fetchMyProfile = async () => {
+      try {
+        const res = await getMyPageInfo();
+        setProfile(res?.data ?? null);
+      } catch (e) {
+        console.error("마이페이지 정보 불러오기 실패", e);
+        setProfile(null);
+      }
+    };
+
+    fetchMyProfile();
+  }, [recruitId]);
+
+  const handleConfirm = async () => {
+    if (!recruitId) {
+      console.error("recruitId 없음.");
+      closeModal();
+      return;
     }
 
-    
-    return (
+    if (!title.trim() || !intro.trim()) {
+      closeModal();
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      await createResume(recruitId, {
+        title: title.trim(),
+        intro: intro.trim(),
+      });
+
+      setIsModalOpen(false);
+      navigate("/applications");
+    } catch (e) {
+      console.error("지원서 생성 실패", e);
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
     <div style={{ paddingBottom: 92 }}>
       <Header title="지원서 작성" leftAction={() => navigate(-1)} />
 
@@ -71,11 +108,10 @@ export default function ApplicationForm() {
               borderRadius: "50%",
               overflow: "hidden",
               flexShrink: 0,
-              background: "#FFC107",
             }}
           >
             <img
-              src={Profile}
+              src={profile?.profileImageUrl || Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -83,10 +119,10 @@ export default function ApplicationForm() {
 
           <div style={{ minWidth: 0 }}>
             <div style={{ fontWeight: 600, fontSize: 16, color: "#111" }}>
-              {data.name}
+              {profile?.name ?? ""}
             </div>
             <div style={{ marginTop: 6, fontSize: 13, color: "#8A8FA3" }}>
-              {data.gender} · {data.age}세 / {data.major} {data.grade}
+              {profile?.gender ?? ""} · {profile?.age ?? ""}세 / {profile?.major ?? ""} {profile?.grade ?? ""}
             </div>
           </div>
         </div>
@@ -96,13 +132,35 @@ export default function ApplicationForm() {
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#9AA0A6" }}>주소</div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>{data.address}</div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                width: 64,
+                color: "#9AA0A6",
+              }}
+            >
+              주소
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
+              {profile?.address ?? ""}
+            </div>
           </div>
 
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#9AA0A6" }}>연락처</div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>{data.phone}</div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                width: 64,
+                color: "#9AA0A6",
+              }}
+            >
+              연락처
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
+              {profile?.phone ?? ""}
+            </div>
           </div>
         </div>
 
@@ -149,7 +207,11 @@ export default function ApplicationForm() {
 
         {/* 하단 버튼 */}
         <div style={{ marginTop: 80 }}>
-          <Button label="지원하기" onClick={openModal}/>
+          <Button
+            label="지원하기"
+            onClick={openModal}
+            disabled={!title.trim() || !intro.trim() || isSubmitting}
+          />
         </div>
       </div>
 
@@ -184,7 +246,14 @@ export default function ApplicationForm() {
               지원하시겠습니까?
             </div>
 
-            <div style={{ fontWeight: 400, color: "#000000", fontSize: 14, lineHeight: 1.5 }}>
+            <div
+              style={{
+                fontWeight: 400,
+                color: "#000000",
+                fontSize: 14,
+                lineHeight: 1.5,
+              }}
+            >
               지금 지원한 내용은 수정 및 취소가 되지 않습니다.
             </div>
 
@@ -192,6 +261,7 @@ export default function ApplicationForm() {
               <button
                 type="button"
                 onClick={closeModal}
+                disabled={isSubmitting}
                 style={{
                   flex: 1,
                   height: 46,
@@ -199,6 +269,7 @@ export default function ApplicationForm() {
                   border: "1px solid #E5E5E5",
                   background: "#fff",
                   fontWeight: 500,
+                  opacity: isSubmitting ? 0.6 : 1,
                 }}
               >
                 취소
@@ -207,6 +278,7 @@ export default function ApplicationForm() {
               <button
                 type="button"
                 onClick={handleConfirm}
+                disabled={isSubmitting}
                 style={{
                   flex: 1,
                   height: 46,
@@ -215,6 +287,7 @@ export default function ApplicationForm() {
                   background: "#2572B9",
                   color: "#fff",
                   fontWeight: 500,
+                  opacity: isSubmitting ? 0.6 : 1,
                 }}
               >
                 확인
