@@ -56,23 +56,7 @@ const notice = () => {
       const rawList = await noticeApi.getList();
       console.log('📬 알림 목록:', rawList);
       
-      // 읽지 않은 알림만 필터링
-      const unreadNotices = (rawList || []).filter(item => !item.isRead);
-      setNotifications(unreadNotices);
-
-      // 조회된 알림을 읽음 처리 (화면은 그대로 유지)
-      if (unreadNotices.length > 0) {
-        console.log('🔔 알림 읽음 처리 시작...');
-        Promise.all(
-          unreadNotices.map(notice => 
-            noticeApi.markAsRead(notice.noticeId).catch(err => 
-              console.log(`알림 ${notice.noticeId} 읽음 처리 실패:`, err)
-            )
-          )
-        ).then(() => {
-          console.log('✅ 알림 읽음 처리 완료 (다음 방문 시 사라집니다)');
-        });
-      }
+      setNotifications(rawList || []);
     } catch (err) {
       console.log('❌ 알림 조회 에러:', err);
       
@@ -85,8 +69,18 @@ const notice = () => {
     }
   };
 
+  const ModalLoginConfirm = () => {
+    navigate('/login');
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      setLoginOpen(true);
+      return;
+    }
+    setLoginOpen(false);
     fetchNotices();
   }, []);
 
@@ -170,7 +164,10 @@ const notice = () => {
         isOpen={LoginOpen}
         lBtn="취소"
         onClose={() => setLoginOpen(false)}
-        onRightClick={() => navigate('/login')}
+        onRightClick={() => {
+          setLoginOpen(false);
+          ModalLoginConfirm();
+        }}
       />
     </div>
   </div>

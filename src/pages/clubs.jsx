@@ -50,19 +50,29 @@ export default function Clubs() {
 
   const calculateDDay = (dueDate) => {
     if (!dueDate) return '';
-    
-    // 한국 시간 기준 오늘 날짜 (YYYY-MM-DD)
+    // 한국 시간 기준 오늘 날짜 (로컬)
     const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
     koreaToday.setHours(0, 0, 0, 0);
-    
-    // 종료일 날짜만 추출 (시간 제거)
-    const dateOnly = typeof dueDate === 'string' ? dueDate.split('T')[0] : dueDate;
-    const due = new Date(dateOnly);
+
+    // 종료일을 로컬 날짜로 안전하게 파싱 (UTC 변환 방지, 다양한 포맷 대응)
+    const raw = typeof dueDate === 'string' ? dueDate.trim() : dueDate;
+    let dateOnly = raw;
+    if (typeof raw === 'string') {
+      if (raw.includes('T')) dateOnly = raw.split('T')[0];
+      else if (/^\d{4}\.\d{2}\.\d{2}$/.test(raw)) dateOnly = raw.replaceAll('.', '-');
+    }
+
+    let due;
+    if (typeof dateOnly === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) {
+      const [y, m, d] = dateOnly.split('-').map(Number);
+      due = new Date(y, m - 1, d);
+    } else {
+      due = new Date(dateOnly);
+    }
+    if (Number.isNaN(due.getTime())) return '';
     due.setHours(0, 0, 0, 0);
-    
     // 날짜 차이 계산 (시간 무관)
     const diffDays = Math.floor((due.getTime() - koreaToday.getTime()) / 86400000);
-    
     if (diffDays < 0) return '마감';
     return `D-${diffDays}`;
   };
@@ -71,13 +81,27 @@ export default function Clubs() {
     // field는 서버에서 'MAJOR', 'HOBBY' 등으로 옴
     const category = mapCategory(item?.field ?? item?.category ?? item?.clubCategory);
 
-    // startDate 포맷팅 (ISO 형식 → YYYY-MM-DD)
+    // startDate 포맷팅 (UTC 변환 없이 안전하게 YYYY-MM-DD 추출)
     let startDate = '';
     if (item?.startDate) {
-      const date = new Date(item.startDate);
-      startDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
-    } else if (item?.startDate) {
-      startDate = item.startDate;
+      if (typeof item.startDate === 'string') {
+        const match = item.startDate.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (match) {
+          startDate = match[1];
+        } else {
+          const d = new Date(item.startDate);
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          startDate = `${y}-${m}-${day}`;
+        }
+      } else {
+        const d = new Date(item.startDate);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        startDate = `${y}-${m}-${day}`;
+      }
     }
 
     // D-day 계산
@@ -132,11 +156,18 @@ export default function Clubs() {
           return true;
         });
         
+        // Sort by creation date (descending, newest first)
+        const sortedRecruits = activeRecruits.sort((a, b) => {
+          const dateA = rawList.find(item => item?.recruitId === a.id)?.createdAt || '';
+          const dateB = rawList.find(item => item?.recruitId === b.id)?.createdAt || '';
+          return new Date(dateB) - new Date(dateA);
+        });
+        
         console.log('✅ 정규화된 데이터:', normalized);
         console.log('🔥 활성 모집글:', activeRecruits);
 
         if (!cancelled) {
-          setRecruits(activeRecruits);
+          setRecruits(sortedRecruits);
         }
       } catch (err) {
         console.error('❌ API 에러:', err);

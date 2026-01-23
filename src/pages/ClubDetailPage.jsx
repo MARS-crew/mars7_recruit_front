@@ -1,81 +1,115 @@
-import React from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ClubDetail from './ClubDetail';
+import { recruitApi } from '../api/recruit';
+
+const formatDate = (iso) => {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}.${m}.${day}`;
+};
+
+const toCategory = (field) => (field === 'MAJOR' ? '전공동아리' : '취미동아리');
+const toGender = (val) => {
+    if (val === 'M') return '남자';
+    if (val === 'F') return '여자';
+    if (val === 'ANY') return '무관';
+    return '무관';
+};
+
+const normalizeClub = (data) => {
+    // 지원자 정보 계산 (applicants 배열이 있으면 분석)
+    const applicants = data?.applicants || [];
+    const viewedCount = applicants.filter(a => a?.isViewed).length || 0;
+    const unviewedCount = applicants.filter(a => !a?.isViewed).length || 0;
+    const acceptedCount = applicants.filter(a => a?.status === 'ACCEPTED').length || 0;
+    const rejectedCount = applicants.filter(a => a?.status === 'REJECTED').length || 0;
+    
+    return {
+        id: data?.recruitId,
+        category: toCategory(data?.field),
+        title: data?.title,
+        recruitCount: String(data?.people ?? ''),
+        gender: toGender(data?.gender),
+        recruitPeriod: `${formatDate(data?.startDate)} - ${formatDate(data?.dueDate)}`,
+        announcementDate: formatDate(data?.resultDate),
+        posterImage: data?.posterImage || '../public/icons/clubdetailimage.png',
+        description: data?.content,
+        managerName: data?.userName,
+        contact: data?.userPhoneNumber,
+        viewCount: data?.viewCount ?? 0,
+        totalApplicants: data?.applicantCount ?? applicants.length ?? 0,
+        viewedApplicants: viewedCount,
+        unviewedApplicants: unviewedCount,
+        acceptedApplicants: acceptedCount,
+        rejectedApplicants: rejectedCount,
+        publisherId: data?.userId,
+    };
+};
 
 const ClubDetailPage = () => {
-    const { id } = useParams(); // URL에서 동아리 ID를 가져옵니다.
-    const location = useLocation();
-    
-    // TODO: 실제로는 API에서 동아리 정보를 가져와야 합니다.
-    // 임시 동아리 데이터 (clubs.jsx와 동일한 데이터)
-    const clubsData = {
-        1: {
-            id: 1,
-            category: '취미동아리',
-            title: '2026년도 전공동아리 ONE 신입 부원 모집',
-            recruitCount: '00',
-            ageRange: '무관',
-            gender: '무관',
-            recruitPeriod: '2025.12.31 - 2026.01.07',
-            announcementDate: '2026.01.12',
-            posterImage: '../public/icons/clubdetailimage.png',
-            description: '웹응용소프트웨어공학과 전공 동아리 ONE에서 신입 부원을 모집합니다.\nONE은 각종 세미나 및 스터디 활동, 대회와 동아리페어 expo 활동을 꾸준히 이어오고 있는 전공 동아리입니다!',
-            managerName: '최예은',
-            contact: '010-9017-0806',
-            viewCount: 6,
-            totalApplicants: 2,
-            viewedApplicants: 1,
-            unviewedApplicants: 1,
-            acceptedApplicants: 0,
-            rejectedApplicants: 0
-        },
-        2: {
-            id: 2,
-            category: '취미동아리',
-            title: '댄스 동아리 MOVE 신입 모집',
-            recruitCount: '20',
-            ageRange: '무관',
-            gender: '무관',
-            recruitPeriod: '2026.01.01 - 2026.01.15',
-            announcementDate: '2026.01.20',
-            posterImage: '../public/icons/clubdetailimage.png',
-            description: '댄스를 사랑하는 사람들의 모임! 초보자도 환영합니다.',
-            managerName: '김댄스',
-            contact: '010-1234-5678',
-            viewCount: 10,
-            totalApplicants: 5,
-            viewedApplicants: 3,
-            unviewedApplicants: 2,
-            acceptedApplicants: 0,
-            rejectedApplicants: 0
-        },
-        3: {
-            id: 3,
-            category: '전공동아리',
-            title: 'AI 연구회 신입부원 모집',
-            recruitCount: '15',
-            ageRange: '무관',
-            gender: '무관',
-            recruitPeriod: '2026.01.05 - 2026.01.20',
-            announcementDate: '2026.01.25',
-            posterImage: '../public/icons/clubdetailimage.png',
-            description: '인공지능과 머신러닝에 관심있는 학생들의 전공 동아리입니다.',
-            managerName: '박AI',
-            contact: '010-2345-6789',
-            viewCount: 8,
-            totalApplicants: 3,
-            viewedApplicants: 2,
-            unviewedApplicants: 1,
-            acceptedApplicants: 0,
-            rejectedApplicants: 0
-        }
-    };
+    const { id } = useParams();
+    const recruitId = useMemo(() => Number(id), [id]);
 
-    const club = clubsData[id] || clubsData[1]; // ID에 해당하는 동아리 데이터
-    
-    // TODO: 로그인한 사용자가 게시자인지 지원자인지 확인하는 로직
-    // location.state?.isPublisher 로 전달된 값 우선, 기본은 지원자(false)
-    const isPublisher = Boolean(location.state?.isPublisher);
+    const [club, setClub] = useState(null);
+    const [isPublisher, setIsPublisher] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchDetail = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const token = localStorage.getItem('accessToken');
+
+                // 토큰이 있을 때 게시자 전용 상세 먼저 시도
+                if (token) {
+                    try {
+                        const ownerData = await recruitApi.getOwnerDetail(recruitId);
+                        console.log('🔍 게시자 상세 조회 성공:', ownerData);
+                        if (!mounted) return;
+                        setClub(normalizeClub(ownerData));
+                        setIsPublisher(true);
+                        setLoading(false);
+                        return;
+                    } catch (ownerErr) {
+                        console.warn('⚠️ 게시자 상세 조회 실패, 일반 상세로 대체:', ownerErr.message);
+                    }
+                }
+
+                // 일반 상세 조회 (토큰 없거나 게시자 아님)
+                const data = await recruitApi.getDetail(recruitId);
+                if (!mounted) return;
+                const publisherId = Number(data?.userId);
+                const isOwner = false;
+
+                console.log('🔍 일반 상세 | publisherId:', publisherId, '| isOwner:', isOwner);
+
+                setClub(normalizeClub(data));
+                setIsPublisher(isOwner);
+            } catch (err) {
+                if (!mounted) return;
+                console.error('❌ 상세 조회 오류:', err);
+                setError('상세 정보를 불러오지 못했습니다.');
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
+        if (recruitId) fetchDetail();
+        return () => {
+            mounted = false;
+        };
+    }, [recruitId]);
+
+    if (loading) return <div style={{ padding: 16 }}>불러오는 중...</div>;
+    if (error) return <div style={{ padding: 16 }}>{error}</div>;
+    if (!club) return <div style={{ padding: 16 }}>데이터가 없습니다.</div>;
 
     return <ClubDetail club={club} isPublisher={isPublisher} />;
 };
