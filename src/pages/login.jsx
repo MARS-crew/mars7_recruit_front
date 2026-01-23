@@ -75,6 +75,7 @@ function Login() {
     const loginData = {
       usersId: userId,
       password: userPw,
+      rememberMe: isIDSaved,
     };
     try {
       console.log("서버 전송 데이터", loginData);
@@ -145,7 +146,7 @@ function Login() {
           <Input
             ref={idRef}
             label="아이디"
-            maxLength="10"
+            maxLength="15"
             value={userId}
             error={idError}
             onChange={(e) => {
