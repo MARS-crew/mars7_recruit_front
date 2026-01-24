@@ -145,7 +145,11 @@ const ClubDetail = ({ club, isPublisher }) => {
                 {isPublisher ? (
                     <button 
                         className="action-button publisher-button"
-                        onClick={() => navigate('/applicants')}
+                        onClick={() =>
+                            navigate(`/applicants?recruitId=${club.id}`, {
+                                state: { recruitId: club.id },
+                            })
+                        }
                     >
                         지원자 조회하기
                     </button>
