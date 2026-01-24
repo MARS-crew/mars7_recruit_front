@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import recruitApi from '../api/recruit';
 import Modal from '../components/Modal';
+import Toast from '../components/Toast';
 import '../styles/Clubs.css';
 import Nobackheader from '../components/nobackheader';
 
@@ -12,15 +13,18 @@ export default function Clubs() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const [fadeOut, setFadeOut] = useState(false);
   const [recruits, setRecruits] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
     if (location.state?.showDeleteToast) {
+      setToastMessage('삭제되었습니다.');
       setShowToast(true);
       setFadeOut(false);
       window.history.replaceState({}, document.title);
@@ -32,6 +36,27 @@ export default function Clubs() {
       setTimeout(() => {
         setShowToast(false);
       }, 2000);
+    }
+    
+    if (location.state?.showSuccessToast) {
+      setToastMessage('등록되었습니다.');
+      setShowToast(true);
+      setFadeOut(false);
+      window.history.replaceState({}, document.title);
+      
+      setTimeout(() => {
+        setFadeOut(true);
+      }, 1500);
+      
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+    }
+    
+    // 수정/작성 후 새로고침 트리거
+    if (location.state?.refresh) {
+      setRefreshKey(prev => prev + 1);
+      window.history.replaceState({}, document.title);
     }
   }, [location]);
 
@@ -49,6 +74,7 @@ export default function Clubs() {
   };
 
   const calculateDDay = (dueDate) => {
+    console.log('📅 calculateDDay 호출:', { dueDate, type: typeof dueDate });
     if (!dueDate) return '';
     // 한국 시간 기준 오늘 날짜 (로컬)
     const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
@@ -69,10 +95,12 @@ export default function Clubs() {
     } else {
       due = new Date(dateOnly);
     }
+    console.log('📅 파싱된 날짜:', { dateOnly, due, isValid: !Number.isNaN(due.getTime()) });
     if (Number.isNaN(due.getTime())) return '';
     due.setHours(0, 0, 0, 0);
     // 날짜 차이 계산 (시간 무관)
     const diffDays = Math.floor((due.getTime() - koreaToday.getTime()) / 86400000);
+    console.log('📅 D-day 계산:', { diffDays, koreaToday, due });
     if (diffDays < 0) return '마감';
     return `D-${diffDays}`;
   };
@@ -147,13 +175,20 @@ export default function Clubs() {
           normalizeRecruit(item, index),
         );
         
-        // 종료일이 지난 모집글 필터링
-        const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-        koreaToday.setHours(0, 0, 0, 0);
+        console.log('✅ 정규화된 데이터:', normalized);
+        console.log('📊 정규화 상세:', normalized.map(item => ({
+          id: item.id,
+          title: item.title,
+          dueDate: item.dueDate,
+          category: item.category
+        })));
         
+        // 마감 여부와 관계없이 모든 모집글 표시
+        // 종료일이 없는 경우만 제외
         const activeRecruits = normalized.filter((item) => {
-          if (!item.dueDate || item.dueDate === '마감') return false;
-          return true;
+          const isValid = item.dueDate !== undefined && item.dueDate !== null && item.dueDate !== '';
+          console.log(`🔍 필터링 체크 [${item.title}]:`, { dueDate: item.dueDate, isValid });
+          return isValid;
         });
         
         // Sort by creation date (descending, newest first)
@@ -163,7 +198,7 @@ export default function Clubs() {
           return new Date(dateB) - new Date(dateA);
         });
         
-        console.log('✅ 정규화된 데이터:', normalized);
+        console.log('🔥 활성 모집글 수:', activeRecruits.length);
         console.log('🔥 활성 모집글:', activeRecruits);
 
         if (!cancelled) {
@@ -188,7 +223,7 @@ export default function Clubs() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [searchTerm, activeFilter]);
+  }, [searchTerm, activeFilter, refreshKey]);
 
   // 이미 서버에서 필터링되어 오므로 클라이언트 필터링 불필요
   const filteredClubs = recruits;
@@ -316,29 +351,11 @@ export default function Clubs() {
         />
       
       {/* 토스트 팝업 */}
-      {showToast && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 80,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: 'rgba(150, 150, 150, 0.7)',
-            color: '#fff',
-            padding: '12px 24px',
-            borderRadius: 16,
-            fontSize: 14,
-            fontWeight: 500,
-            zIndex: 10000,
-            whiteSpace: 'nowrap',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            opacity: fadeOut ? 0 : 1,
-            transition: 'opacity 0.5s ease-out',
-          }}
-        >
-          삭제되었습니다.
-        </div>
-      )}
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

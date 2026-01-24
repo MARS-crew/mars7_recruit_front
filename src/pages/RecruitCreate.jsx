@@ -3,13 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import recruitApi from '../api/recruit';
 import Header from '../components/header';
 import Modal from '../components/Modal';
-import Toast from '../components/Toast';
 import '../styles/RecruitCreate.css';
 
 export default function RecruitCreate() {
   const navigate = useNavigate();
   const location = useLocation();
   const prefilledClub = location.state?.club;
+  const editRecruitId = location.state?.recruitId; // 수정 모드 구분
+
+  console.log('🔍 RecruitCreate 로드됨:', { editRecruitId, prefilledClub: prefilledClub?.id });
 
   const initialFormData = useMemo(
     () => ({
@@ -37,7 +39,6 @@ export default function RecruitCreate() {
   const [deadlineError, setDeadlineError] = useState('');
   const [emptyFieldError, setEmptyFieldError] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
-  const [showToast, setShowToast] = useState(false);
   // const [LoginOpen, setLoginOpen] = useState(false);
   
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -156,11 +157,35 @@ export default function RecruitCreate() {
         };
         setUploadedImages([posterImage]);
       }
+    } else if (editRecruitId) {
+      // 수정 모드: 서버에서 기존 데이터 로드
+      const loadEditData = async () => {
+        try {
+          console.log('📥 기존 모집글 데이터 로드 중...', editRecruitId);
+          const ownerDetail = await recruitApi.getOwnerDetail(editRecruitId);
+          
+          const mappedData = mapClubToFormData(ownerDetail);
+          setFormData((prev) => ({ ...prev, ...mappedData }));
+          
+          if (ownerDetail.posterImage) {
+            const posterImage = {
+              file: null,
+              preview: ownerDetail.posterImage,
+              isExisting: true
+            };
+            setUploadedImages([posterImage]);
+          }
+          console.log('✅ 기존 모집글 데이터 로드 완료');
+        } catch (error) {
+          console.error('❌ 기존 모집글 데이터 로드 실패:', error);
+        }
+      };
+      loadEditData();
     } else {
       fetchUserInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prefilledClub]);
+  }, [prefilledClub, editRecruitId]);
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -423,10 +448,14 @@ export default function RecruitCreate() {
 
     const toIsoDateTime = (value) => {
       if (!value) return null;
-      const normalized = value.includes('T') ? value : `${value}T00:00:00`;
-      const d = new Date(normalized);
-      if (Number.isNaN(d.getTime())) return null;
-      return d.toISOString();
+      // YYYY-MM-DD 형식을 UTC 기준으로 직접 변환 (타임존 변환 방지)
+      const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        const [, year, month, day] = match;
+        // UTC 기준 날짜로 직접 생성하여 타임존 문제 방지
+        return `${year}-${month}-${day}T00:00:00.000Z`;
+      }
+      return null;
     };
     
     // 토큰 확인
@@ -453,24 +482,38 @@ export default function RecruitCreate() {
     };
 
     try {
-      console.log('📝 모집글 작성 중...', submitData);
-      const response = await recruitApi.create(submitData);
-      console.log('✅ 모집글 작성 완료:', response);
+      if (editRecruitId) {
+        // 수정 모드: 새로 업로드한 이미지가 없으면 null로 전송 (기존 이미지 유지)
+        const updateData = {
+          ...submitData,
+          posterImage: uploadedImages[0]?.isExisting ? null : submitData.posterImage
+        };
+        console.log('📝 모집글 수정 중...', { editRecruitId, updateData });
+        const response = await recruitApi.update(editRecruitId, updateData);
+        console.log('✅ 모집글 수정 완료:', response);
+        console.log('📊 수정 API 응답 상태:', { status: response?.status, data: response });
+      } else {
+        // 작성 모드
+        console.log('📝 모집글 작성 중...', submitData);
+        const response = await recruitApi.create(submitData);
+        console.log('✅ 모집글 작성 완료:', response);
+        console.log('📊 작성 API 응답 상태:', { status: response?.status, data: response });
+      }
       
-      setShowToast(true);
-      setTimeout(() => {
-        navigate('/clubs');
-      }, 1500);
+      // 페이지 이동 후 토스트 표시
+      navigate('/clubs', { state: { showSuccessToast: true, refresh: Date.now() } });
     } catch (error) {
-      console.error('❌ 모집글 작성 실패:', error);
-      alert(error.message || '모집글 작성에 실패했습니다.');
+      console.error('❌ 모집글 작성/수정 실패:', error);
+      console.error('❌ 에러 메시지:', error.message);
+      console.error('❌ 에러 전체:', error);
+      alert(error.message || '모집글 작성/수정에 실패했습니다.');
     }
   };
 
   return (
   <div>
     {/* 헤더 */}
-      <Header title="모집글 작성" />
+      <Header title={editRecruitId ? "모집글 수정" : "모집글 작성"} />
     <div
       style={{
         padding: "0 16px",
@@ -865,12 +908,6 @@ export default function RecruitCreate() {
         작성하기
       </button>
 
-      {/* 토스트 팝업 */}
-      <Toast
-        message="등록되었습니다."
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-      />
       {/* <Modal
         isOpen={LoginOpen}
         title="로그인"
