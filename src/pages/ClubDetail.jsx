@@ -31,7 +31,7 @@ const ClubDetail = ({ club, isPublisher }) => {
         {isPublisher ? (
             <Clubheader
                 title="동아리 모집"
-                onEdit={() => navigate('/recruit', { state: { club } })}
+                onEdit={() => navigate('/recruit', { state: { recruitId: club.id, club } })}
                 onDelete={() => setShowDeleteModal(true)}
             />
         ) : (

@@ -23,7 +23,7 @@ const Toast = ({ message, isVisible, duration = 3000, onClose }) => {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
         color: '#fff',
         padding: '12px 24px',
-        borderRadius: 8,
+        borderRadius: 16,
         fontSize: 14,
         fontWeight: 500,
         zIndex: 10000,

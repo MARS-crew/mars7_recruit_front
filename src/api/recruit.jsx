@@ -113,6 +113,25 @@ export const recruitApi = {
       throw error;
     }
   },
+  /**
+   * 모집글 수정 API
+   */
+  update: async (recruitId, data) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_BASE_URL}/api/v1/recruits/${recruitId}`,
+        data,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "모집글 수정에 실패했습니다.",
+        );
+      }
+      throw error;
+    }
+  },
 };
 
 export default recruitApi;
