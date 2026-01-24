@@ -152,7 +152,7 @@ const ClubDetail = ({ club, isPublisher }) => {
                 ) : (
                     <button 
                         className="action-button applicant-button"
-                        onClick={() => navigate('/applications/new')}
+                        onClick={() => navigate(`/applications/new?recruitId=${club.id}`)}
                     >
                         지원하기
                     </button>

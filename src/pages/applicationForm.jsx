@@ -49,7 +49,7 @@ export default function ApplicationForm() {
 
   const handleConfirm = async () => {
     if (!recruitId) {
-      console.error("recruitId 없음.");
+      console.error("recruitId 없음. (location.state 또는 ?recruitId= 로 전달 필요)");
       closeModal();
       return;
     }
@@ -62,9 +62,10 @@ export default function ApplicationForm() {
     try {
       setIsSubmitting(true);
 
-      await createResume(recruitId, {
+      await createResume({
+        recruitId: Number(recruitId),
         title: title.trim(),
-        intro: intro.trim(),
+        selfIntroduce: intro.trim(),
       });
 
       setIsModalOpen(false);
@@ -111,7 +112,7 @@ export default function ApplicationForm() {
             }}
           >
             <img
-              src={profile?.profileImage || Profile}
+              src={profile?.profileImage ? profile.profileImage : Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
