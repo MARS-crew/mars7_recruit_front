@@ -47,6 +47,13 @@ export default function ApplicationDetail() {
   const [detail, setDetail] = useState(null);
   const [fetched, setFetched] = useState(false);
 
+  // API 필드명이 케이스마다 달라서 화면용으로만 안전하게 fallback 처리
+  const displayName = detail?.name ?? detail?.userName ?? "";
+  const displayPhone = detail?.phone ?? detail?.phoneNumber ?? "";
+  const displayIntro = detail?.intro ?? detail?.selfIntroduce ?? "";
+  const displayProfile = detail?.profileImageUrl ?? detail?.profileImage ?? "";
+  const displayAddress = detail?.address ?? "";
+
   useEffect(() => {
     if (!id) {
       setDetail(null);
@@ -129,7 +136,7 @@ export default function ApplicationDetail() {
             }}
           >
             <img
-              src={detail.profileImageUrl || Profile}
+              src={displayProfile || Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -137,13 +144,13 @@ export default function ApplicationDetail() {
 
           <div>
             <div style={{ fontWeight: 600, fontSize: 16 }}>
-              {detail.name ?? detail.userName}
+              {displayName}
             </div>
             <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
-              {detail.gender}
+              {detail.gender === "F" ? "여자" : detail.gender === "M" ? "남자" : detail.gender}
               {detail.age ? ` · ${detail.age}세` : ""}
               {detail.major ? ` / ${detail.major}` : ""}
-              {detail.grade ? ` ${detail.grade}` : ""}
+              {detail.grade ? ` ${detail.grade}학년` : ""}
             </div>
           </div>
         </div>
@@ -164,7 +171,7 @@ export default function ApplicationDetail() {
               주소
             </div>
             <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
-              {detail.address}
+              {displayAddress || "-"}
             </div>
           </div>
 
@@ -180,7 +187,7 @@ export default function ApplicationDetail() {
               연락처
             </div>
             <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
-              {detail.phone}
+              {displayPhone || "-"}
             </div>
           </div>
         </div>
@@ -202,7 +209,7 @@ export default function ApplicationDetail() {
               whiteSpace: "pre-wrap",
             }}
           >
-            {detail.intro}
+            {displayIntro}
           </p>
         </div>
       </div>

@@ -57,18 +57,19 @@ export default function Applications() {
     fetchMyResumes();
   }, []);
 
-  const formatDate = (iso) => {
-    if (!iso) return "";
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+const formatDate = (iso) => {
+  if (!iso) return "-";
+
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+};
 
   return (
     <div style={{ paddingBottom: 72 }}>

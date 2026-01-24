@@ -1,12 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BottomNavBar from "../components/BottomNavBar";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 import { useEffect, useState } from "react";
 import { getApplicants } from "../api/resume";
 
-export default function ApplicantList({ recruitId = 1 }) {
+export default function ApplicantList() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const recruitId =
+    location.state?.recruitId ??
+    Number(new URLSearchParams(location.search).get("recruitId") ?? 1);
   const [applicants, setApplicants] = useState([]);
 
 useEffect(() => {
@@ -32,7 +36,11 @@ useEffect(() => {
         {applicants.map((applicant) => (
           <li
             key={applicant.resumeId}
-            onClick={() => navigate(`/applicants/${applicant.resumeId}`)}
+            onClick={() =>
+              navigate(`/applicants/${applicant.resumeId}?recruitId=${recruitId}`, {
+                state: { recruitId },
+              })
+            }
             style={{
               display: "flex",
               alignItems: "center",
@@ -75,7 +83,13 @@ useEffect(() => {
             </div>
 
             <div style={{ fontSize: 12, color: "#bbb" }}>
-              {applicant.createdAt ? new Date(applicant.createdAt).toLocaleDateString() : ""}
+              {applicant.createdAt
+                ? new Date(applicant.createdAt).toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                : ""}
             </div>
           </li>
         ))}
