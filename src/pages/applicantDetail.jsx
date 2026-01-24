@@ -101,7 +101,7 @@ export default function ApplicantDetail() {
 
           <div>
             <div style={{ fontWeight: 600, fontSize: 16 }}>
-              {applicant.userName}
+              {applicant.name}
             </div>
             <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
               {applicant.major} {applicant.grade}학년
@@ -113,6 +113,21 @@ export default function ApplicantDetail() {
 
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
+          <div style={{ display: "flex", gap: 24 }}>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                width: 64,
+                color: "#999",
+              }}
+            >
+              주소
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
+              {applicant.address}
+            </div>
+          </div>
           <div style={{ display: "flex", gap: 24 }}>
             <div
               style={{
