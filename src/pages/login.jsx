@@ -234,12 +234,6 @@ function Login() {
               아이디 저장
             </span>
           </div>
-          <span
-            style={{ fontSize: 14, color: "#9EA3B2", paddingRight: 5 }}
-            onClick={() => navigate("/pwChange")}
-          >
-            비밀번호 찾기
-          </span>
         </div>
 
         <div style={{ marginTop: 50 }}>
