@@ -5,6 +5,7 @@ import Clubheader from '../components/clubheader';
 import Header from '../components/header';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
+import recruitApi from '../api/recruit';
 
 const ClubDetail = ({ club, isPublisher }) => {
     const navigate = useNavigate();
@@ -15,10 +16,17 @@ const ClubDetail = ({ club, isPublisher }) => {
         window.scrollTo(0, 0);
     }, []);
 
-    const handleDeleteConfirm = () => {
-        console.log('글 삭제:', club.id);
-        setShowDeleteModal(false);
-        navigate('/clubs', { state: { showDeleteToast: true } });
+    const handleDeleteConfirm = async () => {
+        try {
+            console.log('🗑️ 글 삭제 요청:', club.id);
+            await recruitApi.delete(club.id);
+            console.log('✅ 글 삭제 완료');
+            setShowDeleteModal(false);
+            navigate('/clubs', { state: { showDeleteToast: true, refresh: Date.now() } });
+        } catch (error) {
+            console.error('❌ 글 삭제 실패:', error);
+            alert(error.message || '모집글 삭제에 실패했습니다.');
+        }
     };
 
     const descriptionParagraphs = (club.description || '동아리 소개 내용이 여기에 표시됩니다.')

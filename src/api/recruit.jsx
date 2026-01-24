@@ -132,6 +132,24 @@ export const recruitApi = {
       throw error;
     }
   },
+  /**
+   * 모집글 삭제 API
+   */
+  delete: async (recruitId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `${API_BASE_URL}/api/v1/recruits/${recruitId}`,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "모집글 삭제에 실패했습니다.",
+        );
+      }
+      throw error;
+    }
+  },
 };
 
 export default recruitApi;
