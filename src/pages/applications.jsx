@@ -42,12 +42,44 @@ export default function Applications() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
 
+  const safeStatus = (v) => {
+    const s = (v ?? "").toString().trim();
+    return s ? s : null;
+  };
+
+  const getSavedStatus = (resumeId, recruitId) => {
+    try {
+      const map = JSON.parse(localStorage.getItem("resumeStatusMap") || "{}");
+      const item = map[String(resumeId)];
+      const s1 = safeStatus(typeof item === "string" ? item : item?.status);
+      if (s1) return s1;
+
+      if (recruitId != null) {
+        const s2 = safeStatus(localStorage.getItem(`resumeStatus:${recruitId}:${resumeId}`));
+        if (s2) return s2;
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     const fetchMyResumes = async () => {
       try {
         const res = await getMyResumes();
         const list = res?.data?.data ?? [];
-        setItems(Array.isArray(list) ? list : []);
+        const normalized = Array.isArray(list)
+          ? list.map((it) => ({
+              ...it,
+              status:
+                safeStatus(it.status) ||
+                getSavedStatus(it.resumeId, it.recruitId) ||
+                "INPROGRESS",
+            }))
+          : [];
+        setItems(normalized);
       } catch (e) {
         console.error("내 지원서 목록 조회 실패", e);
         setItems([]);
