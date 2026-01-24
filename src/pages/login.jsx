@@ -88,6 +88,11 @@ function Login() {
           response.data?.refreshToken || response.refreshToken;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        if (isIDSaved) {
+          localStorage.setItem("savedUserId", userId);
+        } else {
+          localStorage.removeItem("savedUserId");
+        }
         navigate("/");
       }
     } catch (error) {
@@ -109,6 +114,13 @@ function Login() {
       }
     }
   };
+  useEffect(() => {
+    const savedId = localStorage.getItem("savedUserId");
+    if (savedId) {
+      setUserId(savedId);
+      setIsIDSaved(true);
+    }
+  }, []);
 
   return (
     <div>
