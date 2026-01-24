@@ -17,8 +17,8 @@ export const getMyResumeDetail = (resumeId) =>
   axiosInstance.get(`/api/resumes/my/${resumeId}`);
 
 // 지원서 작성
-export const createResume = (data) =>
-  axiosInstance.post("/api/resumes", data);
+export const createResume = (recruitId, data) =>
+  axiosInstance.post("/api/resumes", { recruitId: Number(recruitId), ...data });
 
 // 합격 / 불합격 처리
 export const updateResumeStatus = (recruitId, resumeId, status) =>
