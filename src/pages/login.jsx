@@ -88,6 +88,11 @@ function Login() {
           response.data?.refreshToken || response.refreshToken;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        if (isIDSaved) {
+          localStorage.setItem("savedUserId", userId);
+        } else {
+          localStorage.removeItem("savedUserId");
+        }
         navigate("/");
       }
     } catch (error) {
@@ -109,6 +114,13 @@ function Login() {
       }
     }
   };
+  useEffect(() => {
+    const savedId = localStorage.getItem("savedUserId");
+    if (savedId) {
+      setUserId(savedId);
+      setIsIDSaved(true);
+    }
+  }, []);
 
   return (
     <div>
@@ -234,12 +246,6 @@ function Login() {
               아이디 저장
             </span>
           </div>
-          <span
-            style={{ fontSize: 14, color: "#9EA3B2", paddingRight: 5 }}
-            onClick={() => navigate("/pwChange")}
-          >
-            비밀번호 찾기
-          </span>
         </div>
 
         <div style={{ marginTop: 50 }}>
