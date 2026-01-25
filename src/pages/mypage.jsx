@@ -19,6 +19,7 @@ export default function MyPage() {
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [LoginOpen, setLoginOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   // Refs
   const nameRef = useRef(null);
   const phoneRef = useRef(null);
@@ -34,7 +35,7 @@ export default function MyPage() {
   const [appPush, setAppPush] = useState(false);
   const [profileImg, setProfileImg] = useState(userImage);
   const [toastMsg, setToastMsg] = useState("");
-
+  const [imgFile, setImgFile] = useState(null);
   // Error States
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -80,6 +81,7 @@ export default function MyPage() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImgFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setProfileImg(reader.result);
       reader.readAsDataURL(file);
@@ -139,37 +141,49 @@ export default function MyPage() {
     }
 
     if (isValid) {
-      const patchData = {
-        name: userName,
-        phoneNumber: userPhone,
-        grade: parseInt(grade.replace("학년", "")),
-        major: major,
-        profileImage: profileImg,
-        apppushAgreed: appPush,
-      };
-      try {
-        console.log("서버 전송 데이터:", patchData);
-        const response = await mypageApi.mypageUpdate(patchData);
+      if (isValid) {
+        try {
+          let finalImgUrl = profileImg;
+          if (imgFile) {
+            const formData = new FormData();
+            formData.append("file", imgFile);
 
-        // 2. 알럿 대신 토스트 활성화
-        setToastMsg("저장되었습니다.");
-        setShowToast(true);
+            const uploadRes = await mypageApi.uploadImage(formData);
 
-        if (response) {
+            if (uploadRes.success) {
+              finalImgUrl = uploadRes.data.imageUrl;
+            } else {
+              throw new Error("이미지 업로드에 실패했습니다.");
+            }
+          }
+
+          const patchData = {
+            name: userName,
+            phoneNumber: userPhone,
+            grade: parseInt(grade.replace("학년", "")),
+            major: major,
+            profileImage: finalImgUrl,
+            apppushAgreed: appPush,
+          };
+
+          const response = await mypageApi.mypageUpdate(patchData);
+
+          if (response.success) {
+            setToastMsg("저장되었습니다.");
+            setShowToast(true);
+            setImgFile(null); // 전송 완료 후 파일 객체 초기화
+            setTimeout(() => setShowToast(false), 2000);
+          }
+        } catch (error) {
+          console.error("수정 실패:", error);
+
+          setToastMsg(error.message || "저장에 실패했습니다.");
           setShowToast(true);
-          console.log("토스트 활성화됨"); // 디버깅용 로그
-
-          // 2초 뒤에 토스트 숨기기
-          setTimeout(() => {
-            setShowToast(false);
-          }, 2000);
+          setTimeout(() => setShowToast(false), 2000);
         }
-      } catch (error) {
-        console.error("저장 실패:", error);
+      } else if (firstErrorRef) {
+        firstErrorRef.current?.focus();
       }
-      // 2. 알럿 대신 토스트 활성화
-    } else if (firstErrorRef) {
-      firstErrorRef.current?.focus();
     }
   };
 
@@ -240,7 +254,9 @@ export default function MyPage() {
           setGrade(`${res.grade}학년`);
           setMajor(res.major);
           setAppPush(res.apppushAgreed);
-          if (res.profileImage) setProfileImg(res.profileImage);
+          if (res.profileImage) {
+            setProfileImg(res.profileImage);
+          }
         }
       } catch (err) {
         console.error("마이페이지 로드 실패:", err);
@@ -250,10 +266,17 @@ export default function MyPage() {
         ) {
           navigate("/login");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchMypageData();
   }, []);
+  //로딩
+  if (isLoading) {
+    return <div className="page-container"></div>;
+  }
+
   return (
     <div>
       <div className="page-container">
