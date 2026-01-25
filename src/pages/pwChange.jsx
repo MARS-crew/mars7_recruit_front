@@ -4,7 +4,7 @@ import PasswordField from "../components/PasswordField";
 import MessageText from "../components/MessageText";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 export default function PwChange() {
   const navigate = useNavigate();
   const pwRef = useRef(null);

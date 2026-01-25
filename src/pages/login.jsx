@@ -7,7 +7,7 @@ import MessageText from "../components/MessageText"; // 경고문구 컴포넌�
 import Button from "../components/Button";
 import Header from "../components/header";
 import check from "../icon/check.png";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 
 function Login() {
   const navigate = useNavigate();

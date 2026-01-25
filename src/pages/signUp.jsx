@@ -8,7 +8,7 @@ import check from "../icon/check.png";
 import RightArrow from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 import { useNavigate, useLocation } from "react-router-dom";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 export default function SignUp() {
   //input 칸
   const majorRef = useRef(null);
