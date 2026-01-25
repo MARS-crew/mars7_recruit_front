@@ -376,6 +376,9 @@ function Home() {
                 style={{
                   width: "100px",
                   height: "116px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 {popularList[2]?.posterImage ? (
