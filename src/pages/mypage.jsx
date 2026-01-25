@@ -9,7 +9,7 @@ import Toggle from "../components/Toggle";
 import RA from "../icon/RightArrow.png";
 import MessageText from "../components/MessageText";
 import mypageApi from "../api/mypage";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 import Modal from "../components/Modal";
 import Header from "../components/header";
 
@@ -19,7 +19,7 @@ export default function MyPage() {
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [LoginOpen, setLoginOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
   // Refs
   const nameRef = useRef(null);
   const phoneRef = useRef(null);
@@ -266,16 +266,10 @@ export default function MyPage() {
         ) {
           navigate("/login");
         }
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchMypageData();
   }, []);
-  //로딩
-  if (isLoading) {
-    return <div className="page-container"></div>;
-  }
 
   return (
     <div>

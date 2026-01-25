@@ -3,7 +3,7 @@ import { axiosInstance } from "./axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const authApi = {
+const authApi = {
   /**
    * 회원가입 API
    */
@@ -19,6 +19,24 @@ export const authApi = {
         const errorMessage =
           error.response?.data?.error?.message || "회원가입 실패";
         throw new Error(errorMessage);
+      }
+      throw error;
+    }
+  },
+  /**
+   * 회원가입 사진 저장 API
+   */
+  signupImage: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/images/signup/profile`,
+        formData,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("에러 데이터:", error.response?.data);
+        throw new Error(error.response?.data?.message);
       }
       throw error;
     }

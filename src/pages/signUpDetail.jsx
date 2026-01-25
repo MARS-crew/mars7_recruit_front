@@ -6,7 +6,7 @@ import MessageText from "../components/MessageText";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { useNavigate, useLocation } from "react-router-dom";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 export default function SingUpDetail() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,7 +27,7 @@ export default function SingUpDetail() {
   const [genderError, setGenderError] = useState("");
   const [birthError, setBirthError] = useState("");
   const [profileImg, setProfileImg] = useState(userImage);
-
+  const [imgFile, setImgFile] = useState(null);
   const isDefaultImage = profileImg === userImage;
 
   // 옵션 데이터
@@ -57,6 +57,7 @@ export default function SingUpDetail() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImgFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setProfileImg(reader.result);
       reader.readAsDataURL(file);
@@ -98,20 +99,35 @@ export default function SingUpDetail() {
 
     // 모든 검증 통과 시 서버 전송
     if (isValid) {
-      // 데이터 포맷팅
-      const formattedBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-      const formattedGender = gender === "여성" ? "F" : "M";
-
-      // 최종 JSON 구조 생성
-      const finalData = {
-        ...prevData, // usersId, password, name, phoneNumber, grade, major, serviceAgreed, apppushAgreed 포함
-        gender: formattedGender,
-        birth: formattedBirth,
-        profileImage: profileImg,
-        address: address,
-      };
-      console.log("최종 전송 데이터:", finalData);
       try {
+        let finalImgUrl = ""; // 기본값 (이미지 선택 안 했을 경우)
+
+        if (imgFile) {
+          const formData = new FormData();
+          formData.append("file", imgFile);
+
+          // 이미지 업로드 API 호출 (mypageApi에 정의한 것 재사용)
+          const uploadRes = await authApi.signupImage(formData);
+          if (uploadRes.success) {
+            finalImgUrl = uploadRes.data.imageUrl;
+          } else {
+            throw new Error("이미지 업로드에 실패했습니다.");
+          }
+        }
+        // 데이터 포맷팅
+        const formattedBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        const formattedGender = gender === "여성" ? "F" : "M";
+
+        // 최종 JSON 구조 생성
+        const finalData = {
+          ...prevData, // usersId, password, name, phoneNumber, grade, major, serviceAgreed, apppushAgreed 포함
+          gender: formattedGender,
+          birth: formattedBirth,
+          profileImage: finalImgUrl,
+          address: address,
+        };
+        console.log("최종 전송 데이터:", finalData);
+
         // API 호출
         const response = await authApi.signup(finalData);
 
