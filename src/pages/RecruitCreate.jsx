@@ -11,8 +11,6 @@ export default function RecruitCreate() {
   const prefilledClub = location.state?.club;
   const editRecruitId = location.state?.recruitId; // 수정 모드 구분
 
-  console.log('🔍 RecruitCreate 로드됨:', { editRecruitId, prefilledClub: prefilledClub?.id });
-
   const initialFormData = useMemo(
     () => ({
       title: '',
@@ -124,28 +122,8 @@ export default function RecruitCreate() {
   });
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        // 사용자의 모집글 목록 조회
-        const rawList = await recruitApi.getList('ALL');
-        if (rawList && rawList.length > 0) {
-          // 첫 번째 모집글의 상세 정보 조회 (게시자 상세)
-          const recruitId = rawList[0].recruitId;
-          const ownerDetail = await recruitApi.getOwnerDetail(recruitId);
-          if (ownerDetail?.userName && ownerDetail?.userPhoneNumber) {
-            setFormData((prev) => ({
-              ...prev,
-              managerName: ownerDetail.userName,
-              phoneNumber: ownerDetail.userPhoneNumber
-            }));
-          }
-        }
-      } catch (error) {
-        console.log('⚠️ 사용자 정보 로드 실패:', error.message);
-      }
-    };
-
     if (prefilledClub) {
+      // 수정 모드 (클럽 데이터 전달됨)
       const mappedData = mapClubToFormData(prefilledClub);
       setFormData((prev) => ({ ...prev, ...mappedData }));
       
@@ -161,7 +139,6 @@ export default function RecruitCreate() {
       // 수정 모드: 서버에서 기존 데이터 로드
       const loadEditData = async () => {
         try {
-          console.log('📥 기존 모집글 데이터 로드 중...', editRecruitId);
           const ownerDetail = await recruitApi.getOwnerDetail(editRecruitId);
           
           const mappedData = mapClubToFormData(ownerDetail);
@@ -175,14 +152,29 @@ export default function RecruitCreate() {
             };
             setUploadedImages([posterImage]);
           }
-          console.log('✅ 기존 모집글 데이터 로드 완료');
         } catch (error) {
-          console.error('❌ 기존 모집글 데이터 로드 실패:', error);
         }
       };
       loadEditData();
     } else {
-      fetchUserInfo();
+      // 새 글 작성 모드: localStorage에서 사용자 정보 로드
+      try {
+        const userInfo = localStorage.getItem('user');
+        
+        if (userInfo) {
+          const { name, phoneNumber } = JSON.parse(userInfo);
+          
+          if (name || phoneNumber) {
+            setFormData((prev) => ({
+              ...prev,
+              managerName: name || prev.managerName,
+              phoneNumber: phoneNumber || prev.phoneNumber
+            }));
+          }
+        }
+      } catch (error) {
+        // 조용히 실패 처리
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefilledClub, editRecruitId]);
@@ -465,47 +457,53 @@ export default function RecruitCreate() {
       navigate('/login');
       return;
     }
-    
-    // 서버에 전송할 데이터 포맷팅
-    const submitData = {
-      title: formData.title,
-      content: formData.content,
-      field: formData.category === '취미동아리' ? 'HOBBY' : 'MAJOR',
-      gender: formData.gender === '무관' ? 'ANY' : formData.gender === '남자' ? 'M' : 'F',
-      people: parseInt(formData.recruitCount),
-      startDate: toIsoDateTime(formData.startDate),
-      dueDate: toIsoDateTime(formData.endDate),
-      resultDate: toIsoDateTime(formData.deadline),
-      posterImage: uploadedImages[0]?.preview || null,
-      managerName: formData.managerName,
-      contact: formData.phoneNumber,
-    };
 
     try {
+      // 이미지 업로드 (새 이미지가 있는 경우만)
+      let posterImageUrl = null;
+      if (uploadedImages[0] && !uploadedImages[0]?.isExisting) {
+        const formData = new FormData();
+        formData.append('file', uploadedImages[0].file);
+        
+        const uploadRes = await recruitApi.uploadImage(formData);
+        
+        if (uploadRes.success) {
+          posterImageUrl = uploadRes.data.imageUrl;
+        } else {
+          throw new Error('이미지 업로드에 실패했습니다.');
+        }
+      }
+
+      // 서버에 전송할 데이터 포맷팅
+      const submitData = {
+        title: formData.title,
+        content: formData.content,
+        field: formData.category === '취미동아리' ? 'HOBBY' : 'MAJOR',
+        gender: formData.gender === '무관' ? 'ANY' : formData.gender === '남자' ? 'M' : 'F',
+        people: parseInt(formData.recruitCount),
+        startDate: toIsoDateTime(formData.startDate),
+        dueDate: toIsoDateTime(formData.endDate),
+        resultDate: toIsoDateTime(formData.deadline),
+        posterImage: posterImageUrl,
+        managerName: formData.managerName,
+        contact: formData.phoneNumber,
+      };
+    
       if (editRecruitId) {
         // 수정 모드: 새로 업로드한 이미지가 없으면 null로 전송 (기존 이미지 유지)
         const updateData = {
           ...submitData,
-          posterImage: uploadedImages[0]?.isExisting ? null : submitData.posterImage
+          posterImage: !posterImageUrl ? null : posterImageUrl
         };
-        console.log('📝 모집글 수정 중...', { editRecruitId, updateData });
         const response = await recruitApi.update(editRecruitId, updateData);
-        console.log('✅ 모집글 수정 완료:', response);
-        console.log('📊 수정 API 응답 상태:', { status: response?.status, data: response });
       } else {
         // 작성 모드
-        console.log('📝 모집글 작성 중...', submitData);
         const response = await recruitApi.create(submitData);
-        console.log('✅ 모집글 작성 완료:', response);
-        console.log('📊 작성 API 응답 상태:', { status: response?.status, data: response });
       }
       
       // 페이지 이동 후 토스트 표시
       navigate('/clubs', { state: { showSuccessToast: true, refresh: Date.now() } });
     } catch (error) {
-      console.error('❌ 모집글 작성/수정 실패:', error);
-      console.error('❌ 에러 메시지:', error.message);
-      console.error('❌ 에러 전체:', error);
       alert(error.message || '모집글 작성/수정에 실패했습니다.');
     }
   };
@@ -908,18 +906,6 @@ export default function RecruitCreate() {
         작성하기
       </button>
 
-      {/* <Modal
-        isOpen={LoginOpen}
-        title="로그인"
-        content="로그인이 필요합니다."
-        lBtn="취소"
-        rBtn="로그인"
-        onClose={() => setLoginOpen(false)}
-        onRightClick={() => {
-          setLoginOpen(false);
-          ModalLoginConfirm();
-        }}
-      /> */}
     </div>
   </div>
   );

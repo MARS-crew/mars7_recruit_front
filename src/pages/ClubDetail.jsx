@@ -18,13 +18,10 @@ const ClubDetail = ({ club, isPublisher }) => {
 
     const handleDeleteConfirm = async () => {
         try {
-            console.log('🗑️ 글 삭제 요청:', club.id);
             await recruitApi.delete(club.id);
-            console.log('✅ 글 삭제 완료');
             setShowDeleteModal(false);
             navigate('/clubs', { state: { showDeleteToast: true, refresh: Date.now() } });
         } catch (error) {
-            console.error('❌ 글 삭제 실패:', error);
             alert(error.message || '모집글 삭제에 실패했습니다.');
         }
     };
