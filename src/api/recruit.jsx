@@ -150,6 +150,31 @@ export const recruitApi = {
       throw error;
     }
   },
+  /**
+   * 모집글 이미지 업로드 API
+   */
+  uploadImage: async (formData) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_BASE_URL}/api/v1/images/recruit`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('❌ 이미지 업로드 에러:', error.response?.data);
+        throw new Error(
+          error.response?.data?.message || "이미지 업로드에 실패했습니다.",
+        );
+      }
+      throw error;
+    }
+  },
 };
 
 export default recruitApi;

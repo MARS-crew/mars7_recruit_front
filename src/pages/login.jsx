@@ -78,16 +78,27 @@ function Login() {
       rememberMe: isIDSaved,
     };
     try {
-      console.log("서버 전송 데이터", loginData);
-
       const response = await authApi.login(loginData);
 
       if (response) {
-        const accessToken = response.data?.accessToken || response.accessToken;
-        const refreshToken =
-          response.data?.refreshToken || response.refreshToken;
+        const accessToken = response.accessToken || response.data?.accessToken;
+        const refreshToken = response.refreshToken || response.data?.refreshToken;
+        const userDetails = response.userDetails || response.data?.userDetails;
+        const name = userDetails?.name;
+        const phoneNumber = userDetails?.phoneNumber;
+        
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        
+        // 사용자 정보 저장 (담당자 정보로 활용)
+        if (name || phoneNumber) {
+          const userInfo = {
+            name: name || "",
+            phoneNumber: phoneNumber || ""
+          };
+          localStorage.setItem("user", JSON.stringify(userInfo));
+        }
+        
         if (isIDSaved) {
           localStorage.setItem("savedUserId", userId);
         } else {

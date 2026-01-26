@@ -74,7 +74,6 @@ export default function Clubs() {
   };
 
   const calculateDDay = (dueDate) => {
-    console.log('📅 calculateDDay 호출:', { dueDate, type: typeof dueDate });
     if (!dueDate) return '';
     // 한국 시간 기준 오늘 날짜 (로컬)
     const koreaToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
@@ -95,12 +94,10 @@ export default function Clubs() {
     } else {
       due = new Date(dateOnly);
     }
-    console.log('📅 파싱된 날짜:', { dateOnly, due, isValid: !Number.isNaN(due.getTime()) });
     if (Number.isNaN(due.getTime())) return '';
     due.setHours(0, 0, 0, 0);
     // 날짜 차이 계산 (시간 무관)
     const diffDays = Math.floor((due.getTime() - koreaToday.getTime()) / 86400000);
-    console.log('📅 D-day 계산:', { diffDays, koreaToday, due });
     if (diffDays < 0) return '마감';
     return `D-${diffDays}`;
   };
@@ -160,12 +157,10 @@ export default function Clubs() {
 
         if (keyword) {
           // 검색어가 있으면 검색 API 사용
-          console.log('🔍 검색 키워드:', keyword);
           rawList = await recruitApi.search(keyword);
         } else {
           // 검색어가 없으면 전체 조회 API 사용 (필터 적용)
           const field = mapFilterToField(activeFilter);
-          console.log('📋 분야 필터:', field);
           rawList = await recruitApi.getList(field);
         }
         
@@ -175,19 +170,10 @@ export default function Clubs() {
           normalizeRecruit(item, index),
         );
         
-        console.log('✅ 정규화된 데이터:', normalized);
-        console.log('📊 정규화 상세:', normalized.map(item => ({
-          id: item.id,
-          title: item.title,
-          dueDate: item.dueDate,
-          category: item.category
-        })));
-        
         // 마감 여부와 관계없이 모든 모집글 표시
         // 종료일이 없는 경우만 제외
         const activeRecruits = normalized.filter((item) => {
           const isValid = item.dueDate !== undefined && item.dueDate !== null && item.dueDate !== '';
-          console.log(`🔍 필터링 체크 [${item.title}]:`, { dueDate: item.dueDate, isValid });
           return isValid;
         });
         
@@ -198,14 +184,10 @@ export default function Clubs() {
           return new Date(dateB) - new Date(dateA);
         });
         
-        console.log('🔥 활성 모집글 수:', activeRecruits.length);
-        console.log('🔥 활성 모집글:', activeRecruits);
-
         if (!cancelled) {
           setRecruits(sortedRecruits);
         }
       } catch (err) {
-        console.error('❌ API 에러:', err);
         if (!cancelled) {
           const errorMsg = err.message || '동아리 모집글을 불러오지 못했습니다.';
           setError(errorMsg);
