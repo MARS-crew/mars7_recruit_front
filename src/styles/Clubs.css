@@ -190,6 +190,7 @@
 .club-members {
   display: flex;
   align-items: center;
+  gap: 4px;
   color: #9EA3B2;
   margin-left: auto;
 }
@@ -197,12 +198,15 @@
 .member-icon {
   width: 19px;
   height: 19px;
+  min-width: 19px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .club-members-count {
   color: #9EA3B2;
   font-family: 'Pretendard';
+  min-width: 30px;
 }
 
 /* 동아리 이미지 */

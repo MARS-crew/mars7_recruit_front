@@ -132,6 +132,14 @@ export default function Clubs() {
     // D-day 계산
     const dDay = calculateDDay(item?.dueDate);
 
+    const memberValue = item?.people ?? item?.members ?? item?.targetCount ?? '';
+    console.log('📋 clubs.jsx normalizeRecruit:', {
+      item: item,
+      people: item?.people,
+      peopleType: typeof item?.people,
+      memberValue: memberValue,
+    });
+
     return {
       id: item?.recruitId ?? item?.id ?? `recruit-${index}`,
       title: item?.title ?? item?.recruitTitle ?? '제목 없음',
@@ -139,7 +147,7 @@ export default function Clubs() {
       category,
       startDate,
       dueDate: dDay,
-      members: item?.people ?? item?.members ?? item?.targetCount ?? '',
+      members: memberValue,
       image: item?.posterImage ?? item?.thumbnailUrl ?? '/icons/clubimage.png',
     };
   };
@@ -267,7 +275,7 @@ export default function Clubs() {
           filteredClubs.map((club, index) => {
             const dueDateLabel = club.dueDate || '모집중';
             const startLabel = club.startDate ? `${club.startDate} 시작` : '시작일 미정';
-            const memberLabel = club.members ? `${club.members}명` : '인원 미정';
+            const memberLabel = club.members !== undefined && club.members !== null && club.members !== '' ? `${club.members}명` : '인원 미정';
 
             return (
               <div 

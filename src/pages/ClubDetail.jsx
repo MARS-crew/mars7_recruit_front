@@ -16,6 +16,21 @@ const ClubDetail = ({ club, isPublisher }) => {
         window.scrollTo(0, 0);
     }, []);
 
+    useEffect(() => {
+        // 게시자용 지원 정보 디버깅
+        if (isPublisher) {
+            console.log('🔍 ClubDetail - 게시자 정보:', {
+                club: club,
+                viewCount: club?.viewCount,
+                totalApplicants: club?.totalApplicants,
+                viewedApplicants: club?.viewedApplicants,
+                unviewedApplicants: club?.unviewedApplicants,
+                acceptedApplicants: club?.acceptedApplicants,
+                rejectedApplicants: club?.rejectedApplicants,
+            });
+        }
+    }, [club, isPublisher]);
+
     const handleDeleteConfirm = async () => {
         try {
             await recruitApi.delete(club.id);
@@ -64,7 +79,11 @@ const ClubDetail = ({ club, isPublisher }) => {
                     <h3>모집 조건</h3>
                     <div className="condition-item">
                         <span className="condition-label">모집 인원</span>
-                        <span className="condition-value">{club.recruitCount || '00'}명</span>
+                        <span className="condition-value">
+                            {club.recruitCount !== undefined && club.recruitCount !== null && club.recruitCount !== ''
+                                ? `${club.recruitCount}명`
+                                : '미정'}
+                        </span>
                     </div>
                     <div className="condition-item">
                         <span className="condition-label">성별</span>

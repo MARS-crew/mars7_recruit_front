@@ -23,8 +23,8 @@ export default function Modal({
   //기본 값 로그인 모달
   spacing = {
     iconToTitle: 8,
-    titleToContent: 13,
-    contentToBtn: 20,
+    titleToContent: 3,
+    contentToBtn: 18,
   },
 }) {
   const { iconToTitle, titleToContent, contentToBtn } = spacing;

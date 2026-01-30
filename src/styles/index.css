@@ -6,6 +6,12 @@
   --font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 * {
   margin: 0;
   padding: 0;

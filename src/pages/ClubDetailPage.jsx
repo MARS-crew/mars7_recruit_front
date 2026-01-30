@@ -25,14 +25,33 @@ const normalizeClub = (data) => {
     const applicants = data?.applicants || [];
     const viewedCount = applicants.filter(a => a?.isViewed).length || 0;
     const unviewedCount = applicants.filter(a => !a?.isViewed).length || 0;
-    const acceptedCount = applicants.filter(a => a?.status === 'ACCEPTED').length || 0;
-    const rejectedCount = applicants.filter(a => a?.status === 'REJECTED').length || 0;
+    const acceptedCount = applicants.filter(a => a?.status === 'PASS').length || 0;
+    const rejectedCount = applicants.filter(a => a?.status === 'FAIL').length || 0;
+    
+    const recruitCountValue = String(data?.people ?? '');
+    console.log('📊 normalizeClub - 데이터 변환:', {
+        rawData: data,
+        applicants: applicants,
+        applicantsDetail: applicants.map((a, idx) => ({
+            index: idx,
+            isViewed: a?.isViewed,
+            status: a?.status,
+            name: a?.name,
+        })),
+        viewedCount: viewedCount,
+        unviewedCount: unviewedCount,
+        acceptedCount: acceptedCount,
+        rejectedCount: rejectedCount,
+        people: data?.people,
+        peopleType: typeof data?.people,
+        recruitCount: recruitCountValue,
+    });
     
     return {
         id: data?.recruitId,
         category: toCategory(data?.field),
         title: data?.title,
-        recruitCount: String(data?.people ?? ''),
+        recruitCount: recruitCountValue,
         gender: toGender(data?.gender),
         recruitPeriod: `${formatDate(data?.startDate)} - ${formatDate(data?.dueDate)}`,
         announcementDate: formatDate(data?.resultDate),
