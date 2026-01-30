@@ -102,6 +102,26 @@ const authApi = {
       throw error;
     }
   },
+/**
+   * 토큰 재발급
+   */
+refreshToken: async (refreshToken) => {
+  try {
+   
+    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/reissue`, {
+      refreshToken: refreshToken,
+    });
+    return response.data.data; 
+    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || '토큰 갱신 중 오류가 발생했습니다.'
+      );
+    }
+    throw error;
+  }
+},
 
   /**
    * 회원탈퇴 API
