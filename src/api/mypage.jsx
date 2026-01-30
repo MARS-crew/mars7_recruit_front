@@ -26,11 +26,16 @@ const mypageApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message ||
-            "데이터를 불러오는 중 오류가 발생했습니다.",
-        );
-      }
+      // 1. 서버가 보내준 JSON의 error 객체 안의 message 확인
+      // 2. 그게 없다면 일반 message 확인
+      // 3. 둘 다 없다면 에러 코드나 기본 문구 출력
+      const serverMsg = error.response?.data?.error?.message 
+                     || error.response?.data?.message 
+                     || "정보 수정에 실패했습니다.";
+      
+      // 여기서 문자열만 던집니다.
+      throw serverMsg; 
+    }
       throw error;
     }
   },
