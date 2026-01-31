@@ -73,8 +73,9 @@ export default function Applications() {
         const res = await getMyResumes();
         const list = res?.data?.data ?? [];
 
-        setItems(Array.isArray(list) ? list : []);
-        // Fetch recruit titles
+        const safeList = Array.isArray(list) ? list : [];
+        setItems(safeList);
+
         const titles = {};
         await Promise.all(
           list.map(async (item) => {
@@ -87,6 +88,15 @@ export default function Applications() {
           })
         );
         setRecruitTitles(titles);
+
+        const normalized = safeList.map((it) => ({
+          ...it,
+          status:
+            safeStatus(it.status) ||
+            getSavedStatus(it.resumeId, it.recruitId) ||
+            "INPROGRESS",
+        }));
+        setItems(normalized);
 
       } catch (e) {
         console.error("내 지원서 목록 조회 실패", e);
@@ -115,7 +125,7 @@ const formatDate = (iso) => {
         <div style={{ height: 10 }} />
 
         {items.length === 0 ? (
-          <div style={{ textAlign: "center", marginTop: 60, color: "#9EA382", fontSize: 14 }}>
+          <div style={{ textAlign: "center", marginTop: 60, color: "rgba(158, 163, 178,1)", fontSize: 14 }}>
             아직 지원서가 없습니다.
           </div>
         ) : (
