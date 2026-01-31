@@ -26,3 +26,7 @@ export const updateResumeStatus = (recruitId, resumeId, status) =>
     `/api/v1/recruits/${recruitId}/resumes/${resumeId}/status`,
     { status }
   );
+
+// 모집글 상세 조회 (모집글 제목 등)
+export const getRecruitDetail = (recruitId) =>
+  axiosInstance.get(`/api/v1/recruits/${recruitId}`);
