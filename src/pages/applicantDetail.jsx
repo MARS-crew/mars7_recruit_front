@@ -110,7 +110,7 @@ export default function ApplicantDetail() {
       console.warn("recruitId가 없습니다.");
       return;
     }
-    const status = modalType === "pass" ? "PASS" : " FAIL";
+    const status = modalType === "pass" ? "PASS" : "FAIL";
 
     try {
       await updateResumeStatus(recruitIdNum ?? recruitId, resumeId, status);
@@ -177,10 +177,19 @@ export default function ApplicantDetail() {
   }
 
   return (
-    <div style={{ paddingBottom: 40 }}>
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        background: "#fff",
+      }}
+    >
       <Header title="지원서 조회" />
 
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 24, paddingBottom: 120, flex: 1, overflow: "hidden" }}>
         {/* 제목 */}
         <h2
           style={{
@@ -215,7 +224,7 @@ export default function ApplicantDetail() {
             <div style={{ fontWeight: 600, fontSize: 16 }}>
               {applicant.userName ?? applicant.name ?? ""}
             </div>
-            <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
+            <div style={{ color: "#888", marginTop: 6, fontSize: 14, fontWeight: 400 }}>
               {applicant.gender === "F"
                 ? "여자"
                 : applicant.gender === "M"
@@ -228,34 +237,34 @@ export default function ApplicantDetail() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "30px 0" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "30px 0" }} />
 
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
           <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "rgba(158, 163, 178, 1)" }}>
               주소
             </div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#212121" }}>
               {applicant.address ?? applicant.userAddress ?? "-"}
             </div>
           </div>
 
           <div style={{ display: "flex", gap: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "#999" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, width: 64, color: "rgba(158, 163, 178, 1)" }}>
               연락처
             </div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#222" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#212121" }}>
               {applicant.phoneNumber ?? applicant.phone ?? "-"}
             </div>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "30px 0" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "30px 0" }} />
 
         {/* 자기소개 */}
         <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12, color: "#212121" }}>
             자기소개
           </div>
           <p
@@ -264,8 +273,9 @@ export default function ApplicantDetail() {
               fontSize: 14,
               margin: 0,
               lineHeight: 1.7,
-              color: "#333",
+              color: "#000000",
               whiteSpace: "pre-wrap",
+              overflow: "hidden"
             }}
           >
             {applicant.selfIntroduce ?? applicant.intro ?? ""}
@@ -275,10 +285,16 @@ export default function ApplicantDetail() {
         {/* 하단 버튼 */}
         <div
           style={{
+            position: "fixed",
+            left: 24,
+            right: 24,
+            bottom: 24,
+            zIndex: 10,
+            paddingBottom: "env(safe-area-inset-bottom)",
             display: "flex",
-            gap: 12,
-            marginTop: 300,
+            gap: 8,
             justifyContent: "space-between",
+            background: "#fff",
           }}
         >
           <button
@@ -303,7 +319,7 @@ export default function ApplicantDetail() {
               flex: 1,
               padding: "14px 0",
               borderRadius: 14,
-              border: "1.5px solid #FF383C",
+              border: "1px solid #FF383C",
               background: "rgba(255, 56, 60, 0.2)",
               color: "#FF383C",
               fontWeight: 400,
@@ -378,8 +394,8 @@ export default function ApplicantDetail() {
                 style={{
                   flex: 1,
                   padding: "12px 0",
-                  borderRadius: 12,
-                  border: "1px solid #E5E5E5",
+                  borderRadius: 16,
+                  border: "1px solid #EAEAEA",
                   background: "#fff",
                   fontWeight: 500,
                   fontSize: 16,
@@ -394,8 +410,9 @@ export default function ApplicantDetail() {
                 style={{
                   flex: 1,
                   padding: "12px 0",
-                  borderRadius: 12,
+                  borderRadius: 16,
                   border: "none",
+                  border: "1px solid #EAEAEA",
                   background: modalType === "pass" ? "#2572B9" : "#FF383C",
                   color: "#fff",
                   fontWeight: 500,
