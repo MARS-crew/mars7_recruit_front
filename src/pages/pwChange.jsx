@@ -4,7 +4,7 @@ import PasswordField from "../components/PasswordField";
 import MessageText from "../components/MessageText";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-
+import authApi from "../api/auth";
 export default function PwChange() {
   const navigate = useNavigate();
   const pwRef = useRef(null);
@@ -18,7 +18,7 @@ export default function PwChange() {
   // 1. 토스트 메시지 표시 여부 상태 추가
   const [showToast, setShowToast] = useState(false);
 
-  const pwcheck = () => {
+  const pwcheck = async () => {
     setPwcError("");
     setPwError("");
 
@@ -50,14 +50,22 @@ export default function PwChange() {
     }
 
     if (isValid) {
-      // 2. 알럿 대신 토스트 활성화
-      setShowToast(true);
+      const pwchangeData = { password: userPw, passwordConfirm: userPwC };
+      try {
+        const response = await authApi.changePassword(pwchangeData);
+        if (response) {
+          setShowToast(true);
 
-      // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
-      setTimeout(() => {
-        setShowToast(false);
-        navigate("/mypage");
-      }, 2000);
+          // 2초 뒤에 마이페이지로 이동 (토스트를 보여주기 위해)
+          setTimeout(() => {
+            setShowToast(false);
+            navigate("/mypage");
+          }, 2000);
+        }
+      } catch (error) {
+        setPwcError(error.message);
+      }
+      // 2. 알럿 대신 토스트 활성화
     } else if (firstErrorRef) {
       firstErrorRef.current?.focus();
     }

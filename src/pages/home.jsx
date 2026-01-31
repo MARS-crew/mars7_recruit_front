@@ -1,44 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLogo from "../icon/MainLogo.png";
 import notice from "../icon/notice.png";
-import MainImg from "../icon/MainImg.png";
+import mainApi from "../api/main";
 import person from "../icon/person.png";
 
 function Home() {
-  const recruits = [
-    {
-      id: 1,
-      title: "26학년도 ONE 신입부원을 모집합니다...",
-      content:
-        "2026학년도 전공동아리 ONE에서 신입 부원을 모집합니다! 전공동아리 ONE 웹응용소프트웨어공학과 동...",
-      dDay: "D-1",
-      startDate: "26.02.18 시작",
-      targetCount: "00명",
-      poster: MainImg,
-    },
-    {
-      id: 2,
-      title: "데이터베이스 스터디 모집",
-      content:
-        "함께 SQL 자격증을 준비할 열정 있는 부원을 찾고 있습니다. 매주 목요일 저녁에 진행됩니다.",
-      dDay: "D-4",
-      startDate: "26.03.01 시작",
-      targetCount: "05명",
-      poster: MainImg,
-    },
-    {
-      id: 3,
-      title: "환영합니다~",
-      content:
-        "안녕하세요. 누구나 같이 즐길 수 있다면 환영합니다. 만나는 시간은 미정이예요~",
-      dDay: "D-4",
-      startDate: "26.03.01 시작",
-      targetCount: "05명",
-      poster: MainImg,
-    },
-  ];
+  const [latestList, setLatestList] = useState([]);
+  const [popularList, setPopularList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
+  const MainData = async () => {
+    try {
+      setLoading(true);
+      const response = await mainApi.mainPage();
+
+      if (response.success) {
+        setLatestList(response.data.latestRecruits);
+        const originalPopular = response.data.popularRecruits;
+
+        if (originalPopular) {
+          const reordered = [
+            originalPopular[1],
+            originalPopular[0],
+            originalPopular[2],
+          ];
+          setPopularList(reordered);
+        } else {
+          setPopularList(originalPopular);
+        }
+      }
+    } catch (error) {
+      console.error("데이터 로드 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const calculateDDay = (dueDateString) => {
+    if (!dueDateString) return "";
+
+    const today = new Date();
+    const targetDate = new Date(dueDateString);
+
+    // 시간차를 밀리초 단위로 계산한 뒤 날짜로 변환
+    const diffTime = targetDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return `D-${diffDays}`;
+  };
+  useEffect(() => {
+    MainData();
+  }, []);
   return (
     <div
       style={{
@@ -71,7 +84,7 @@ function Home() {
           onClick={() => navigate("/notice")}
         />
       </div>
-
+      {/**지금 핫한 동아리 영역 */}
       <div style={{ marginTop: 23 }}>
         <p
           style={{
@@ -95,7 +108,6 @@ function Home() {
           동양미래대학교에서 핫한 동아리를 모았다!!
         </p>
 
-        {/* 목록 영역 */}
         <div
           style={{
             display: "flex",
@@ -109,7 +121,7 @@ function Home() {
           <div
             style={{ width: "28%", minWidth: "100px" }}
             onClick={() => {
-              navigate("/clubs/1");
+              navigate(`/clubs/${popularList[0]?.recruitId}`);
             }}
           >
             <span
@@ -129,15 +141,32 @@ function Home() {
                 overflow: "hidden",
               }}
             >
-              <img
+              <div
                 style={{
-                  width: "100%",
-                  aspectRatio: "100 / 116",
-                  objectFit: "cover",
+                  width: "100px",
+                  height: "116px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-                src={MainImg}
-                alt="동아리"
-              />
+              >
+                {popularList[0]?.posterImage ? (
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    src={`${popularList[0]?.posterImage}`}
+                  />
+                ) : (
+                  <p style={{ fontSize: 12, color: "#9EA3B2" }}>
+                    포스터가
+                    <br />
+                    없습니다
+                  </p>
+                )}
+              </div>
               <div
                 style={{
                   margin: "4px",
@@ -157,7 +186,7 @@ function Home() {
                     width: "100%",
                   }}
                 >
-                  26학년도 ONfffffffE 신입 모집 안내fdsfsfsfs...
+                  {popularList[0]?.title}
                 </p>
               </div>
               <div
@@ -188,7 +217,7 @@ function Home() {
                       fontWeight: "bold",
                     }}
                   >
-                    D-4
+                    {calculateDDay(popularList[0]?.dueDate)}
                   </p>
                 </div>
                 <div
@@ -196,7 +225,7 @@ function Home() {
                 >
                   <img src={person} style={{ height: 16, width: 16 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
-                    00명
+                    {popularList[0]?.people < 10 ? "0명" : "00명"}
                   </p>
                 </div>
               </div>
@@ -207,7 +236,7 @@ function Home() {
           <div
             style={{ width: "36%", minWidth: "133px" }}
             onClick={() => {
-              navigate("/clubs/1");
+              navigate(`/clubs/${popularList[1]?.recruitId}`);
             }}
           >
             <span
@@ -225,15 +254,36 @@ function Home() {
                 borderRadius: 8,
                 boxShadow: "0px 2px 4px 1px rgba(0, 0, 0, 0.1)",
                 overflow: "hidden",
+                backgroundColor: "#F5F5F5",
               }}
             >
-              <img
+              <div
                 style={{
-                  width: "100%",
+                  width: 133,
+                  height: 154,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-                src={MainImg}
-                alt="동아리"
-              />
+              >
+                {popularList[1]?.posterImage ? (
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    src={`${popularList[1]?.posterImage}`}
+                    alt="동아리"
+                  />
+                ) : (
+                  <p style={{ fontSize: 14, color: "#9EA3B2" }}>
+                    포스터가
+                    <br /> 없습니다
+                  </p>
+                )}
+              </div>
               <div
                 style={{
                   margin: "4px",
@@ -253,7 +303,7 @@ function Home() {
                     width: "100%",
                   }}
                 >
-                  26학년도 ONE 신입 모집 안내...
+                  {popularList[1]?.title}
                 </p>
               </div>
               <div
@@ -283,7 +333,7 @@ function Home() {
                       fontWeight: "bold",
                     }}
                   >
-                    D-4
+                    {calculateDDay(popularList[1]?.dueDate)}
                   </p>
                 </div>
                 <div
@@ -291,7 +341,7 @@ function Home() {
                 >
                   <img src={person} style={{ height: 19, width: 19 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 12, margin: 0 }}>
-                    00명
+                    {popularList[1]?.people < 10 ? "0명" : "00명"}
                   </p>
                 </div>
               </div>
@@ -302,7 +352,7 @@ function Home() {
           <div
             style={{ width: "28%", minWidth: "100px" }}
             onClick={() => {
-              navigate("/clubs/1");
+              navigate(`/clubs/${popularList[2]?.recruitId}`);
             }}
           >
             <span
@@ -322,15 +372,33 @@ function Home() {
                 overflow: "hidden",
               }}
             >
-              <img
+              <div
                 style={{
-                  width: "100%",
-                  aspectRatio: "100 / 116",
-                  objectFit: "cover",
+                  width: "100px",
+                  height: "116px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-                src={MainImg}
-                alt="동아리"
-              />
+              >
+                {popularList[2]?.posterImage ? (
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    src={`${popularList[2]?.posterImage}`}
+                    alt="동아리"
+                  />
+                ) : (
+                  <p style={{ fontSize: 10, color: "#9EA3B2" }}>
+                    포스터가
+                    <br />
+                    없습니다
+                  </p>
+                )}
+              </div>
               <div
                 style={{
                   margin: "4px",
@@ -350,7 +418,7 @@ function Home() {
                     width: "100%",
                   }}
                 >
-                  26학년도 ONE 신입 모집 안내...
+                  {popularList[2]?.title}
                 </p>
               </div>
               <div
@@ -381,7 +449,7 @@ function Home() {
                       fontWeight: "bold",
                     }}
                   >
-                    D-4
+                    {calculateDDay(popularList[2]?.dueDate)}
                   </p>
                 </div>
                 <div
@@ -389,15 +457,15 @@ function Home() {
                 >
                   <img src={person} style={{ height: 16, width: 16 }} />
                   <p style={{ color: "#9EA3B2", fontSize: 10, margin: 0 }}>
-                    00명
+                    {popularList[2]?.people < 10 ? "0명" : "00명"}
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        {/*리스트 영역 */}
-        <div style={{ marginTop: 23 }}>
+        {/**최근 동아리 영역 */}
+        <div style={{ marginTop: 46 }}>
           <p
             style={{
               color: "#000000",
@@ -414,28 +482,31 @@ function Home() {
               color: "#2572B9",
               fontSize: 12,
               fontWeight: "500",
-              margin: "4px 0 20px",
+              margin: 0,
             }}
           >
             방금 막 올라온 신상 모집글!
           </p>
         </div>
 
-        {recruits.map((item, index) => {
+        {latestList?.map((item, index) => {
           const showBorder =
-            recruits.length >= 2 && index !== recruits.length - 1;
-          const isDay1 = item.dDay === "D-1";
+            latestList.length >= 2 && index !== latestList.length - 1;
+          const dDayValue = calculateDDay(item?.dueDate);
+          const isDay1 = dDayValue === "D-1";
+
           return (
             <div
               onClick={() => {
-                navigate("/clubs/1");
+                navigate(`/clubs/${item.recruitId}`);
               }}
-              key={item.id}
+              key={item.recruitId}
               style={{
                 width: "100%",
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
+
+                alignItems: "stretch",
                 padding: "11px 0",
                 borderBottom: showBorder ? "1px solid #EAEAEA" : "none",
               }}
@@ -447,6 +518,7 @@ function Home() {
                   minWidth: 0,
                   display: "flex",
                   flexDirection: "column",
+                  justifyContent: "center",
                   marginRight: 16,
                 }}
               >
@@ -500,7 +572,7 @@ function Home() {
                       width: "53px",
                     }}
                   >
-                    {item.dDay}
+                    {calculateDDay(item?.dueDate)}
                   </div>
                   <span
                     style={{
@@ -509,7 +581,7 @@ function Home() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {item.startDate}
+                    {item.createdAt.split("T")[0]} 시작
                   </span>
                   <div
                     style={{
@@ -525,7 +597,7 @@ function Home() {
                       style={{ width: 19, height: 19 }}
                     />
                     <span style={{ color: "#9EA3B2", fontSize: "14px" }}>
-                      {item.targetCount}
+                      {item?.people < 10 ? "0명" : "00명"}
                     </span>
                   </div>
                 </div>
@@ -535,22 +607,38 @@ function Home() {
               <div
                 style={{
                   width: 82,
+                  height: 117,
                   flexShrink: 0,
                   display: "flex",
                   flexDirection: "column",
+                  justifyContent: "center",
                   alignItems: "center",
                 }}
               >
-                <img
-                  style={{
-                    width: 82,
-                    height: 117,
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                  }}
-                  src={item.poster}
-                  alt="포스터"
-                />
+                {item.posterImage ? (
+                  <img
+                    style={{
+                      width: 82,
+                      height: 117,
+                      borderRadius: "8px",
+                      objectFit: "contain",
+                    }}
+                    src={item.posterImage}
+                  />
+                ) : (
+                  <p
+                    style={{
+                      fontSize: 10,
+                      color: "#9EA3B2",
+                      textAlign: "center",
+                      margin: 0,
+                    }}
+                  >
+                    포스터가
+                    <br />
+                    없습니다
+                  </p>
+                )}
               </div>
             </div>
           );

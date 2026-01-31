@@ -7,7 +7,7 @@ import MessageText from "../components/MessageText"; // 경고문구 컴포넌�
 import Button from "../components/Button";
 import Header from "../components/header";
 import check from "../icon/check.png";
-import { authApi } from "../api/auth";
+import authApi from "../api/auth";
 
 function Login() {
   const navigate = useNavigate();
@@ -75,18 +75,35 @@ function Login() {
     const loginData = {
       usersId: userId,
       password: userPw,
+      rememberMe: isIDSaved,
     };
     try {
-      console.log("서버 전송 데이터", loginData);
-
       const response = await authApi.login(loginData);
 
       if (response) {
-        const accessToken = response.data?.accessToken || response.accessToken;
-        const refreshToken =
-          response.data?.refreshToken || response.refreshToken;
+        const accessToken = response.accessToken || response.data?.accessToken;
+        const refreshToken = response.refreshToken || response.data?.refreshToken;
+        const userDetails = response.userDetails || response.data?.userDetails;
+        const name = userDetails?.name;
+        const phoneNumber = userDetails?.phoneNumber;
+        
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        
+        // 사용자 정보 저장 (담당자 정보로 활용)
+        if (name || phoneNumber) {
+          const userInfo = {
+            name: name || "",
+            phoneNumber: phoneNumber || ""
+          };
+          localStorage.setItem("user", JSON.stringify(userInfo));
+        }
+        
+        if (isIDSaved) {
+          localStorage.setItem("savedUserId", userId);
+        } else {
+          localStorage.removeItem("savedUserId");
+        }
         navigate("/");
       }
     } catch (error) {
@@ -108,6 +125,13 @@ function Login() {
       }
     }
   };
+  useEffect(() => {
+    const savedId = localStorage.getItem("savedUserId");
+    if (savedId) {
+      setUserId(savedId);
+      setIsIDSaved(true);
+    }
+  }, []);
 
   return (
     <div>
@@ -145,7 +169,7 @@ function Login() {
           <Input
             ref={idRef}
             label="아이디"
-            maxLength="10"
+            maxLength="15"
             value={userId}
             error={idError}
             onChange={(e) => {
@@ -233,12 +257,6 @@ function Login() {
               아이디 저장
             </span>
           </div>
-          <span
-            style={{ fontSize: 14, color: "#9EA3B2", paddingRight: 5 }}
-            onClick={() => navigate("/pwChange")}
-          >
-            비밀번호 찾기
-          </span>
         </div>
 
         <div style={{ marginTop: 50 }}>

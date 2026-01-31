@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ClubDetail.css';
 import Clubheader from '../components/clubheader';
+import Header from '../components/header';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
+import recruitApi from '../api/recruit';
 
 const ClubDetail = ({ club, isPublisher }) => {
     const navigate = useNavigate();
@@ -14,10 +16,14 @@ const ClubDetail = ({ club, isPublisher }) => {
         window.scrollTo(0, 0);
     }, []);
 
-    const handleDeleteConfirm = () => {
-        console.log('글 삭제:', club.id);
-        setShowDeleteModal(false);
-        navigate('/clubs', { state: { showDeleteToast: true } });
+    const handleDeleteConfirm = async () => {
+        try {
+            await recruitApi.delete(club.id);
+            setShowDeleteModal(false);
+            navigate('/clubs', { state: { showDeleteToast: true, refresh: Date.now() } });
+        } catch (error) {
+            alert(error.message || '모집글 삭제에 실패했습니다.');
+        }
     };
 
     const descriptionParagraphs = (club.description || '동아리 소개 내용이 여기에 표시됩니다.')
@@ -25,6 +31,17 @@ const ClubDetail = ({ club, isPublisher }) => {
         .filter(Boolean);
 
     return (
+        <div>
+                {/* Header: 게시자 전용 헤더 vs 기본 헤더 */}
+        {isPublisher ? (
+            <Clubheader
+                title="동아리 모집"
+                onEdit={() => navigate('/recruit', { state: { recruitId: club.id, club } })}
+                onDelete={() => setShowDeleteModal(true)}
+            />
+        ) : (
+            <Header title="동아리 모집" />
+        )}
         <div style={{
         padding: "0 16px",
         minHeight: "100vh",
@@ -33,13 +50,6 @@ const ClubDetail = ({ club, isPublisher }) => {
         boxSizing: "border-box",
         backgroundColor: "#FFFFFF",
       }}>
-            {/* Header */}
-            <Clubheader
-                title="동아리 모집"
-                onEdit={() => navigate('/recruit', { state: { club } })}
-                onDelete={() => setShowDeleteModal(true)}
-            />
-
             <div className="club-detail-content">
                 {/* 동아리 카테고리 태그 */}
                 <div className="club-category-tag">
@@ -55,10 +65,6 @@ const ClubDetail = ({ club, isPublisher }) => {
                     <div className="condition-item">
                         <span className="condition-label">모집 인원</span>
                         <span className="condition-value">{club.recruitCount || '00'}명</span>
-                    </div>
-                    <div className="condition-item">
-                        <span className="condition-label">연령대</span>
-                        <span className="condition-value">{club.ageRange || '무관'}</span>
                     </div>
                     <div className="condition-item">
                         <span className="condition-label">성별</span>
@@ -112,27 +118,27 @@ const ClubDetail = ({ club, isPublisher }) => {
                         <div className="stats-grid">
                             <div className="stat-item">
                                 <span className="stat-label">조회수</span>
-                                <span className="stat-value">{club.viewCount || 6}</span>
+                                <span className="stat-value">{club.viewCount }</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">총 지원자</span>
-                                <span className="stat-value">{club.totalApplicants || 2}명</span>
+                                <span className="stat-value">{club.totalApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">열람한 지원자</span>
-                                <span className="stat-value">{club.viewedApplicants || 1}명</span>
+                                <span className="stat-value">{club.viewedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">미열람 지원자</span>
-                                <span className="stat-value">{club.unviewedApplicants || 1}명</span>
+                                <span className="stat-value">{club.unviewedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">합격자</span>
-                                <span className="stat-value">{club.acceptedApplicants || 0}명</span>
+                                <span className="stat-value">{club.acceptedApplicants }명</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">불합격자</span>
-                                <span className="stat-value">{club.rejectedApplicants || 0}명</span>
+                                <span className="stat-value">{club.rejectedApplicants }명</span>
                             </div>
                         </div>
                     </section>
@@ -144,14 +150,18 @@ const ClubDetail = ({ club, isPublisher }) => {
                 {isPublisher ? (
                     <button 
                         className="action-button publisher-button"
-                        onClick={() => navigate('/applicants')}
+                        onClick={() =>
+                            navigate(`/applicants?recruitId=${club.id}`, {
+                                state: { recruitId: club.id },
+                            })
+                        }
                     >
                         지원자 조회하기
                     </button>
                 ) : (
                     <button 
                         className="action-button applicant-button"
-                        onClick={() => navigate('/applications/new')}
+                        onClick={() => navigate(`/applications/new?recruitId=${club.id}`)}
                     >
                         지원하기
                     </button>
@@ -184,6 +194,7 @@ const ClubDetail = ({ club, isPublisher }) => {
                 onClose={() => setShowToast(false)}
             />
         </div>
+    </div>
     );
 };
 

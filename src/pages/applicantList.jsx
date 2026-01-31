@@ -1,12 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BottomNavBar from "../components/BottomNavBar";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
 import { useEffect, useState } from "react";
 import { getApplicants } from "../api/resume";
 
-export default function ApplicantList({ recruitId = 1 }) {
+export default function ApplicantList() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const recruitId =
+    location.state?.recruitId ??
+    Number(new URLSearchParams(location.search).get("recruitId") ?? 1);
   const [applicants, setApplicants] = useState([]);
 
 useEffect(() => {
@@ -29,15 +33,28 @@ useEffect(() => {
       <Header title="지원자 목록" />
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        {applicants.length === 0 && (
+          <li
+          style = {{
+            textAlign: "center",
+            marginTop: "100px"
+
+          }}>
+            아직 지원자가 없습니다.
+          </li>
+        )}
         {applicants.map((applicant) => (
           <li
             key={applicant.resumeId}
-            onClick={() => navigate(`/applicants/${applicant.resumeId}`)}
+            onClick={() =>
+              navigate(`/applicants/${applicant.resumeId}?recruitId=${recruitId}`, {
+                state: { recruitId },
+              })
+            }
             style={{
               display: "flex",
               alignItems: "center",
               padding: "16px",
-              borderBottom: "1px solid #eee",
               cursor: "pointer",
             }}
           >
@@ -63,19 +80,25 @@ useEffect(() => {
               <div style={{ fontWeight: "bold", fontSize: 14, fontWeight: 700 }}>
                 {applicant.name}
                 <span
-                  style={{ color: "#888", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
+                  style={{ color: "rgba(158, 163, 178, 1)", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
                 >
                   {applicant.gender === "F" ? "여자" : "남자"} · {applicant.age}세
                 </span>
               </div>
 
-              <div style={{ color: "#666", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
+              <div style={{ color: "rgba(158, 163, 178, 1)", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
                 {applicant.major} ({applicant.grade}학년)
               </div>
             </div>
 
-            <div style={{ fontSize: 12, color: "#bbb" }}>
-              {applicant.createdAt ? new Date(applicant.createdAt).toLocaleDateString() : ""}
+            <div style={{ fontSize: 10, color: "rgba(217, 217, 217, 1)" }}>
+              {applicant.createdAt
+                ? new Date(applicant.createdAt).toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                : ""}
             </div>
           </li>
         ))}

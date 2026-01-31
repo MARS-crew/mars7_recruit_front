@@ -44,11 +44,35 @@ export default function Applications() {
   const [items, setItems] = useState([]);
   const [recruitTitles, setRecruitTitles] = useState({});
 
+  const safeStatus = (v) => {
+    const s = (v ?? "").toString().trim();
+    return s ? s : null;
+  };
+
+  const getSavedStatus = (resumeId, recruitId) => {
+    try {
+      const map = JSON.parse(localStorage.getItem("resumeStatusMap") || "{}");
+      const item = map[String(resumeId)];
+      const s1 = safeStatus(typeof item === "string" ? item : item?.status);
+      if (s1) return s1;
+
+      if (recruitId != null) {
+        const s2 = safeStatus(localStorage.getItem(`resumeStatus:${recruitId}:${resumeId}`));
+        if (s2) return s2;
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     const fetchMyResumes = async () => {
       try {
         const res = await getMyResumes();
         const list = res?.data?.data ?? [];
+
         setItems(Array.isArray(list) ? list : []);
         // Fetch recruit titles
         const titles = {};
@@ -63,6 +87,7 @@ export default function Applications() {
           })
         );
         setRecruitTitles(titles);
+
       } catch (e) {
         console.error("내 지원서 목록 조회 실패", e);
         setItems([]);
@@ -73,11 +98,13 @@ export default function Applications() {
   }, []);
 
 const formatDate = (iso) => {
+
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
 
   return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+
 };
 
   return (
@@ -130,6 +157,7 @@ const formatDate = (iso) => {
                     >
                       {recruitTitles[item.recruitId] || item.title}
                     </div>
+
 
                     <div
                       style={{
