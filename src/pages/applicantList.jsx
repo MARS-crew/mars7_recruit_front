@@ -92,7 +92,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div style={{ fontSize: 12, color: "#bbb" }}>
+            <div style={{ fontSize: 10, color: "#bbb" }}>
               {applicant.createdAt
                 ? new Date(applicant.createdAt).toLocaleDateString("ko-KR", {
                     year: "numeric",
