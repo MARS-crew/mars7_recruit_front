@@ -33,6 +33,16 @@ useEffect(() => {
       <Header title="지원자 목록" />
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        {applicants.length === 0 && (
+          <li
+          style = {{
+            textAlign: "center",
+            marginTop: "100px"
+
+          }}>
+            아직 지원자가 없습니다.
+          </li>
+        )}
         {applicants.map((applicant) => (
           <li
             key={applicant.resumeId}
