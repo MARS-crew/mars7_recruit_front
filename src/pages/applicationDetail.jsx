@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
-import { getMyResumeDetail } from "../api/resume";
+import { getMyResumeDetail, getRecruitDetail } from "../api/resume";
 
 function StatusPill({ status }) {
   const map = {
@@ -37,11 +37,17 @@ function StatusPill({ status }) {
 }
 
 export default function ApplicationDetail() {
-  const { id } = useParams(); // resumeId
+  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const recruitId =
+    location.state?.recruitId ??
+    new URLSearchParams(location.search).get("recruitId");
 
   const [detail, setDetail] = useState(null);
   const [fetched, setFetched] = useState(false);
+  const [recruitTitle, setRecruitTitle] = useState("");
 
   const safeStatus = (v) => {
     const s = (v ?? "").toString().trim();
@@ -77,22 +83,38 @@ export default function ApplicationDetail() {
       try {
         const res = await getMyResumeDetail(id);
         setDetail(res.data.data);
+
+        const incoming = res?.data?.data;
+        const t = (incoming?.recruitTitle ?? "").toString().trim();
+        if (t) {
+          setRecruitTitle(t);
+        } else if (recruitId) {
+          try {
+            const r = await getRecruitDetail(recruitId);
+            setRecruitTitle((r?.data?.data?.title ?? "").toString());
+          } catch {
+            setRecruitTitle("");
+          }
+        } else {
+          setRecruitTitle("");
+        }
       } catch (e) {
         console.error("내 지원서 상세 조회 실패", e);
         setDetail(null);
+        setRecruitTitle("");
       } finally {
         setFetched(true);
       }
     };
 
     fetchDetail();
-  }, [id]);
+  }, [id, recruitId]);
 
   if (!detail) {
     return (
       <div style={{ paddingBottom: 40 }}>
         <Header title="지원서 조회" leftAction={() => navigate(-1)} />
-        <div style={{ padding: 24 }}>
+        <div style={{ padding: 20 }}>
           <p>지원서를 찾을 수 없습니다.</p>
         </div>
       </div>
@@ -103,7 +125,7 @@ export default function ApplicationDetail() {
     <div style={{ paddingBottom: 40 }}>
       <Header title="지원서 조회" leftAction={() => navigate(-1)} />
 
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 20 }}>
         {/* 상태 */}
         <div style={{ marginBottom: 14 }}>
           <StatusPill status={mergedStatus} />
@@ -120,6 +142,23 @@ export default function ApplicationDetail() {
         >
           {detail.title}
         </h2>
+        {recruitTitle ? (
+          <div
+            style={{
+              color: "rgba(164, 164, 164,1)",
+              fontSize: 14,
+              fontWeight: 500,
+              marginBottom: 30,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {recruitTitle}
+          </div>
+        ) : (
+          <div style={{ height: 30 }} />
+        )}
 
         {/* 프로필 */}
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -143,7 +182,7 @@ export default function ApplicationDetail() {
             <div style={{ fontWeight: 600, fontSize: 16 }}>
               {detail.name}
             </div>
-            <div style={{ color: "#888", marginTop: 6, fontSize: 13 }}>
+            <div style={{ color: "#A4A4A4", marginTop: 6, fontSize: 14, fontWeight: 400 }}>
               {detail.gender === "F" ? "여자" : detail.gender === "M" ? "남자" : detail.gender}
               {detail.age ? ` · ${detail.age}세` : ""}
               {detail.major ? ` / ${detail.major}` : ""}
@@ -152,7 +191,7 @@ export default function ApplicationDetail() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "40px 0 20px" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "30px 0 20px" }} />
 
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
@@ -162,7 +201,7 @@ export default function ApplicationDetail() {
                 fontSize: 14,
                 fontWeight: 400,
                 width: 64,
-                color: "#999",
+                color: "rgba(158, 163, 178,1)",
               }}
             >
               주소
@@ -178,7 +217,7 @@ export default function ApplicationDetail() {
                 fontSize: 14,
                 fontWeight: 400,
                 width: 64,
-                color: "#999",
+                color: "rgba(158, 163, 178,1)",
               }}
             >
               연락처
@@ -189,11 +228,11 @@ export default function ApplicationDetail() {
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "20px 0" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "20px 0" }} />
 
         {/* 자기소개 */}
         <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12 }}>
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12, color: "#212121" }}>
             자기소개
           </div>
           <p
@@ -202,7 +241,7 @@ export default function ApplicationDetail() {
               fontSize: 14,
               margin: 0,
               lineHeight: 1.7,
-              color: "#333",
+              color: "#000000",
               whiteSpace: "pre-wrap",
             }}
           >
