@@ -4,6 +4,7 @@ import { getMyResumes } from "../api/resume";
 import { getRecruitDetail } from "../api/resume";
 import BottomNavBar from "../components/BottomNavBar";
 import Nobackheader from "../components/nobackheader";
+import Modal from "../components/Modal";
 
 function StatusPill({ status }) {
   const s = status ?? "INPROGRESS";
@@ -43,6 +44,7 @@ export default function Applications() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [recruitTitles, setRecruitTitles] = useState({});
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const safeStatus = (v) => {
     const s = (v ?? "").toString().trim();
@@ -68,6 +70,12 @@ export default function Applications() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     const fetchMyResumes = async () => {
       try {
         const res = await getMyResumes();
@@ -201,6 +209,16 @@ const formatDate = (iso) => {
       </div>
 
       <BottomNavBar />
+      <Modal
+        isOpen={isLoginModalOpen}
+        lBtn="취소"
+        rBtn="로그인"
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          navigate(-1);
+        }}
+        onRightClick={() => navigate("/login")}
+      />
     </div>
   );
 }
