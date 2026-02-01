@@ -1,7 +1,8 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Profile from "../icon/Profile.png";
-import { useEffect, useMemo, useState } from "react";
+import Modal from "../components/Modal";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { createResume } from "../api/resume";
 import { getMyPageInfo } from "../api/resume";
@@ -10,6 +11,8 @@ export default function ApplicationForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const topRef = useRef(null);
+
 
   const recruitId = useMemo(() => {
     return (
@@ -21,6 +24,14 @@ export default function ApplicationForm() {
   const INTRO_MAX = 500;
   const TITLE_MAX = 20;
 
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const isLoggedIn = useMemo(() => {
+    const token = localStorage.getItem("accessToken");
+    return Boolean(token && token.trim());
+  }, []);
+
   const [title, setTitle] = useState("");
   const [intro, setIntro] = useState("");
   const [profile, setProfile] = useState(null);
@@ -30,6 +41,8 @@ export default function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openModal = () => {
+    if (isLoginModalOpen) return;
+
     if (!title.trim() || !intro.trim()) {
       setFormError("필수 정보를 입력해 주세요.");
       return;
@@ -42,7 +55,19 @@ export default function ApplicationForm() {
     setIsModalOpen(false);
   };
 
+
+
   useEffect(() => {
+    // 포커스 고정
+    if (topRef.current) {
+      topRef.current.focus();
+    }
+
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     const fetchMyProfile = async () => {
       try {
         const res = await getMyPageInfo();
@@ -57,8 +82,13 @@ export default function ApplicationForm() {
   }, []);
 
   const handleConfirm = async () => {
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     if (!recruitId) {
-      console.error("recruitId 없음. (location.state 또는 ?recruitId= 로 전달 필요)");
+      console.error("recruitId 없음.");
       closeModal();
       return;
     }
@@ -88,10 +118,21 @@ export default function ApplicationForm() {
   };
 
   return (
-    <div style={{ paddingBottom: 92 }}>
+    <div
+      style={{
+        minHeight: "100dvh",
+        height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        background: "#FFFFFF",
+        boxSizing: "border-box",
+        paddingTop: "env(safe-area-inset-top, 0px)",
+      }}
+    >
       <Header title="지원서 작성" leftAction={() => navigate(-1)} />
+      <div tabIndex={-1} ref={topRef} style={{ outline: "none" }} />
 
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 24, flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
         {/* 제목 input */}
         <input
           value={title}
@@ -231,15 +272,35 @@ export default function ApplicationForm() {
           </div>
         ) : null}
 
-        {/* 하단 버튼 */}
-        <div style={{ marginTop: 80 }}>
-          <Button
-            label="지원하기"
-            onClick={openModal}
-            disabled={isSubmitting}
-          />
-        </div>
       </div>
+
+      <div
+        style={
+          {
+            padding: "12px 24px 20px",
+            borderTop: "1px solid #F5F5F5",
+            background: "#FFFFFF",
+          }
+        }
+      >
+        <Button label="지원하기" onClick={openModal} disabled={isSubmitting} />
+      </div>
+
+      {/* 로그인 필요 모달 */}
+      <Modal
+        isOpen={isLoginModalOpen}
+        lBtn="취소"
+        rBtn="로그인"
+        rBtnColor="#2572B9"
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          navigate(-1);
+        }}
+        onRightClick={() => {
+          setIsLoginModalOpen(false);
+          navigate("/login");
+        }}
+      />
 
       {/* 모달 */}
       {isModalOpen && (
