@@ -243,7 +243,7 @@ if (diffDays < 0) return "마감";
 
           {/* 1 영역 */}
           <div
-            style={{ width: "36%", minWidth: "133px" }}
+            style={{ width: "36%", width: "133px" }}
             onClick={() => {
               navigate(`/clubs/${popularList[1]?.recruitId}`);
             }}
@@ -608,7 +608,7 @@ if (diffDays < 0) return "마감";
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {item.createdAt.split("T")[0]} 시작
+                    {item.startDate.split("T")[0]} 시작
                   </span>
                   <div
                     style={{
