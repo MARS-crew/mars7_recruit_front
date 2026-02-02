@@ -47,8 +47,13 @@
     async (error) => {
       const originalRequest = error.config;
 
-      // 401 Unauthorized 에러 처리 및 재시도하지 않은 요청인 경우
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      // 403 Forbidden이지만 로그인 모달 표시를 스킵해야 하는 요청이면 그대로 실패 처리
+    if (error.response?.status === 403 && originalRequest?.skipAuthRequired) {
+      return Promise.reject(error);
+    }
+
+    // 401 Unauthorized 또는 403 Forbidden 에러 처리 및 재시도하지 않은 요청인 경우
+      if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
         if (isRefreshing) {
           // 이미 토큰 갱신 중이면 Promise를 생성하여 대기열에 추가
           return new Promise((resolve, reject) => {
@@ -76,7 +81,8 @@
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
 
-          window.location.href("/login");
+        // 로그인 모달을 띄우기 위한 커스텀 이벤트 발생
+          window.dispatchEvent(new CustomEvent('auth:required'));
           return Promise.reject(error);
         }
 
@@ -99,14 +105,15 @@
           // 원래 실패했던 요청 재시도
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          // refresh token도 만료된 경우 모든 정보 삭제 후 로그인 이동
+          // refresh token도 만료된 경우 모든 정보 삭제 후 로그인 모달 표시
           processQueue(refreshError, null);
           isRefreshing = false;
 
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
 
-          window.location.href = "/login";
+        // 로그인 모달을 띄우기 위한 커스텀 이벤트 발생
+          window.dispatchEvent(new CustomEvent('auth:required'));
           return Promise.reject(refreshError);
         }
       }

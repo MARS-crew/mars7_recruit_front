@@ -257,6 +257,8 @@ export default function RecruitCreate() {
     const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
     const days = [];
     const selectedDate = parseDate(formData[dateField]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     // 빈 칸 추가
     for (let i = 0; i < firstDay; i++) {
@@ -269,12 +271,16 @@ export default function RecruitCreate() {
         selectedDate.year === currentYear && 
         selectedDate.month === currentMonth && 
         selectedDate.day === day;
+      const cellDate = new Date(currentYear, currentMonth, day);
+      cellDate.setHours(0, 0, 0, 0);
+      const isPast = cellDate < today;
       
       days.push(
         <div
           key={day}
-          className={`calendar-day ${isSelected ? 'selected' : ''}`}
+          className={`calendar-day ${isSelected ? 'selected' : ''} ${isPast ? 'disabled' : ''}`}
           onClick={() => {
+            if (isPast) return;
             const dateStr = formatDate(currentYear, currentMonth, day);
             const newFormData = { ...formData, [dateField]: dateStr };
             setFormData(newFormData);
@@ -319,7 +325,15 @@ export default function RecruitCreate() {
       <div className="calendar-header">
         <button
           className="calendar-nav-button"
+          disabled={
+            currentYear < new Date().getFullYear() ||
+            (currentYear === new Date().getFullYear() && currentMonth <= new Date().getMonth())
+          }
           onClick={() => {
+            const today = new Date();
+            const isAtCurrentMonth =
+              currentYear === today.getFullYear() && currentMonth === today.getMonth();
+            if (isAtCurrentMonth) return;
             if (currentMonth === 0) {
               setCurrentMonth(11);
               setCurrentYear(currentYear - 1);
@@ -480,7 +494,7 @@ export default function RecruitCreate() {
         content: formData.content,
         field: formData.category === '취미동아리' ? 'HOBBY' : 'MAJOR',
         gender: formData.gender === '무관' ? 'ANY' : formData.gender === '남자' ? 'M' : 'F',
-        people: parseInt(formData.recruitCount),
+        people: formData.recruitCount,
         startDate: toIsoDateTime(formData.startDate),
         dueDate: toIsoDateTime(formData.endDate),
         resultDate: toIsoDateTime(formData.deadline),
@@ -488,6 +502,13 @@ export default function RecruitCreate() {
         managerName: formData.managerName,
         contact: formData.phoneNumber,
       };
+    
+      console.log('📤 모집글 제출 데이터:', {
+        formData: formData,
+        submitData: submitData,
+        people: submitData.people,
+        peopleType: typeof submitData.people,
+      });
     
       if (editRecruitId) {
         // 수정 모드: 새로 업로드한 이미지가 없으면 null로 전송 (기존 이미지 유지)
@@ -695,28 +716,24 @@ export default function RecruitCreate() {
         </label>
         <div className="recruit-count-wrapper">
           <input
-            type="number"
+            type="text"
             className="recruit-count-input"
             placeholder="모집 인원을 입력하세요."
             value={formData.recruitCount}
-            min="1"
-            max="100"
             onChange={(e) => {
               let value = e.target.value;
               // 숫자만 허용 (정수)
               if (value === '') {
                 setFormData({ ...formData, recruitCount: '' });
               } else {
-                const numValue = parseInt(value, 10);
-                // 1 이상 100 이하로 제한
-                if (!isNaN(numValue)) {
-                  if (numValue < 0) {
-                    value = '0';
-                  } else if (numValue > 100) {
+                // 숫자만 허용
+                if (/^\d+$/.test(value)) {
+                  const numValue = parseInt(value, 10);
+                  // 0 이상 100 이하로 제한
+                  if (numValue > 100) {
                     value = '100';
-                  } else {
-                    value = String(numValue);
                   }
+                  // 범위 체크 통과하면 입력값 그대로 저장 (00명도 유지)
                   setFormData({ ...formData, recruitCount: value });
                 }
               }

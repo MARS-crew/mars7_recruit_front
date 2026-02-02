@@ -171,8 +171,8 @@
   height: 22px;
   text-align: center;
   line-height: 22px;
-  background-color: #ffe8cc;
-  color: #ff9800;
+  background-color: #FFC10033;
+  color: #D6A200;
   border-radius: 15px;
   font-weight: 700;
   font-size: 12px;
@@ -190,6 +190,7 @@
 .club-members {
   display: flex;
   align-items: center;
+  gap: 4px;
   color: #9EA3B2;
   margin-left: auto;
 }
@@ -197,12 +198,15 @@
 .member-icon {
   width: 19px;
   height: 19px;
+  min-width: 19px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .club-members-count {
   color: #9EA3B2;
   font-family: 'Pretendard';
+  min-width: 30px;
 }
 
 /* 동아리 이미지 */

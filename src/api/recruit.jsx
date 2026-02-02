@@ -102,6 +102,7 @@ export const recruitApi = {
     try {
       const response = await axiosInstance.get(
         `${API_BASE_URL}/api/v1/recruits/${recruitId}/owner`,
+        { skipAuthRequired: true },
       );
       return response.data?.data ?? response.data;
     } catch (error) {

@@ -86,13 +86,15 @@ function Login() {
         const userDetails = response.userDetails || response.data?.userDetails;
         const name = userDetails?.name;
         const phoneNumber = userDetails?.phoneNumber;
+        const userIdFromServer = userDetails?.id; // userId가 아니라 id
         
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         
-        // 사용자 정보 저장 (담당자 정보로 활용)
-        if (name || phoneNumber) {
+        // 사용자 정보 저장 (담당자 정보 + userId로 활용)
+        if (name || phoneNumber || userIdFromServer) {
           const userInfo = {
+            userId: userIdFromServer || "",
             name: name || "",
             phoneNumber: phoneNumber || ""
           };
