@@ -23,8 +23,8 @@ const toGender = (val) => {
 const normalizeClub = (data) => {
     // 지원자 정보 계산 (applicants 배열이 있으면 분석)
     const applicants = data?.applicants || [];
-    const viewedCount = applicants.filter(a => a?.isViewed).length || 0;
-    const unviewedCount = applicants.filter(a => !a?.isViewed).length || 0;
+    const viewedCount = applicants.filter(a => a?.isRead).length || 0;
+    const unviewedCount = applicants.filter(a => !a?.isRead).length || 0;
     const acceptedCount = applicants.filter(a => a?.status === 'PASS').length || 0;
     const rejectedCount = applicants.filter(a => a?.status === 'FAIL').length || 0;
     
@@ -34,7 +34,7 @@ const normalizeClub = (data) => {
         applicants: applicants,
         applicantsDetail: applicants.map((a, idx) => ({
             index: idx,
-            isViewed: a?.isViewed,
+            isRead: a?.isRead,
             status: a?.status,
             name: a?.name,
         })),
