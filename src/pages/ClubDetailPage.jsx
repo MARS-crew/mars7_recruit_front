@@ -90,8 +90,6 @@ const ClubDetailPage = () => {
                 
                 const publisherId = Number(data?.userId);
                 const currentUserStr = localStorage.getItem('user');
-                console.log('🔍 디버그 | publisherId:', publisherId);
-                console.log('🔍 디버그 | currentUserStr:', currentUserStr);
                 let isOwner = false;
                 
                 // 현재 로그인한 사용자가 게시자인지 확인
@@ -99,12 +97,8 @@ const ClubDetailPage = () => {
                     try {
                         const currentUser = JSON.parse(currentUserStr);
                         const currentUserId = Number(currentUser?.userId);
-                        console.log('🔍 디버그 | currentUser:', currentUser);
-                        console.log('🔍 디버그 | currentUserId:', currentUserId);
                         isOwner = currentUserId === publisherId;
-                        console.log('🔍 디버그 | isOwner:', isOwner);
                     } catch (e) {
-                        console.error('❌ user 파싱 실패:', e);
                         // user 파싱 실패 시 게시자 아님으로 처리
                         isOwner = false;
                     }
