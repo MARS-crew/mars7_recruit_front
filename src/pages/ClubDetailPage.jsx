@@ -84,36 +84,52 @@ const ClubDetailPage = () => {
             setLoading(true);
             setError('');
             try {
-                const token = localStorage.getItem('accessToken');
+                // 먼저 일반 상세 조회로 게시자 ID 확인
+                const data = await recruitApi.getDetail(recruitId);
+                if (!mounted) return;
+                
+                const publisherId = Number(data?.userId);
+                const currentUserStr = localStorage.getItem('user');
+                console.log('🔍 디버그 | publisherId:', publisherId);
+                console.log('🔍 디버그 | currentUserStr:', currentUserStr);
+                let isOwner = false;
+                
+                // 현재 로그인한 사용자가 게시자인지 확인
+                if (currentUserStr) {
+                    try {
+                        const currentUser = JSON.parse(currentUserStr);
+                        const currentUserId = Number(currentUser?.userId);
+                        console.log('🔍 디버그 | currentUser:', currentUser);
+                        console.log('🔍 디버그 | currentUserId:', currentUserId);
+                        isOwner = currentUserId === publisherId;
+                        console.log('🔍 디버그 | isOwner:', isOwner);
+                    } catch (e) {
+                        console.error('❌ user 파싱 실패:', e);
+                        // user 파싱 실패 시 게시자 아님으로 처리
+                        isOwner = false;
+                    }
+                }
 
-                // 토큰이 있을 때 게시자 전용 상세 먼저 시도
-                if (token) {
+                // 게시자인 경우에만 owner API 호출 (지원자 정보 포함)
+                if (isOwner) {
                     try {
                         const ownerData = await recruitApi.getOwnerDetail(recruitId);
-                        console.log('🔍 게시자 상세 조회 성공:', ownerData);
                         if (!mounted) return;
                         setClub(normalizeClub(ownerData));
                         setIsPublisher(true);
                         setLoading(false);
                         return;
                     } catch (ownerErr) {
-                        console.warn('⚠️ 게시자 상세 조회 실패, 일반 상세로 대체:', ownerErr.message);
+                        // owner API 실패 시 일반 데이터 사용
+                        if (!mounted) return;
                     }
                 }
 
-                // 일반 상세 조회 (토큰 없거나 게시자 아님)
-                const data = await recruitApi.getDetail(recruitId);
-                if (!mounted) return;
-                const publisherId = Number(data?.userId);
-                const isOwner = false;
-
-                console.log('🔍 일반 상세 | publisherId:', publisherId, '| isOwner:', isOwner);
-
+                // 일반 사용자 또는 owner API 실패 시 일반 데이터 사용
                 setClub(normalizeClub(data));
-                setIsPublisher(isOwner);
+                setIsPublisher(false);
             } catch (err) {
                 if (!mounted) return;
-                console.error('❌ 상세 조회 오류:', err);
                 setError('상세 정보를 불러오지 못했습니다.');
             } finally {
                 if (mounted) setLoading(false);

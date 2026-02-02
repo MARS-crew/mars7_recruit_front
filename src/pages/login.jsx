@@ -84,18 +84,24 @@ function Login() {
         const accessToken = response.accessToken || response.data?.accessToken;
         const refreshToken = response.refreshToken || response.data?.refreshToken;
         const userDetails = response.userDetails || response.data?.userDetails;
+        console.log('🔍 로그인 응답 전체:', response);
+        console.log('🔍 userDetails:', userDetails);
         const name = userDetails?.name;
         const phoneNumber = userDetails?.phoneNumber;
+        const userIdFromServer = userDetails?.id; // userId가 아니라 id
+        console.log('🔍 추출된 값 | userId:', userIdFromServer, '| name:', name, '| phoneNumber:', phoneNumber);
         
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         
-        // 사용자 정보 저장 (담당자 정보로 활용)
-        if (name || phoneNumber) {
+        // 사용자 정보 저장 (담당자 정보 + userId로 활용)
+        if (name || phoneNumber || userIdFromServer) {
           const userInfo = {
+            userId: userIdFromServer || "",
             name: name || "",
             phoneNumber: phoneNumber || ""
           };
+          console.log('💾 localStorage에 저장할 userInfo:', userInfo);
           localStorage.setItem("user", JSON.stringify(userInfo));
         }
         
