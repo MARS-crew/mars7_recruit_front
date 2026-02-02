@@ -33,6 +33,16 @@ useEffect(() => {
       <Header title="지원자 목록" />
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        {applicants.length === 0 && (
+          <li
+          style = {{
+            textAlign: "center",
+            marginTop: "100px"
+
+          }}>
+            아직 지원자가 없습니다.
+          </li>
+        )}
         {applicants.map((applicant) => (
           <li
             key={applicant.resumeId}
@@ -45,7 +55,6 @@ useEffect(() => {
               display: "flex",
               alignItems: "center",
               padding: "16px",
-              borderBottom: "1px solid #eee",
               cursor: "pointer",
             }}
           >
@@ -71,18 +80,18 @@ useEffect(() => {
               <div style={{ fontWeight: "bold", fontSize: 14, fontWeight: 700 }}>
                 {applicant.name}
                 <span
-                  style={{ color: "#888", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
+                  style={{ color: "rgba(158, 163, 178, 1)", fontWeight: "normal", marginLeft: 8, fontSize: 11, fontWeight: 500 }}
                 >
                   {applicant.gender === "F" ? "여자" : "남자"} · {applicant.age}세
                 </span>
               </div>
 
-              <div style={{ color: "#666", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
+              <div style={{ color: "rgba(158, 163, 178, 1)", fontSize: 12, fontWeight: 500, marginTop: 4 }}>
                 {applicant.major} ({applicant.grade}학년)
               </div>
             </div>
 
-            <div style={{ fontSize: 12, color: "#bbb" }}>
+            <div style={{ fontSize: 10, color: "rgba(217, 217, 217, 1)" }}>
               {applicant.createdAt
                 ? new Date(applicant.createdAt).toLocaleDateString("ko-KR", {
                     year: "numeric",

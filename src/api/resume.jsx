@@ -17,8 +17,8 @@ export const getMyResumeDetail = (resumeId) =>
   axiosInstance.get(`/api/resumes/my/${resumeId}`);
 
 // 지원서 작성
-export const createResume = (data) =>
-  axiosInstance.post("/api/resumes", data);
+export const createResume = (recruitId, data) =>
+  axiosInstance.post("/api/resumes", { recruitId: Number(recruitId), ...data });
 
 // 합격 / 불합격 처리
 export const updateResumeStatus = (recruitId, resumeId, status) =>
@@ -27,7 +27,12 @@ export const updateResumeStatus = (recruitId, resumeId, status) =>
     { status }
   );
 
+// 모집글 상세 조회 (모집글 제목)
+export const getRecruitDetail = (recruitId) =>
+  axiosInstance.get(`/api/v1/recruits/${recruitId}`);
+
   // 마이페이지 정보 조회
 export const getMyPageInfo = () => {
   return axiosInstance.get("/api/v1/mypage");
 };
+

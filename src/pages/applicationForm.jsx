@@ -1,7 +1,8 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Profile from "../icon/Profile.png";
-import { useEffect, useMemo, useState } from "react";
+import Modal from "../components/Modal";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { createResume } from "../api/resume";
 import { getMyPageInfo } from "../api/resume";
@@ -10,6 +11,8 @@ export default function ApplicationForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const topRef = useRef(null);
+
 
   const recruitId = useMemo(() => {
     return (
@@ -19,21 +22,52 @@ export default function ApplicationForm() {
   }, [location.state, searchParams]);
 
   const INTRO_MAX = 500;
+  const TITLE_MAX = 20;
+
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const isLoggedIn = useMemo(() => {
+    const token = localStorage.getItem("accessToken");
+    return Boolean(token && token.trim());
+  }, []);
 
   const [title, setTitle] = useState("");
   const [intro, setIntro] = useState("");
   const [profile, setProfile] = useState(null);
+  const [formError, setFormError] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = () => {
+    if (isLoginModalOpen) return;
+
+    if (!title.trim() || !intro.trim()) {
+      setFormError("필수 정보를 입력해 주세요.");
+      return;
+    }
+    setFormError("");
+    setIsModalOpen(true);
+  };
   const closeModal = () => {
     if (isSubmitting) return;
     setIsModalOpen(false);
   };
 
+
+
   useEffect(() => {
+    // 포커스 고정
+    if (topRef.current) {
+      topRef.current.focus();
+    }
+
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     const fetchMyProfile = async () => {
       try {
         const res = await getMyPageInfo();
@@ -48,8 +82,13 @@ export default function ApplicationForm() {
   }, []);
 
   const handleConfirm = async () => {
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     if (!recruitId) {
-      console.error("recruitId 없음. (location.state 또는 ?recruitId= 로 전달 필요)");
+      console.error("recruitId 없음.");
       closeModal();
       return;
     }
@@ -79,14 +118,28 @@ export default function ApplicationForm() {
   };
 
   return (
-    <div style={{ paddingBottom: 92 }}>
+    <div
+      style={{
+        minHeight: "100dvh",
+        height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        background: "#FFFFFF",
+        boxSizing: "border-box",
+        paddingTop: "env(safe-area-inset-top, 0px)",
+      }}
+    >
       <Header title="지원서 작성" leftAction={() => navigate(-1)} />
+      <div tabIndex={-1} ref={topRef} style={{ outline: "none" }} />
 
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 24, flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
         {/* 제목 input */}
         <input
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            setTitle(e.target.value.slice(0, TITLE_MAX));
+            if (formError) setFormError("");
+          }}
           placeholder="제목을 입력해주세요."
           style={{
             width: "100%",
@@ -94,11 +147,16 @@ export default function ApplicationForm() {
             outline: "none",
             fontSize: 20,
             fontWeight: 600,
-            color: "#111",
+            color: "#000000",
             padding: "10px 0 14px",
           }}
         />
-        <div style={{ height: 1, background: "#eee", marginBottom: 18 }} />
+        {title.length >= TITLE_MAX && (
+          <div style={{ marginBottom: 10, fontSize: 12, color: "#A4A4A4" }}>
+            20자까지 작성 가능합니다.
+          </div>
+        )}
+        <div style={{ height: 1, background: "#F5F5F5", marginBottom: 30 }} />
 
         {/* 프로필 */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -119,16 +177,16 @@ export default function ApplicationForm() {
           </div>
 
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 600, fontSize: 16, color: "#111" }}>
+            <div style={{ fontWeight: 600, fontSize: 16, color: "#000000" }}>
               {profile?.name ?? ""}
             </div>
-            <div style={{ marginTop: 6, fontSize: 13, color: "#8A8FA3" }}>
+            <div style={{ marginTop: 6, fontWeight: 400, fontSize: 14, color: "#A4A4A4" }}>
               {profile?.major ?? ""} {profile?.grade ? `· ${profile.grade}학년` : ""}
             </div>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "40px 0 20px" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "30px 0 20px" }} />
 
         {/* 주소, 연락처 */}
         <div style={{ display: "grid", rowGap: 14 }}>
@@ -138,12 +196,12 @@ export default function ApplicationForm() {
                 fontSize: 14,
                 fontWeight: 400,
                 width: 64,
-                color: "#9AA0A6",
+                color: "#A4A4A4",
               }}
             >
               주소
             </div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#212121" }}>
               {profile?.address ?? "-"}
             </div>
           </div>
@@ -154,18 +212,18 @@ export default function ApplicationForm() {
                 fontSize: 14,
                 fontWeight: 400,
                 width: 64,
-                color: "#9AA0A6",
+                color: "#A4A4A4",
               }}
             >
               연락처
             </div>
-            <div style={{ fontSize: 14, fontWeight: 400, color: "#111" }}>
+            <div style={{ fontSize: 14, fontWeight: 400, color: "#212121" }}>
               {profile?.phoneNumber ?? ""}
             </div>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "#eee", margin: "20px 0" }} />
+        <div style={{ height: 1, background: "#F5F5F5", margin: "20px 0" }} />
 
         {/* 자기소개*/}
         <div
@@ -188,7 +246,10 @@ export default function ApplicationForm() {
         {/* 자기소개 input */}
         <textarea
           value={intro}
-          onChange={(e) => setIntro(e.target.value.slice(0, INTRO_MAX))}
+          onChange={(e) => {
+            setIntro(e.target.value.slice(0, INTRO_MAX));
+            if (formError) setFormError("");
+          }}
           placeholder="자기소개를 입력해주세요."
           style={{
             width: "100%",
@@ -205,16 +266,41 @@ export default function ApplicationForm() {
             background: "#fff",
           }}
         />
+        {formError ? (
+          <div style={{ marginTop: 10, fontSize: 13, color: "#FF4D4D" }}>
+            {formError}
+          </div>
+        ) : null}
 
-        {/* 하단 버튼 */}
-        <div style={{ marginTop: 80 }}>
-          <Button
-            label="지원하기"
-            onClick={openModal}
-            disabled={!title.trim() || !intro.trim() || isSubmitting}
-          />
-        </div>
       </div>
+
+      <div
+        style={
+          {
+            padding: "12px 24px 20px",
+            borderTop: "1px solid #F5F5F5",
+            background: "#FFFFFF",
+          }
+        }
+      >
+        <Button label="지원하기" onClick={openModal} disabled={isSubmitting} />
+      </div>
+
+      {/* 로그인 필요 모달 */}
+      <Modal
+        isOpen={isLoginModalOpen}
+        lBtn="취소"
+        rBtn="로그인"
+        rBtnColor="#2572B9"
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          navigate(-1);
+        }}
+        onRightClick={() => {
+          setIsLoginModalOpen(false);
+          navigate("/login");
+        }}
+      />
 
       {/* 모달 */}
       {isModalOpen && (

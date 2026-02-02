@@ -46,12 +46,13 @@ function Home() {
     // 시간차를 밀리초 단위로 계산한 뒤 날짜로 변환
     const diffTime = targetDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+if (diffDays < 0) return "마감";
     return `D-${diffDays}`;
   };
   useEffect(() => {
     MainData();
   }, []);
+  
   return (
     <div
       style={{
@@ -199,7 +200,11 @@ function Home() {
               >
                 <div
                   style={{
-                    background: "#FFC10033",
+                    background: calculateDDay(popularList[0]?.dueDate) === "마감" 
+      ? "#ffe8cc" 
+      : (calculateDDay(popularList[0]?.dueDate) === "D-1" || calculateDDay(popularList[0]?.dueDate) === "D-0" 
+        ? "#FFEBEB" 
+        : "#FFC10033"),
                     padding: "2px 8px",
                     borderRadius: 16,
                     display: "flex",
@@ -211,7 +216,11 @@ function Home() {
                 >
                   <p
                     style={{
-                      color: "#D6A200",
+                      color: calculateDDay(popularList[0]?.dueDate) === "마감" 
+        ? "#ff9800" 
+        : (calculateDDay(popularList[0]?.dueDate) === "D-1" || calculateDDay(popularList[0]?.dueDate) === "D-0" 
+          ? "#FF4D4D" 
+          : "#D6A200"),
                       fontSize: 8,
                       margin: 0,
                       fontWeight: "bold",
@@ -234,7 +243,7 @@ function Home() {
 
           {/* 1 영역 */}
           <div
-            style={{ width: "36%", minWidth: "133px" }}
+            style={{ width: "36%", width: "133px" }}
             onClick={() => {
               navigate(`/clubs/${popularList[1]?.recruitId}`);
             }}
@@ -316,7 +325,11 @@ function Home() {
               >
                 <div
                   style={{
-                    background: "#FFC10033",
+                    background: calculateDDay(popularList[1]?.dueDate) === "마감" 
+      ? "#ffe8cc" 
+      : (calculateDDay(popularList[1]?.dueDate) === "D-1" || calculateDDay(popularList[1]?.dueDate) === "D-0" 
+        ? "#FFEBEB" 
+        : "#FFC10033"),
                     padding: "4px 10px",
                     display: "flex",
                     alignItems: "center",
@@ -327,7 +340,11 @@ function Home() {
                 >
                   <p
                     style={{
-                      color: "#D6A200",
+                     color: calculateDDay(popularList[1]?.dueDate) === "마감" 
+        ? "#ff9800" 
+        : (calculateDDay(popularList[1]?.dueDate) === "D-1" || calculateDDay(popularList[1]?.dueDate) === "D-0" 
+          ? "#FF4D4D" 
+          : "#D6A200"),
                       fontSize: 12,
                       margin: 0,
                       fontWeight: "bold",
@@ -431,7 +448,11 @@ function Home() {
               >
                 <div
                   style={{
-                    background: "#FFC10033",
+                    background: calculateDDay(popularList[2]?.dueDate) === "마감" 
+      ? "#ffe8cc" 
+      : (calculateDDay(popularList[2]?.dueDate) === "D-1" || calculateDDay(popularList[2]?.dueDate) === "D-0" 
+        ? "#FFEBEB" 
+        : "#FFC10033"),
                     padding: "2px 8px",
                     display: "flex",
                     alignItems: "center",
@@ -443,7 +464,11 @@ function Home() {
                 >
                   <p
                     style={{
-                      color: "#D6A200",
+                  color: calculateDDay(popularList[2]?.dueDate) === "마감" 
+        ? "#ff9800" 
+        : (calculateDDay(popularList[2]?.dueDate) === "D-1" || calculateDDay(popularList[2]?.dueDate) === "D-0" 
+          ? "#FF4D4D" 
+          : "#D6A200"),
                       fontSize: 8,
                       margin: 0,
                       fontWeight: "bold",
@@ -493,7 +518,8 @@ function Home() {
           const showBorder =
             latestList.length >= 2 && index !== latestList.length - 1;
           const dDayValue = calculateDDay(item?.dueDate);
-          const isDay1 = dDayValue === "D-1";
+          const isClosed = dDayValue === "마감";
+          const isDay1 = dDayValue === "D-1"||dDayValue ==="D-0";
 
           return (
             <div
@@ -505,7 +531,7 @@ function Home() {
                 width: "100%",
                 display: "flex",
                 justifyContent: "space-between",
-
+                height:139,
                 alignItems: "stretch",
                 padding: "11px 0",
                 borderBottom: showBorder ? "1px solid #EAEAEA" : "none",
@@ -518,16 +544,16 @@ function Home() {
                   minWidth: 0,
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "center",
+                  justifyContent: "flex-start",
                   marginRight: 16,
                 }}
               >
                 {/* 제목 */}
+                <div style={{minHeight:22}}>
                 <p
                   style={{
                     fontSize: 18,
                     fontWeight: "bold",
-                    margin: "0 0 6px 0",
                     color: "#000",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -537,13 +563,14 @@ function Home() {
                 >
                   {item.title}
                 </p>
-
-                {/* 본문 요약 */}
+            </div>             
+            {/* 본문 요약 */}
+                <div style={{minHeight:44}}>
                 <p
                   style={{
                     fontSize: 14,
                     color: "#9EA3B2",
-                    margin: "0 0 16px 0",
+                    margin: "0px",
                     display: "-webkit-box",
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
@@ -553,15 +580,15 @@ function Home() {
                 >
                   {item.content}
                 </p>
-
+</div>
                 {/* 하단 메타 정보 (D-Day 등) */}
                 <div
-                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                  style={{ display: "flex", alignItems: "center", gap: "12px",marginTop:25 }}
                 >
                   <div
                     style={{
-                      backgroundColor: !isDay1 ? "#FFC10033" : "#FFEBEB",
-                      color: !isDay1 ? "#D6A200" : "#FF4D4D",
+                      backgroundColor: isClosed ? "#ffe8cc":(!isDay1 ? "#FFC10033" : "#FFEBEB"),
+                      color:  isClosed ? "#ff9800":(!isDay1 ? "#D6A200" : "#FF4D4D"),
                       padding: "4px 12px",
                       borderRadius: "16px",
                       fontSize: "12px",
@@ -581,7 +608,7 @@ function Home() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {item.createdAt.split("T")[0]} 시작
+                    {item.startDate.split("T")[0]} 시작
                   </span>
                   <div
                     style={{

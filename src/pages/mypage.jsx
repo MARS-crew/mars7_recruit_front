@@ -175,12 +175,17 @@ export default function MyPage() {
             setTimeout(() => setShowToast(false), 2000);
           }
         } catch (error) {
+          const errorMsg = error.message || String(error);
           console.error("수정 실패:", error);
-
-          setToastMsg(error.message || "저장에 실패했습니다.");
+          if (errorMsg.includes("전화번호")) {
+          setPhoneError(errorMsg); 
+          phoneRef.current?.focus();
+        } else {
+          setToastMsg(errorMsg || "저장에 실패했습니다.");
           setShowToast(true);
           setTimeout(() => setShowToast(false), 2000);
         }
+      }
       } else if (firstErrorRef) {
         firstErrorRef.current?.focus();
       }
@@ -394,7 +399,7 @@ export default function MyPage() {
               borderBottom: "1px solid #F0F0F0",
             }}
           >
-            <span style={{ fontSize: 16, color: "#000" }}>알림 푸시 알림</span>
+            <span style={{ fontSize: 16, color: "#000" }}>알림 푸시</span>
             <Toggle
               id="app-push"
               checked={appPush}
@@ -430,7 +435,7 @@ export default function MyPage() {
             }}
             onClick={() => setIsWithdrawOpen(true)}
           >
-            <span style={{ fontSize: 16, color: "#333" }}>회원 탈퇴</span>
+            <span style={{ fontSize: 16, color: "#000" }}>회원 탈퇴</span>
             <img src={RA} alt="arrow" />
           </div>
           <Modal

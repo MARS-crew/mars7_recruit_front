@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyResumes } from "../api/resume";
+import { getRecruitDetail } from "../api/resume";
 import BottomNavBar from "../components/BottomNavBar";
 import Nobackheader from "../components/nobackheader";
+import Modal from "../components/Modal";
 
 function StatusPill({ status }) {
   const s = status ?? "INPROGRESS";
@@ -41,6 +43,8 @@ function StatusPill({ status }) {
 export default function Applications() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
+  const [recruitTitles, setRecruitTitles] = useState({});
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const safeStatus = (v) => {
     const s = (v ?? "").toString().trim();
@@ -66,20 +70,42 @@ export default function Applications() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     const fetchMyResumes = async () => {
       try {
         const res = await getMyResumes();
         const list = res?.data?.data ?? [];
-        const normalized = Array.isArray(list)
-          ? list.map((it) => ({
-              ...it,
-              status:
-                safeStatus(it.status) ||
-                getSavedStatus(it.resumeId, it.recruitId) ||
-                "INPROGRESS",
-            }))
-          : [];
+
+        const safeList = Array.isArray(list) ? list : [];
+        setItems(safeList);
+
+        const titles = {};
+        await Promise.all(
+          list.map(async (item) => {
+            if (item.recruitId) {
+              try {
+                const r = await getRecruitDetail(item.recruitId);
+                titles[item.recruitId] = r?.data?.data?.title ?? "";
+              } catch {}
+            }
+          })
+        );
+        setRecruitTitles(titles);
+
+        const normalized = safeList.map((it) => ({
+          ...it,
+          status:
+            safeStatus(it.status) ||
+            getSavedStatus(it.resumeId, it.recruitId) ||
+            "INPROGRESS",
+        }));
         setItems(normalized);
+
       } catch (e) {
         console.error("내 지원서 목록 조회 실패", e);
         setItems([]);
@@ -90,17 +116,13 @@ export default function Applications() {
   }, []);
 
 const formatDate = (iso) => {
-  if (!iso) return "-";
 
+  if (!iso) return "";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
+  if (Number.isNaN(d.getTime())) return "";
 
-  return new Intl.DateTimeFormat("ko-KR", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
+  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+
 };
 
   return (
@@ -110,76 +132,93 @@ const formatDate = (iso) => {
       <div style={{ padding: "0 16px" }}>
         <div style={{ height: 10 }} />
 
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {items.map((item) => (
-            <li
-              key={item.resumeId}
-              style={{
-                borderBottom: "1px solid #eee",
-                cursor: "pointer",
-                userSelect: "none",
-              }}
-              onClick={() =>
-                navigate(`/applications/${item.resumeId}`, {
-                  state: { recruitId: item.recruitId },
-                })
-              }
-            >
-              <div
+        {items.length === 0 ? (
+          <div style={{ textAlign: "center", marginTop: 60, color: "rgba(158, 163, 178,1)", fontSize: 14 }}>
+            아직 지원서가 없습니다.
+          </div>
+        ) : (
+          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            {items.map((item) => (
+              <li
+                key={item.resumeId}
                 style={{
-                  display: "flex",
-                  gap: 14,
-                  alignItems: "center",
-                  padding: "18px 0 10px",
+                  borderBottom: "1px solid #F5F5F5",
+                  cursor: "pointer",
+                  userSelect: "none",
                 }}
+                onClick={() =>
+                  navigate(`/applications/${item.resumeId}`, {
+                    state: { recruitId: item.recruitId },
+                  })
+                }
               >
-                <StatusPill status={item.status} />
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 14,
+                    alignItems: "center",
+                    padding: "18px 0 10px",
+                  }}
+                >
+                  <StatusPill status={item.status} />
 
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 15,
-                      fontWeight: 700,
-                      color: "#111",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      maxWidth: "100%"
-                    }}
-                  >
-                    {item.title}
-                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: "#111",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {recruitTitles[item.recruitId] || item.title}
+                    </div>
 
-                  <div
-                    style={{
-                      marginTop: 6,
-                      fontSize: 12,
-                      color: "#8A8FA3",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {item.selfIntroduce}
+
+                    <div
+                      style={{
+                        marginTop: 6,
+                        fontSize: 12,
+                        fontWeight: 500,
+                        color: "rgba(158, 163, 178,1)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.selfIntroduce}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                style={{
-                  paddingBottom: 14,
-                  color: "#C9CDD6",
-                  fontSize: 12,
-                }}
-              >
-                {formatDate(item.createdAt)}
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div
+                  style={{
+                    paddingBottom: 14,
+                    color: "#D9D9D9",
+                    fontSize: 10,
+                  }}
+                >
+                  {formatDate(item.createdAt)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <BottomNavBar />
+      <Modal
+        isOpen={isLoginModalOpen}
+        lBtn="취소"
+        rBtn="로그인"
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          navigate(-1);
+        }}
+        onRightClick={() => navigate("/login")}
+      />
     </div>
   );
 }
