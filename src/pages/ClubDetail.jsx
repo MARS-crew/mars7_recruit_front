@@ -81,7 +81,7 @@ const ClubDetail = ({ club, isPublisher }) => {
                         <span className="condition-label">모집 인원</span>
                         <span className="condition-value">
                             {club.recruitCount !== undefined && club.recruitCount !== null && club.recruitCount !== ''
-                                ? `${club.recruitCount}명`
+                                ? (Number(club.recruitCount) < 10 ? "0명" : "00명")
                                 : '미정'}
                         </span>
                     </div>

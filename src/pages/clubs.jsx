@@ -270,6 +270,9 @@ export default function Clubs() {
           filteredClubs.map((club, index) => {
             const dueDateLabel = club.dueDate || '모집중';
             const startLabel = club.startDate ? `${club.startDate} 시작` : '시작일 미정';
+            const memberDisplay = club.members !== undefined && club.members !== null && club.members !== '' 
+              ? (Number(club.members) < 10 ? "0명" : "00명")
+              : '인원 미정';
             const memberLabel = club.members !== undefined && club.members !== null && club.members !== '' ? `${club.members}명` : '인원 미정';
 
             return (
@@ -298,7 +301,7 @@ export default function Clubs() {
                     <span className="club-date">{startLabel}</span>
                     <span className="club-members">
                       <img src="/icons/user-icon.png" alt="멤버" className="member-icon" />
-                      <span className="club-members-count">{memberLabel}</span>
+                      <span className="club-members-count">{memberDisplay}</span>
                     </span>
                   </div>
                 </div>
