@@ -3,23 +3,20 @@ import Button from "../components/Button";
 import Profile from "../icon/Profile.png";
 import Modal from "../components/Modal";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { createResume } from "../api/resume";
-import { getMyPageInfo } from "../api/resume";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { createResume, getMyPageInfo } from "../api/resume";
 
 export default function ApplicationForm() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const topRef = useRef(null);
 
 
   const recruitId = useMemo(() => {
     return (
-      location.state?.recruitId ??
       searchParams.get("recruitId")
     );
-  }, [location.state, searchParams]);
+  }, [searchParams]);
 
   const INTRO_MAX = 500;
   const TITLE_MAX = 20;
@@ -41,8 +38,6 @@ export default function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openModal = () => {
-    if (isLoginModalOpen) return;
-
     if (!title.trim() || !intro.trim()) {
       setFormError("필수 정보를 입력해 주세요.");
       return;
@@ -73,7 +68,6 @@ export default function ApplicationForm() {
         const res = await getMyPageInfo();
         setProfile(res?.data?.data ?? null);
       } catch (e) {
-        console.error("마이페이지 정보 불러오기 실패", e);
         setProfile(null);
       }
     };
@@ -87,8 +81,10 @@ export default function ApplicationForm() {
       return;
     }
 
-    if (!recruitId) {
-      console.error("recruitId 없음.");
+    const recruitIdNum = Number(recruitId);
+
+    if (!recruitId || Number.isNaN(recruitIdNum)) {
+      setFormError("모집글 정보(recruitId)를 가져오지 못했어요. 다시 시도해주세요.");
       closeModal();
       return;
     }
@@ -101,16 +97,51 @@ export default function ApplicationForm() {
     try {
       setIsSubmitting(true);
 
-      await createResume({
-        recruitId: Number(recruitId),
+      const payload = {
+        recruitId: recruitIdNum,
         title: title.trim(),
         selfIntroduce: intro.trim(),
-      });
+      };
+
+      await createResume(payload);
 
       setIsModalOpen(false);
       navigate("/applications");
     } catch (e) {
-      console.error("지원서 생성 실패", e);
+
+      if (e?.response?.status === 409) {
+        try {
+          const myRes = await getMyResumes();
+          const myList = myRes?.data?.data ?? [];
+
+          const existed = Array.isArray(myList)
+            ? myList.find((it) => Number(it.recruitId) === recruitIdNum)
+            : null;
+
+          if (existed?.resumeId) {
+            setIsModalOpen(false);
+            navigate(`/applications/${existed.resumeId}`, {
+              state: { recruitId: existed.recruitId },
+            });
+            return;
+          }
+
+          setFormError("이미 지원한 모집글입니다.");
+          setIsModalOpen(false);
+          return;
+        } catch (err) {
+          setFormError("이미 지원한 모집글입니다.");
+          setIsModalOpen(false);
+          return;
+        }
+      }
+
+      const msg =
+        e?.response?.data?.error?.message ||
+        e?.response?.data?.message ||
+        "지원서 생성에 실패했습니다.";
+
+      setFormError(msg);
       setIsModalOpen(false);
     } finally {
       setIsSubmitting(false);

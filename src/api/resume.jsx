@@ -17,8 +17,20 @@ export const getMyResumeDetail = (resumeId) =>
   axiosInstance.get(`/api/resumes/my/${resumeId}`);
 
 // 지원서 작성
-export const createResume = (recruitId, data) =>
-  axiosInstance.post("/api/resumes", { recruitId: Number(recruitId), ...data });
+export const createResume = (recruitIdOrData, maybeData) => {
+  const isObj =
+    recruitIdOrData != null &&
+    typeof recruitIdOrData === "object" &&
+    !Array.isArray(recruitIdOrData);
+
+      const data = isObj ? recruitIdOrData : maybeData || {};
+  const recruitId = isObj ? recruitIdOrData.recruitId : recruitIdOrData;
+
+  return axiosInstance.post("/api/resumes", {
+    ...data,
+    recruitId: Number(recruitId),
+  });
+};
 
 // 합격 / 불합격 처리
 export const updateResumeStatus = (recruitId, resumeId, status) =>
