@@ -133,12 +133,6 @@ export default function Clubs() {
     const dDay = calculateDDay(item?.dueDate);
 
     const memberValue = item?.people ?? item?.members ?? item?.targetCount ?? '';
-    console.log('📋 clubs.jsx normalizeRecruit:', {
-      item: item,
-      people: item?.people,
-      peopleType: typeof item?.people,
-      memberValue: memberValue,
-    });
 
     return {
       id: item?.recruitId ?? item?.id ?? `recruit-${index}`,
@@ -171,16 +165,17 @@ export default function Clubs() {
           const field = mapFilterToField(activeFilter);
           rawList = await recruitApi.getList(field);
         }
-        
-        console.log('📦 API 응답:', rawList);
-        
         const normalized = (rawList || []).map((item, index) =>
           normalizeRecruit(item, index),
         );
+
+        const categoryFiltered = activeFilter === '전체'
+          ? normalized
+          : normalized.filter((item) => item.category === activeFilter);
         
         // 마감 여부와 관계없이 모든 모집글 표시
         // 종료일이 없는 경우만 제외
-        const activeRecruits = normalized.filter((item) => {
+        const activeRecruits = categoryFiltered.filter((item) => {
           const isValid = item.dueDate !== undefined && item.dueDate !== null && item.dueDate !== '';
           return isValid;
         });
