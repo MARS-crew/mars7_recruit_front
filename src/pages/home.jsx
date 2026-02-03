@@ -614,7 +614,6 @@ if (diffDays < 0) return "마감";
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "4px",
                       marginLeft: "auto",
                     }}
                   >
@@ -622,10 +621,13 @@ if (diffDays < 0) return "마감";
                       src={person}
                       alt="인원"
                       style={{ width: 19, height: 19 }}
-                    />
-                    <span style={{ color: "#9EA3B2", fontSize: "14px" }}>
+                    /><div style={{width:25,
+                      display: "flex", 
+  justifyContent: "flex-end"
+                    }}>
+                    <span style={{ color: "#9EA3B2", fontSize: "12px" }}>
                       {item?.people < 10 ? "0명" : "00명"}
-                    </span>
+                    </span></div>
                   </div>
                 </div>
               </div>
