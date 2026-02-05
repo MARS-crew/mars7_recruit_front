@@ -4,7 +4,7 @@ import Profile from "../icon/Profile.png";
 import Modal from "../components/Modal";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createResume, getMyPageInfo } from "../api/resume";
+import { createResume, getMyPageInfo, getMyResumes } from "../api/resume";
 
 export default function ApplicationForm() {
   const navigate = useNavigate();
@@ -36,6 +36,28 @@ export default function ApplicationForm() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const genderLabel = useMemo(() => {
+    const g = profile?.gender;
+    if (g === "F") return "여자";
+    if (g === "M") return "남자";
+    return g ?? "";
+  }, [profile?.gender]);
+
+  const ageText = useMemo(() => {
+    const birth = profile?.birth;
+    if (!birth) return "";
+
+    const d = new Date(birth);
+    if (Number.isNaN(d.getTime())) return "";
+
+    const today = new Date();
+    let age = today.getFullYear() - d.getFullYear();
+    const m = today.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age -= 1;
+
+    return Number.isFinite(age) && age > 0 ? String(age) : "";
+  }, [profile?.birth]);
 
   const openModal = () => {
     if (!title.trim() || !intro.trim()) {
@@ -201,7 +223,7 @@ export default function ApplicationForm() {
             }}
           >
             <img
-              src={profile?.profileImage ? profile.profileImage : Profile}
+              src={profile?.profileImage || Profile}
               alt="프로필"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -212,7 +234,10 @@ export default function ApplicationForm() {
               {profile?.name ?? ""}
             </div>
             <div style={{ marginTop: 6, fontWeight: 400, fontSize: 14, color: "#A4A4A4" }}>
-              {profile?.major ?? ""} {profile?.grade ? `· ${profile.grade}학년` : ""}
+              {genderLabel ? `${genderLabel}` : ""}
+              {ageText ? `${genderLabel ? " · " : ""}${ageText}세` : ""}
+              {(profile?.major ?? "") ? ` / ${profile.major}` : ""}
+              {profile?.grade ? ` ${profile.grade}학년` : ""}
             </div>
           </div>
         </div>
