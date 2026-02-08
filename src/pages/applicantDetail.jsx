@@ -2,7 +2,42 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Profile from "../icon/Profile.png";
+
 import { getResumeDetail, updateResumeStatus } from "../api/resume";
+
+function StatusPill({ status }) {
+  const s = (status ?? "INPROGRESS").toString().trim() || "INPROGRESS";
+
+  const map = {
+    INPROGRESS: { label: "심사중", border: "#CFCFCF", bg: "#F5F5F5", color: "#888" },
+    PASS: { label: "합격", border: "#2B7FFF", bg: "#E8F1FF", color: "#2B7FFF" },
+    FAIL: { label: "불합격", border: "#FF4D4D", bg: "#FFECEC", color: "#FF4D4D" },
+  };
+
+  const v = map[s] ?? map.INPROGRESS;
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 77,
+        height: 32,
+        padding: "0 14px",
+        borderRadius: 999,
+        border: `1.5px solid ${v.border}`,
+        background: v.bg,
+        color: v.color,
+        fontWeight: 500,
+        fontSize: 13,
+        flexShrink: 0,
+      }}
+    >
+      {v.label}
+    </span>
+  );
+}
 
 export default function ApplicantDetail() {
   const { id } = useParams();
@@ -190,6 +225,10 @@ export default function ApplicantDetail() {
       <Header title="지원서 조회" />
 
       <div style={{ padding: 24, paddingBottom: 120, flex: 1, overflow: "hidden" }}>
+        {/* 상태 */}
+        <div style={{ marginBottom: 14 }}>
+          <StatusPill status={applicant.status} />
+        </div>
         {/* 제목 */}
         <h2
           style={{
@@ -283,6 +322,7 @@ export default function ApplicantDetail() {
         </div>
 
         {/* 하단 버튼 */}
+        {(applicant.status ?? "INPROGRESS") === "INPROGRESS" && (
         <div
           style={{
             position: "fixed",
@@ -329,6 +369,7 @@ export default function ApplicantDetail() {
             불합격
           </button>
         </div>
+        )}
       </div>
 
       {/* 모달 */}
