@@ -84,42 +84,20 @@ const ClubDetailPage = () => {
             setLoading(true);
             setError('');
             try {
-                // 먼저 일반 상세 조회로 게시자 ID 확인
+                // 게시자 API를 먼저 시도 (조회수 증가 방지)
+                try {
+                    const ownerData = await recruitApi.getOwnerDetail(recruitId);
+                    if (!mounted) return;
+                    setClub(normalizeClub(ownerData));
+                    setIsPublisher(true);
+                    return;
+                } catch (ownerErr) {
+                    // 게시자 API 실패 시 일반 상세 조회로 fallback
+                    if (!mounted) return;
+                }
+
                 const data = await recruitApi.getDetail(recruitId);
                 if (!mounted) return;
-                
-                const publisherId = Number(data?.userId);
-                const currentUserStr = localStorage.getItem('user');
-                let isOwner = false;
-                
-                // 현재 로그인한 사용자가 게시자인지 확인
-                if (currentUserStr) {
-                    try {
-                        const currentUser = JSON.parse(currentUserStr);
-                        const currentUserId = Number(currentUser?.userId);
-                        isOwner = currentUserId === publisherId;
-                    } catch (e) {
-                        // user 파싱 실패 시 게시자 아님으로 처리
-                        isOwner = false;
-                    }
-                }
-
-                // 게시자인 경우에만 owner API 호출 (지원자 정보 포함)
-                if (isOwner) {
-                    try {
-                        const ownerData = await recruitApi.getOwnerDetail(recruitId);
-                        if (!mounted) return;
-                        setClub(normalizeClub(ownerData));
-                        setIsPublisher(true);
-                        setLoading(false);
-                        return;
-                    } catch (ownerErr) {
-                        // owner API 실패 시 일반 데이터 사용
-                        if (!mounted) return;
-                    }
-                }
-
-                // 일반 사용자 또는 owner API 실패 시 일반 데이터 사용
                 setClub(normalizeClub(data));
                 setIsPublisher(false);
             } catch (err) {
